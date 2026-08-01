@@ -178,29 +178,17 @@ def _classify_stub(ctx: MessageContext, text: str) -> tuple[str, str, str, float
     lower = text.lower()
     m = ctx.message
 
-    if _any_kw(lower, INJECTION_PATTERNS):
-        return (
-            "mute", "scam",
-            "The message tries to instruct the router directly instead of relying on its "
-            "actual content, which is treated as a manipulation attempt.",
-            0.83,
-        )
-
-    if _domain_mismatch(ctx):
-        biz_name = ctx.business.get("display_name") or "the business"
-        return (
-            "mute", "scam",
-            f"The sending domain does not match {biz_name}'s official domain, a lookalike "
-            "sender pattern.",
-            0.82,
-        )
-
-    if _any_kw(lower, SCAM_KEYWORDS):
-        return (
-            "mute", "scam",
-            "The message uses urgent account/OTP/verification language typical of phishing.",
-            0.80,
-        )
+    # RISK IS NOT THIS STAGE'S JOB (M2). code/safety.py owns scam/spam/injection
+    # and force-mutes before anything reaches here, so every message the router
+    # sees has already been cleared. The prompt-injection, domain-mismatch and
+    # scam-keyword branches that used to live here have moved to the gate.
+    #
+    # They were not merely redundant, they were wrong: the naive domain check
+    # flagged verified senders using a link shortener (Thrillophilia), and the
+    # keyword check flagged FedEx for saying "no payment or OTP is required".
+    # Re-deriving risk here would also reintroduce exactly the failure the blind
+    # gate exists to prevent, since this stage CAN see engagement history and
+    # could talk itself out of a correct flag.
 
     if ctx.business or m.conversation_type == "business":
         biz_name = ctx.business.get("display_name") or "This business"

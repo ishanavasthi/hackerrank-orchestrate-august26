@@ -81,8 +81,33 @@ def main(argv: list[str] | None = None) -> int:
             print("  NOTE: media extraction incomplete (M0 may still be running); "
                   "affected rows route on text only.")
 
-        print(f"Routing via provider={args.provider} ...")
-        decisions = route_all(contexts, provider=args.provider)
+        # M2 — blind safety gate. Runs FIRST and can force mute on its own.
+        # Gated messages never reach personalization, so a trusted-sender
+        # signal has no opportunity to argue a scam back down.
+        from safety import gate_all              # noqa: PLC0415
+        from contracts import Decision           # noqa: PLC0415
+
+        print("Safety gate ...")
+        verdicts = gate_all(contexts, provider=args.provider)
+        gated = {mid: v for mid, v in verdicts.items() if v.force_mute}
+        print(f"  force-muted {len(gated)}/{len(contexts)} on risk grounds")
+
+        passthrough = [c for c in contexts if not verdicts[c.message.message_id].force_mute]
+        print(f"Routing {len(passthrough)} via provider={args.provider} ...")
+        routed = {d.message_id: d for d in route_all(passthrough, provider=args.provider)}
+
+        decisions = []
+        for c in contexts:
+            mid = c.message.message_id
+            if mid in gated:
+                v = gated[mid]
+                decisions.append(Decision(
+                    message_id=mid, action="mute", message_type=v.message_type,
+                    reason=v.reason, confidence=v.confidence,
+                    evidence_message_ids=[],
+                ))
+            else:
+                decisions.append(routed[mid])
 
         write_output(decisions, args.out, messages)
         print(f"Wrote {args.out}")

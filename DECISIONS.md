@@ -56,11 +56,41 @@ Alternatives considered: Treating the cache as a local speed-up and re-extractin
 Why: The determinism promise in an earlier entry assumed temperature 0 on one vendor. Groq and Gemini free tiers make no reproducibility guarantee we can rely on, so temperature 0 alone no longer buys determinism across providers. Freezing extraction output into a committed file is what actually makes two runs produce identical `output.csv`. It also means the submission runs end-to-end without Groq or Gemini keys at all.
 Trade-off / what we gave up: A stale cache silently ships old transcriptions if a prompt changes and we forget to clear it — the same invalidation risk flagged in the determinism entry, now with a second way to bite. Committing derived model output also makes the repo less obviously "run it from scratch"; a reviewer has to be told the cache is regenerable.
 
-## Deferred: media model choice and DND handling
-Decision: Not yet made. Two questions are open and were deliberately not guessed at.
-Alternatives considered: (a) Which model handles the 33 media files. (b) Whether a `do_not_disturb_window` should downgrade `notify` to `digest`, or whether DND is a delivery-layer concern outside routing.
-Why: The DND call is a genuine toss-up and materially shifts the notify/digest split — every user has a DND window and real messages land inside them (`msg_023` at 22:19). Both readings are defensible from the spec, and there's no evidence in the data that settles it, so guessing would bake in an unexamined assumption across all 110 rows.
-Trade-off / what we gave up: Blocking on these costs a little time up front. Judged cheaper than discovering the wrong assumption at M4 and re-running everything.
+## DND is a routing input, applied as a tie-breaker after the safety gate
+Decision: `do_not_disturb_window` factors into the routing decision rather than sitting outside it as a delivery concern. It can move a borderline `notify` down to `digest`, but never overrides the safety gate, never upgrades anything, and never suppresses a genuinely urgent direct message.
+Alternatives considered: Treating DND as a delivery-layer concern outside our scope; or applying it as a hard `notify`-to-`digest` downgrade with no urgency carve-out.
+Why: `do_not_disturb_window` lives in `users.csv` alongside the engagement counters — the same file and category as the other personalization attributes — so the dataset treats it as user context, not transport config. The urgency carve-out mirrors the spec's own muted-group-but-urgent-mention case. It applies after the gate for the same reason the gate exists: a scam at 6 AM is muted because it is a scam, not because of the hour.
+Trade-off / what we gave up: We are adding a rule the evidence does not independently support (see next entry), so we accept a small risk of downgrading a true `notify`. Mitigated by making DND a tie-breaker rather than a hard rule.
+
+## The DND evidence is weak, and we recorded that rather than papering over it
+Decision: Adopt the rule above despite the historical data not backing it, and treat DND as low-confidence and near-inert rather than as a validated signal.
+Alternatives considered: Following the measured behaviour literally, which would mean DND *raises* engagement and should if anything push toward `notify`.
+Why: Three findings, none flattering to a strong rule. (1) Zero of the 30 sample rows fall inside their user's DND window, so the labelled set cannot settle this at all. (2) In `message_history`, DND-window messages were opened more (76% vs 67%) and dismissed less (24% vs 33%) — but n=34 across 16 users, and the whole effect sits in one 19-message business slice. (3) The decisive tell: median reaction time is 2.0 minutes both inside and outside the window. If DND were a real delivery gate, in-window messages would be seen hours later. So `created_at` does not behave like a delivery constraint here and the engagement gap is a composition artifact.
+Trade-off / what we gave up: We are shipping a rule on reasoning rather than evidence. Defensible only because it is close to costless: of the 8 test messages inside a DND window, none is a plausible `notify` on content alone — two are phishing, one is a promo, one is media-only, four are next-day informational. If asked to defend it, the honest answer is "it is the right shape and costs us nothing here," not "the data showed it."
+
+## Blindness is enforced structurally, not by intention
+Decision: The gate reads a `SafetyContext` that enumerates every field it may see, built by one function that touches only message/media/business/group. An `assert_blind()` tripwire re-checks the rendered prompt against 21 engagement field names, and the M2 gate runs it over all 110 prompts.
+Alternatives considered: Passing the full `MessageContext` and simply not mentioning engagement in the prompt; or relying on code-review convention.
+Why: The original safety-gate entry claimed blindness but nothing enforced it — any later edit could quietly reintroduce engagement data and every test would still pass. A whitelist dataclass makes the leak impossible to write by accident; the tripwire makes it impossible to reintroduce silently. Blindness is the entire mechanism by which "muted regardless of usual engagement" is achieved, so it warrants an assertion rather than a comment.
+Trade-off / what we gave up: Two representations of the same message now exist, and adding a legitimately structural signal later means editing the whitelist rather than just the prompt. That friction is the point.
+
+## A domain mismatch alone is not impersonation
+Decision: Impersonation requires a mismatch PLUS a corroborating signal (unverified, account under 180 days, domain under 60 days, or 15+ reports). A mismatch is only claimed when an official domain exists to mismatch against.
+Alternatives considered: The obvious rule — `domain_used_by_sender != official_domain` implies scam.
+Why: The obvious rule is wrong here in two distinct ways. Thrillophilia and Polaris are verified senders 4300+ days old with single-digit reports using link shorteners (`link.wame.pro`, `weurl.co`) — a mismatch with an innocent cause. Green Cross Pharmacy has an empty `official_domain`, so a naive compare flags it against nothing. Five of the twelve mismatching rows are legitimate. The true impersonation set separates cleanly: unverified, 20–34 days old, 20–61 reports.
+Trade-off / what we gave up: An attacker who ages a domain past the thresholds and avoids reports clears the gate. The thresholds are tuned against 12 rows, which is thin; they are named constants so they are at least easy to find and revise.
+
+## Negation-aware credential detection
+Decision: A credential term counts as a request only when it is not inside a negation. "No payment or OTP is required" and "do not share your OTP" are reassurances; "don't delay, share your OTP" is still a request, because a clause break separates the negation from the verb.
+Alternatives considered: Plain keyword matching on OTP/CVV/PIN.
+Why: Plain matching falsely muted `msg_093`, a legitimate FedEx notice whose text is literally an anti-fraud warning — the dataset appears to plant this deliberately. Anti-fraud advice is the likeliest place for credential vocabulary to appear in benign messages from banks and couriers, making this the highest-yield false-positive class in the domain rather than an edge case.
+Trade-off / what we gave up: This is regex-level sentence analysis and will mishandle phrasings we did not anticipate; it is covered by nine unit cases, not a grammar. The LLM path should handle it better; the heuristic exists for the offline fallback.
+
+## Risk has exactly one owner
+Decision: Removed the prompt-injection, domain-mismatch and scam-keyword branches from the router's classifier. `code/safety.py` is the only stage that may output `scam`/`spam`; the router handles notify/digest/mute-for-low-value only.
+Alternatives considered: Leaving the router's checks in as defence in depth.
+Why: They were not redundant, they were wrong — the router's naive domain check muted Thrillophilia and its keyword check muted FedEx, so both false positives the gate had correctly cleared reappeared downstream and reached `output.csv`. Worse, the router CAN see engagement history, so letting it re-derive risk reintroduces precisely the failure the blind gate exists to prevent. Defence in depth is only defence when both layers are correct.
+Trade-off / what we gave up: If the gate misses something, nothing downstream catches it — a single point of failure by design. Accepted because a second, weaker, non-blind risk stage is worse than none.
 
 ## Vision provider bake-off: kept Gemini, rejected NIM for OCR
 Decision: Keep Gemini for image OCR. `VISION_PROVIDER` (gemini|nim|both) stays in the code so the choice is re-testable, but the default is Gemini and the committed cache was produced by it.
