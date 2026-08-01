@@ -91,3 +91,27 @@ Decision: No change to the design, but the earlier determinism entry is now back
 Alternatives considered: Continuing to assume temperature 0 was sufficient and treating the cache as an optimisation.
 Why: Ran the same image through Gemini twice at temperature 0 and hashed both outputs — they differed. This is the direct evidence for the claim made in "Media cache is the determinism boundary". If challenged on it in an interview, the answer is a measurement, not a belief.
 Trade-off / what we gave up: Nothing. It confirms a decision we had already made for other reasons.
+
+## ASR bake-off: Groq Whisper for voice notes, NIM omni rejected on reliability
+Decision: Transcribe the 13 voice notes with Groq `whisper-large-v3-turbo`. `ASR_PROVIDER` (groq|nim|both) stays in the code so the choice is re-testable.
+Alternatives considered: NVIDIA NIM `nemotron-3-nano-omni-30b-a3b-reasoning`, the only speech-capable model in the NIM catalogue — attractive because it would have collapsed a provider.
+Why: On 5 files the two agreed exactly on 2 (including a 41s clip), and NIM was actually *better* on one — it produced "call when free" where Whisper produced the nonsensical "call went free". But NIM timed out at 180s on a 7.9s file, a 1-in-5 failure rate, and ran 4x to 30x slower where it did succeed. Groq did all 13 files in 5.3 seconds wall clock with 13/13 clean. For a one-time extraction feeding a committed cache, reliability beats a marginal wording edge.
+Trade-off / what we gave up: Whisper makes occasional small transcription errors ("call went free"), and NIM would have caught at least one of them. We keep a third provider we could otherwise have dropped. Neither observed error changed the routing-relevant meaning of its message.
+
+## Nearly rejected NIM for the wrong reason — the payload shape was mine, not the model's
+Decision: Record this as a process note, not just an outcome. The NIM audio block is `audio_url` with a data URI, not the OpenAI-style `input_audio`.
+Alternatives considered: Concluding from the first run that the omni model simply cannot do ASR.
+Why: The first bake-off had NIM returning "I'm unable to transcribe the voice note without the audio file" on every file. That reads as a model incapability, and I was one step from writing it up that way. The endpoint had accepted `input_audio` with HTTP 200 and silently dropped the audio. Switching to `audio_url` produced a correct transcript immediately. The lesson generalises: when a provider appears incapable, rule out your own request shape before recording a verdict about the model.
+Trade-off / what we gave up: A round trip of extra probing. Cheap against publishing a wrong conclusion in a document meant to be defended out loud.
+
+## Validator missed a silent failure because of a curly apostrophe
+Decision: Refusal detection normalises smart punctuation and scans the first 200 characters, rather than matching a straight apostrophe at index 0.
+Alternatives considered: Leaving the original startswith check, which looked reasonable when written.
+Why: nemotron-omni refused with "I’m unable to transcribe..." using U+2019. The check tested `startswith("i'm unable")` with a straight apostrophe and passed the refusal through as a clean transcript. Two files were marked ok with no transcript content at all. This is the third silent HTTP-200 failure across M0, and the first one my own validator failed to catch — which is the more useful data point: a validator is only as good as the failure modes you have actually seen.
+Trade-off / what we gave up: Broader substring matching risks rejecting a genuine transcript that happens to contain "please provide" in the first 200 characters. Judged acceptable — a false rejection is visible and re-runnable, a false accept is invisible and permanent in a committed cache.
+
+## Known caveat: three transcripts begin mid-sentence
+Decision: Ship them as-is and record the caveat rather than silently accepting or hand-fixing them.
+Alternatives considered: Flagging them as failures in the validator, or manually re-cutting the audio.
+Why: vn_007, vn_013 and vn_014 begin mid-sentence and run at 6-11 characters per second against a 12-21 norm. That is consistent with two different causes — robocalls containing pauses and hold music, or source recordings that genuinely start mid-call — and distinguishing them needs someone to listen to the audio. All three are unambiguously promotional or telemarketing content, so the routing decision is the same under either explanation. The validator's characters-per-second floor deliberately did not fire, because these look legitimate.
+Trade-off / what we gave up: If ASR did drop leading audio, we lose whatever was in it. Accepted because the routing call does not turn on it; worth revisiting only if one of these three is misrouted during evaluation.
