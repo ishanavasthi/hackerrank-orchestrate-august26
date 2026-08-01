@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "personal",
+  "reason": "The request is a non-urgent ask for study materials that the user can address later.",
+  "confidence": 0.84,
+  "evidence_message_ids": [
+    "message_0120"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"personal\", \"reason\": \"The request is a non-urgent ask for study materials that the user can address later.\", \"confidence\": 0.84, \"evidence_message_ids\": [\"message_0120\"]}"
+}

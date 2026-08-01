@@ -431,46 +431,47 @@ def _llm_safety(s: SafetyContext, provider: str) -> Optional[dict]:
 
 
 def _dispatch(provider: str, prompt: str) -> Optional[str]:
-    import urllib.request
+    try:
+        from net import post_json          # noqa: PLC0415
+    except ImportError:
+        from code.net import post_json     # noqa: PLC0415
 
     if provider == "anthropic":
         key = os.environ.get("ANTHROPIC_API_KEY")
         if not key:
             raise RuntimeError("ANTHROPIC_API_KEY is not set")
-        body = json.dumps({
-            "model": "claude-haiku-4-5",
-            "max_tokens": 512,
-            "temperature": 0,
-            "system": SAFETY_SYSTEM_PROMPT,
-            "messages": [{"role": "user", "content": prompt}],
-        }).encode()
-        req = urllib.request.Request(
-            "https://api.anthropic.com/v1/messages", data=body,
-            headers={"content-type": "application/json", "x-api-key": key,
-                     "anthropic-version": "2023-06-01"})
-    elif provider == "nvidia":
+        data = post_json(
+            "https://api.anthropic.com/v1/messages",
+            {
+                "model": "claude-haiku-4-5",
+                "max_tokens": 512,
+                "temperature": 0,
+                "system": SAFETY_SYSTEM_PROMPT,
+                "messages": [{"role": "user", "content": prompt}],
+            },
+            {"content-type": "application/json", "x-api-key": key,
+             "anthropic-version": "2023-06-01"},
+        )
+        return "".join(b.get("text", "") for b in data.get("content", []))
+
+    if provider == "nvidia":
         key = os.environ.get("NVIDIA_API_KEY")
         if not key:
             raise RuntimeError("NVIDIA_API_KEY is not set")
         base = os.environ.get("NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1")
-        body = json.dumps({
-            "model": os.environ.get("NVIDIA_MODEL", "meta/llama-3.3-70b-instruct"),
-            "temperature": 0, "max_tokens": 512,
-            "messages": [{"role": "system", "content": SAFETY_SYSTEM_PROMPT},
-                         {"role": "user", "content": prompt}],
-        }).encode()
-        req = urllib.request.Request(
-            f"{base}/chat/completions", data=body,
-            headers={"content-type": "application/json",
-                     "authorization": f"Bearer {key}"})
-    else:
-        return None
+        data = post_json(
+            f"{base}/chat/completions",
+            {
+                "model": os.environ.get("NVIDIA_MODEL", "meta/llama-3.3-70b-instruct"),
+                "temperature": 0, "max_tokens": 512,
+                "messages": [{"role": "system", "content": SAFETY_SYSTEM_PROMPT},
+                             {"role": "user", "content": prompt}],
+            },
+            {"content-type": "application/json", "authorization": f"Bearer {key}"},
+        )
+        return data["choices"][0]["message"]["content"]
 
-    with urllib.request.urlopen(req, timeout=120) as resp:
-        data = json.loads(resp.read().decode())
-    if provider == "anthropic":
-        return "".join(b.get("text", "") for b in data.get("content", []))
-    return data["choices"][0]["message"]["content"]
+    return None
 
 
 def gate_all(contexts: list[MessageContext], provider: str = "stub") -> dict[str, SafetyVerdict]:

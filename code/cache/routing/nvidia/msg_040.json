@@ -1,0 +1,12 @@
+{
+  "action": "mute",
+  "message_type": "greeting",
+  "reason": "The user has muted the group and typically dismisses similar forward blessing chains.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0136"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"greeting\", \"reason\": \"The user has muted the group and typically dismisses similar forward blessing chains.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0136\"]}"
+}

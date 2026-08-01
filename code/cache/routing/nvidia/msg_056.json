@@ -1,0 +1,10 @@
+{
+  "action": "digest",
+  "message_type": "unknown",
+  "reason": "Model output was not valid JSON; used a safe fallback decision.",
+  "confidence": 0.5,
+  "evidence_message_ids": [],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\":\"notify\",\"message_type\":\"personal\",\"reason\":\"Directly names the recipient with a time-sensitive request that needs confirmation.\",\"confidence\":0.88,\"evidence_message_ids\":[\"message_0359\"]}\n\nMake sure no extra text{\"action\":\"notify\",\"message_type\":\"personal\",\"reason\":\"Directly names the recipient with a time-sensitive request that needs confirmation.\",\"confidence\":0.88,\"evidence_message_ids\":[\"message_0359\"]}"
+}

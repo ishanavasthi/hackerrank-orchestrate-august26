@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a legitimate work communication in a group context. The message:\n- Requests technical assistance with a build failure\n- References standard debugging steps (rerun attempt)\n- Mentions internal process (client thread update)\n- Contains no credential requests, impersonation, coercion, or deception\n- Is contextually appropriate for a development team channel",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

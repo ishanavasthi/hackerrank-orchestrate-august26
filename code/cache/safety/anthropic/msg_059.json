@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests sensitive financial information (account number)\",\n    \"Impersonates official benefit/institution process\",\n    \"Creates false urgency with deadline ('closes today')\",\n    \"Coerces action toward credential disclosure\",\n    \"Deceptive framing of legitimate-sounding benefit claim\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests sensitive financial information (account number)",
+      "Impersonates official benefit/institution process",
+      "Creates false urgency with deadline ('closes today')",
+      "Coerces action toward credential disclosure",
+      "Deceptive framing of legitimate-sounding benefit claim"
+    ],
+    "kind": "scam"
+  }
+}

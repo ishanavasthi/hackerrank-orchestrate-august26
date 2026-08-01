@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"Operational/logistical message\",\n    \"Time-sensitive but legitimate facility management\",\n    \"No credential requests\",\n    \"No impersonation\",\n    \"No payment demands\"\n  ],\n  \"kind\": \"none\"\n}\n```\n\nThis appears to be a genuine facility management notice in a group chat (likely a residential building or shared space). While it uses urgency, it's directed at a practical operational issue (vehicle blocking) rather than attempting to manipulate users into unsafe actions like credential sharing or payments.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "Operational/logistical message",
+      "Time-sensitive but legitimate facility management",
+      "No credential requests",
+      "No impersonation",
+      "No payment demands"
+    ],
+    "kind": "none"
+  }
+}

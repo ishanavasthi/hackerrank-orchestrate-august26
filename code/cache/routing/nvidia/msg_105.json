@@ -1,0 +1,12 @@
+{
+  "action": "mute",
+  "message_type": "forward",
+  "reason": "The user previously dismissed a nearly identical forwarded health tip, indicating they ignore such messages.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0373"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"mute\",\n  \"message_type\": \"forward\",\n  \"reason\": \"The user previously dismissed a nearly identical forwarded health tip, indicating they ignore such messages.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0373\"]\n}"
+}

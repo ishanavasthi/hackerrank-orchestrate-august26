@@ -1,0 +1,17 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Impersonates legitimate brand (Talabat) with unverified sender\",\n    \"Domain mismatch: talabat-refund.com vs official talabat.com\",\n    \"Suspicious domain age: 12 days old\",\n    \"Requests credential/wallet details via link\",\n    \"Creates urgency: 'release the amount today'\",\n    \"Forwarded message (reduced authenticity)\",\n    \"High report volume: 61 reports in 30 days\",\n    \"Young account age: 26 days\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Impersonates legitimate brand (Talabat) with unverified sender",
+      "Domain mismatch: talabat-refund.com vs official talabat.com",
+      "Suspicious domain age: 12 days old",
+      "Requests credential/wallet details via link",
+      "Creates urgency: 'release the amount today'",
+      "Forwarded message (reduced authenticity)",
+      "High report volume: 61 reports in 30 days",
+      "Young account age: 26 days"
+    ],
+    "kind": "scam"
+  }
+}

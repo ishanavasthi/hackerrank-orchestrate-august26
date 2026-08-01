@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Impersonates a platform/institution (security check language)\",\n    \"Requests credential verification via link\",\n    \"Creates false urgency with 'immediately' and 'final reminder'\",\n    \"Threatens account restriction/loss to coerce action\",\n    \"High forwarded count (9) suggests mass distribution\",\n    \"Deceptive framing of failed login attempts\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Impersonates a platform/institution (security check language)",
+      "Requests credential verification via link",
+      "Creates false urgency with 'immediately' and 'final reminder'",
+      "Threatens account restriction/loss to coerce action",
+      "High forwarded count (9) suggests mass distribution",
+      "Deceptive framing of failed login attempts"
+    ],
+    "kind": "scam"
+  }
+}

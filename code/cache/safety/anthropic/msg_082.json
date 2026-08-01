@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Impersonates internal/institutional communication (incident bridge, payments system)\",\n    \"Creates false urgency with crisis language (spiking errors, live users failing)\",\n    \"Coerces immediate action (join now) under pressure\",\n    \"Deceptive framing as legitimate operational alert\",\n    \"Group message increases likelihood of social engineering attack\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Impersonates internal/institutional communication (incident bridge, payments system)",
+      "Creates false urgency with crisis language (spiking errors, live users failing)",
+      "Coerces immediate action (join now) under pressure",
+      "Deceptive framing as legitimate operational alert",
+      "Group message increases likelihood of social engineering attack"
+    ],
+    "kind": "scam"
+  }
+}

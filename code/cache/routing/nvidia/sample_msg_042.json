@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "The sender reports a family health emergency requiring immediate call, which is time-sensitive and relevant.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0218",
+    "message_0380"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"notify\", \"message_type\": \"urgent\", \"reason\": \"The sender reports a family health emergency requiring immediate call, which is time-sensitive and relevant.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0218\", \"message_0380\"]}"
+}

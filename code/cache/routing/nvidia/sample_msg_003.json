@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "Direct request from coworker needing immediate action to close client note before EOD.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0003",
+    "message_0060"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"urgent\",\n  \"reason\": \"Direct request from coworker needing immediate action to close client note before EOD.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0003\", \"message_0060\"]\n}"
+}

@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "event",
+  "reason": "The message is a school circular about a field trip consent form, relevant to the parent group but not time-critical.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0051"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"digest\",\n  \"message_type\": \"event\",\n  \"reason\": \"The message is a school circular about a field trip consent form, relevant to the parent group but not time-critical.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0051\"]\n}"
+}

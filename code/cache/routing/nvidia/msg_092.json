@@ -1,0 +1,10 @@
+{
+  "action": "digest",
+  "message_type": "unknown",
+  "reason": "Model output was not valid JSON; used a safe fallback decision.",
+  "confidence": 0.5,
+  "evidence_message_ids": [],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action: Wait, need correct key \"action\". Let's produce.\n\n{\n  \"action\": \"digest\",\n  \"message_type\": \"business_update\",\n  \"reason\": \"It's a routine statement notification from a verified business that can be reviewed later.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0346\", \"message_0345\"]\n}\n\n\n\n{\n  \"action\": \"digest\",\n  \"message_type\": \"business_update\",\n  \"reason\": \"It's a routine statement notification from a verified business that can be reviewed later.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0346\", \"message_0345\"]\n}"
+}

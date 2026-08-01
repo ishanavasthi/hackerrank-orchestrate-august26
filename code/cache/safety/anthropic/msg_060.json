@@ -1,0 +1,16 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Impersonation of legitimate institution (IIT Bombay Faculty Advising)\",\n    \"Artificial urgency with same-day deadline (5 PM today)\",\n    \"Requests submission of sensitive documents (supervisor email, offer letter)\",\n    \"Portal lock threat to coerce immediate action\",\n    \"Mismatch between message text (generic faculty advising) and image (specific 2023-24 internship program from past year)\",\n    \"Forwarded official document repurposed for phishing context\",\n    \"Classic phishing pattern: authority + deadline + document collection\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Impersonation of legitimate institution (IIT Bombay Faculty Advising)",
+      "Artificial urgency with same-day deadline (5 PM today)",
+      "Requests submission of sensitive documents (supervisor email, offer letter)",
+      "Portal lock threat to coerce immediate action",
+      "Mismatch between message text (generic faculty advising) and image (specific 2023-24 internship program from past year)",
+      "Forwarded official document repurposed for phishing context",
+      "Classic phishing pattern: authority + deadline + document collection"
+    ],
+    "kind": "scam"
+  }
+}

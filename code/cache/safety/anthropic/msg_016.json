@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"impersonates support/institution\",\n    \"coerces via account loss threat\",\n    \"artificial deadline (30 mins)\",\n    \"suspicious domain (account-login.in)\",\n    \"requests verification action\",\n    \"forwarded message (reduced authenticity)\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "impersonates support/institution",
+      "coerces via account loss threat",
+      "artificial deadline (30 mins)",
+      "suspicious domain (account-login.in)",
+      "requests verification action",
+      "forwarded message (reduced authenticity)"
+    ],
+    "kind": "scam"
+  }
+}

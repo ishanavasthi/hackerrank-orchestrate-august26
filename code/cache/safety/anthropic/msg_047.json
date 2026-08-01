@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a legitimate operational notice about building maintenance. It provides practical information about temporary service disruptions and alternative access, with no attempt to obtain credentials, impersonate institutions deceptively, or coerce users into unsafe actions.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

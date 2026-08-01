@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests OTP (one-time password) - credential harvesting\",\n    \"Impersonates banking/wallet service\",\n    \"Creates false urgency with 'keep wallet payments active'\",\n    \"Coerces action via account loss threat\",\n    \"Message structure suggests social engineering attempt\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests OTP (one-time password) - credential harvesting",
+      "Impersonates banking/wallet service",
+      "Creates false urgency with 'keep wallet payments active'",
+      "Coerces action via account loss threat",
+      "Message structure suggests social engineering attempt"
+    ],
+    "kind": "scam"
+  }
+}

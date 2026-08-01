@@ -1,0 +1,8 @@
+{
+  "raw": "{\"risky\": false, \"signals\": [], \"kind\": \"none\"}",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests credential (6-digit login code)\",\n    \"Impersonates institution (workspace/security authority)\",\n    \"Coerces via account loss threat (access suspension)\",\n    \"Creates false urgency (security patch failure)\",\n    \"Deceptive framing as system message\",\n    \"Forwarded message (reduced authenticity)\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests credential (6-digit login code)",
+      "Impersonates institution (workspace/security authority)",
+      "Coerces via account loss threat (access suspension)",
+      "Creates false urgency (security patch failure)",
+      "Deceptive framing as system message",
+      "Forwarded message (reduced authenticity)"
+    ],
+    "kind": "scam"
+  }
+}

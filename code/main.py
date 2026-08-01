@@ -66,6 +66,14 @@ def main(argv: list[str] | None = None) -> int:
         help="stub is offline and deterministic; it is the fallback that "
              "guarantees a submittable output.csv.",
     )
+    parser.add_argument(
+        "--safety-provider", default=os.environ.get("SAFETY_PROVIDER", "stub"),
+        choices=["stub", "anthropic", "nvidia"],
+        help="Reasoning engine for the safety gate. Defaults to the deterministic "
+             "rules ('stub') even when --provider selects an LLM: the LLM safety "
+             "classifier fails the M2 gate (6 false positives across 23 trusted "
+             "senders). Override only to re-measure that.",
+    )
     parser.add_argument("--limit", type=int, default=None,
                         help="Route only the first N messages (smoke tests).")
     parser.add_argument("--validate-only", action="store_true",
@@ -109,8 +117,14 @@ def main(argv: list[str] | None = None) -> int:
         from safety import gate_all              # noqa: PLC0415
         from contracts import Decision           # noqa: PLC0415
 
-        print("Safety gate ...")
-        verdicts = gate_all(contexts, provider=args.provider)
+        # The safety gate deliberately does NOT follow --provider. Measured on
+        # all 110 rows, the LLM classifier force-muted 44 vs 22 for rules and
+        # broke assertion 3 with 6 false positives on verified, clean-domain
+        # senders ("vague urgency framing", "unverified sender"). The gate's
+        # whole contract is that trusted senders are never falsely muted, so it
+        # stays deterministic and the LLM is used for personalization instead.
+        print(f"Safety gate ({args.safety_provider}) ...")
+        verdicts = gate_all(contexts, provider=args.safety_provider)
         gated = {mid: v for mid, v in verdicts.items() if v.force_mute}
         print(f"  force-muted {len(gated)}/{len(contexts)} on risk grounds")
 

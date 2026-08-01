@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"Forwarded message (7 times) - suggests viral/community sharing\",\n    \"Missing person poster - legitimate community safety concern\",\n    \"Contact numbers provided for information sharing - expected in missing person cases\",\n    \"No credential requests\",\n    \"No impersonation or deception\",\n    \"No coercion or false urgency for payment/verification\"\n  ],\n  \"kind\": \"none\"\n}\n```",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "Forwarded message (7 times) - suggests viral/community sharing",
+      "Missing person poster - legitimate community safety concern",
+      "Contact numbers provided for information sharing - expected in missing person cases",
+      "No credential requests",
+      "No impersonation or deception",
+      "No coercion or false urgency for payment/verification"
+    ],
+    "kind": "none"
+  }
+}

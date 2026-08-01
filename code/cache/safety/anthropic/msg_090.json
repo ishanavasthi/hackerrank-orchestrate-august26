@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"Casual, conversational tone\",\n    \"Explains source of contact (courier desk)\",\n    \"No urgency or pressure\",\n    \"No credential requests\",\n    \"No impersonation attempt\",\n    \"Legitimate reason for contact\"\n  ],\n  \"kind\": \"none\"\n}\n```",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "Casual, conversational tone",
+      "Explains source of contact (courier desk)",
+      "No urgency or pressure",
+      "No credential requests",
+      "No impersonation attempt",
+      "Legitimate reason for contact"
+    ],
+    "kind": "none"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "event",
+  "reason": "The message is an informational event notice that does not require immediate action and matches the user's pattern of opening similar updates.",
+  "confidence": 0.8,
+  "evidence_message_ids": [
+    "message_0282"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"event\", \"reason\": \"The message is an informational event notice that does not require immediate action and matches the user's pattern of opening similar updates.\", \"confidence\": 0.80, \"evidence_message_ids\": [\"message_0282\"]}"
+}

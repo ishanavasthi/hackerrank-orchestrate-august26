@@ -1,0 +1,12 @@
+{
+  "action": "mute",
+  "message_type": "scam",
+  "reason": "The message is a mass-forwarded reward scam that the user has previously dismissed and reported.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0092"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"scam\", \"reason\": \"The message is a mass-forwarded reward scam that the user has previously dismissed and reported.\", \"confidence\": 0.86, \"evidence_message_ids\": [\"message_0092\"]}"
+}

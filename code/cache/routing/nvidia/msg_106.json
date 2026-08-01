@@ -1,0 +1,12 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "A personal contact sent a time-sensitive schedule change that requires the user's attention before 7:15.",
+  "confidence": 0.9,
+  "evidence_message_ids": [
+    "message_0376"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"notify\", \"message_type\": \"urgent\", \"reason\": \"A personal contact sent a time-sensitive schedule change that requires the user's attention before 7:15.\", \"confidence\": 0.9, \"evidence_message_ids\": [\"message_0376\"]}"
+}

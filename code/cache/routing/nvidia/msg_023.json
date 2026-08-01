@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "business_update",
+  "reason": "The user opened similar banking updates before and this is a non-urgent account update that can be reviewed later.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0102"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"business_update\", \"reason\": \"The user opened similar banking updates before and this is a non-urgent account update that can be reviewed later.\", \"confidence\": 0.86, \"evidence_message_ids\": [\"message_0102\"]}"
+}

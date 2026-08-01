@@ -1,0 +1,13 @@
+{
+  "action": "digest",
+  "message_type": "business_update",
+  "reason": "The user has opened similar review requests before, so this feedback request is useful but not urgent.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0296",
+    "message_0071"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"business_update\", \"reason\": \"The user has opened similar review requests before, so this feedback request is useful but not urgent.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0296\", \"message_0071\"]}"
+}

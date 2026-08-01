@@ -42,7 +42,15 @@ def _message(row: dict) -> Message:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--verbose", action="store_true")
+    ap.add_argument("--provider", default="stub", choices=["stub", "anthropic", "nvidia"],
+                    help="Personalization engine. The safety gate always uses the "
+                         "deterministic rules — see main.py --safety-provider.")
     args = ap.parse_args()
+
+    if args.provider != "stub":
+        sys.path.insert(0, str(REPO / "code"))
+        from main import load_dotenv       # noqa: PLC0415
+        load_dotenv(REPO / ".env")
 
     ds = Dataset.load(REPO / "dataset", REPO / "code" / "cache" / "media.json")
     rows = list(csv.DictReader(open(REPO / "dataset" / "sample_messages.csv")))
@@ -54,11 +62,16 @@ def main() -> int:
 
     for row in rows:
         ctx = ds.context_for(_message(row))
+        # Safety always runs on rules; only personalization varies by provider.
         verdict = safety_verdict(ctx)
         if verdict.force_mute:
             action, mtype = "mute", verdict.message_type
-        else:
+        elif args.provider == "stub":
             decision = personalize(ctx)
+            action, mtype = decision.action, decision.message_type
+        else:
+            from router import route       # noqa: PLC0415
+            decision = route(ctx, provider=args.provider)
             action, mtype = decision.action, decision.message_type
 
         act_ok += action == row["action"]

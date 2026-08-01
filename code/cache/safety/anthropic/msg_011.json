@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a benign motivational message. While it has been forwarded multiple times (8 times), it contains no deceptive elements, credential requests, impersonation, coercion, or attempts to manipulate the recipient into unsafe actions. It's simply a positive message being shared in a group chat.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a legitimate school communication about a field trip. The message contains:\n- A standard consent form from an identified school (Swartz Creek Community Schools)\n- Routine logistical information (lunch, ID card, bus list deadline)\n- No requests for credentials, payment, or sensitive personal data beyond what's normal for school consent forms\n- No impersonation, coercion, or deceptive tactics\n- No artificial urgency beyond a reasonable administrative deadline\n\nWhile the message asks for signatures and contact information, this is standard practice for school field trip authorization and does not constitute a phishing or scam attempt.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

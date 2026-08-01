@@ -1,0 +1,19 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Impersonates Amazon/official brand\",\n    \"Uses lookalike domain (amazonpay-delivery.in vs official amazon.in)\",\n    \"Sender unverified despite claiming official status\",\n    \"Lookalike domain is very new (2 days old)\",\n    \"Sender account is very new (23 days old)\",\n    \"High report volume against sender (47 reports in 30 days)\",\n    \"Creates false urgency with deadline ('before package returned tonight')\",\n    \"Requests verification action via suspicious link\",\n    \"Typical phishing pattern: delivery failure + verification requirement\",\n    \"Coerces action to avoid account/package loss\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Impersonates Amazon/official brand",
+      "Uses lookalike domain (amazonpay-delivery.in vs official amazon.in)",
+      "Sender unverified despite claiming official status",
+      "Lookalike domain is very new (2 days old)",
+      "Sender account is very new (23 days old)",
+      "High report volume against sender (47 reports in 30 days)",
+      "Creates false urgency with deadline ('before package returned tonight')",
+      "Requests verification action via suspicious link",
+      "Typical phishing pattern: delivery failure + verification requirement",
+      "Coerces action to avoid account/package loss"
+    ],
+    "kind": "scam"
+  }
+}

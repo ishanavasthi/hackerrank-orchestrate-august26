@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"impersonates authority (fake admin notice)\",\n    \"creates false urgency with deadline (tonight/tomorrow)\",\n    \"coerces action via account loss threat (access card blocked)\",\n    \"requests payment via QR code (obfuscated payment mechanism)\",\n    \"vague threat (undefined penalty)\",\n    \"forwarded message (reduced accountability)\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "impersonates authority (fake admin notice)",
+      "creates false urgency with deadline (tonight/tomorrow)",
+      "coerces action via account loss threat (access card blocked)",
+      "requests payment via QR code (obfuscated payment mechanism)",
+      "vague threat (undefined penalty)",
+      "forwarded message (reduced accountability)"
+    ],
+    "kind": "scam"
+  }
+}

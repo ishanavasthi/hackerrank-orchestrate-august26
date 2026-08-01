@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"legitimate_travel_service\",\n    \"verified_sender\",\n    \"operational_update\",\n    \"no_credential_requests\",\n    \"no_urgency_coercion\",\n    \"no_impersonation_attempt\"\n  ],\n  \"kind\": \"none\"\n}\n```",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "legitimate_travel_service",
+      "verified_sender",
+      "operational_update",
+      "no_credential_requests",
+      "no_urgency_coercion",
+      "no_impersonation_attempt"
+    ],
+    "kind": "none"
+  }
+}

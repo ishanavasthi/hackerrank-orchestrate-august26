@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a straightforward logistical message about a dance practice location change. It contains no attempts to obtain credentials, impersonation, coercion, deception, or other safety risks. It's a legitimate personal communication with practical instructions.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

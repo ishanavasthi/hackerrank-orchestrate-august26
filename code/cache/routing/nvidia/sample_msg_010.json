@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "event",
+  "reason": "The message is a casual invitation to a sports match that the user has previously engaged with but does not require immediate attention.",
+  "confidence": 0.78,
+  "evidence_message_ids": [
+    "message_0010"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"digest\",\n  \"message_type\": \"event\",\n  \"reason\": \"The message is a casual invitation to a sports match that the user has previously engaged with but does not require immediate attention.\",\n  \"confidence\": 0.78,\n  \"evidence_message_ids\": [\"message_0010\"]\n}"
+}

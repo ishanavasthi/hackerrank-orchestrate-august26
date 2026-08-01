@@ -1,0 +1,13 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests OTP credential\",\n    \"Impersonates verification system\",\n    \"Creates false urgency with account lockout threat\",\n    \"Coerces action via deadline and access loss\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests OTP credential",
+      "Impersonates verification system",
+      "Creates false urgency with account lockout threat",
+      "Coerces action via deadline and access loss"
+    ],
+    "kind": "scam"
+  }
+}

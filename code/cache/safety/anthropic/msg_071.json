@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a casual message in Hindi/Urdu discussing plans to meet tomorrow, mentioning possible activities (doctor visit or dinner) and indicating the sender will confirm details later. It contains no deceptive elements, credential requests, impersonation, coercion, or suspicious urgency. It's a normal personal communication.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

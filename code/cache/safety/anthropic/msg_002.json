@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a legitimate work-related message requesting a brief call before a client meeting to discuss a specific business topic (refund edge case). It contains no deceptive elements, credential requests, impersonation, coercion, or suspicious urgency tactics.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

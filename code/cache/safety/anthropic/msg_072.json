@@ -1,0 +1,16 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests OTP entry via external link\",\n    \"Impersonates account/support service\",\n    \"Creates false urgency with deadline (6 PM)\",\n    \"Threatens account loss if action not taken\",\n    \"Coerces toward clicking suspicious link\",\n    \"Suspicious domain (account-help.in) mimicking legitimate service\",\n    \"Message forwarded multiple times (2x) - typical phishing distribution\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests OTP entry via external link",
+      "Impersonates account/support service",
+      "Creates false urgency with deadline (6 PM)",
+      "Threatens account loss if action not taken",
+      "Coerces toward clicking suspicious link",
+      "Suspicious domain (account-help.in) mimicking legitimate service",
+      "Message forwarded multiple times (2x) - typical phishing distribution"
+    ],
+    "kind": "scam"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Unverified sender claiming to be healthcare provider\",\n    \"Vague reference to 'health-related update' without specifics\",\n    \"Urgency tactic with 'before the scheduled time' deadline\",\n    \"Requests user to check 'registered app' - potential credential harvesting vector\",\n    \"No official domain registered despite healthcare claims\",\n    \"Generic greeting 'Dear Customer' lacks personalization\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Unverified sender claiming to be healthcare provider",
+      "Vague reference to 'health-related update' without specifics",
+      "Urgency tactic with 'before the scheduled time' deadline",
+      "Requests user to check 'registered app' - potential credential harvesting vector",
+      "No official domain registered despite healthcare claims",
+      "Generic greeting 'Dear Customer' lacks personalization"
+    ],
+    "kind": "scam"
+  }
+}

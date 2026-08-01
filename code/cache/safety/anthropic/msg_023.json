@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Vague urgency framing ('Important Information', 'now available')\",\n    \"Requests action without specific details ('Please review')\",\n    \"Directs to external app rather than providing information directly\",\n    \"Generic greeting ('Dear Customer') despite verified sender\",\n    \"4 reports against sender in 30 days suggests pattern of complaints\",\n    \"Classic phishing structure: creates concern about account/payment, directs to app\"\n  ],\n  \"kind\": \"scam\"\n}\n```\n\n**Rationale**: Despite sender verification and official domain, this message exhibits hallmark phishing characteristics. It creates vague urgency around account/payment matters and directs the user to \"review details\" in their banking app\u2014a common social engineering tactic to bypass security. The generic language, lack of specific transaction details, and recent complaint history (4 reports in 30 days) are inconsistent with legitimate banking communications, which typically reference specific transactions or accounts.",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Vague urgency framing ('Important Information', 'now available')",
+      "Requests action without specific details ('Please review')",
+      "Directs to external app rather than providing information directly",
+      "Generic greeting ('Dear Customer') despite verified sender",
+      "4 reports against sender in 30 days suggests pattern of complaints",
+      "Classic phishing structure: creates concern about account/payment, directs to app"
+    ],
+    "kind": "scam"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "action": "digest",
+  "message_type": "promotion",
+  "reason": "The user has opened similar promotional messages from Target before, indicating interest but not requiring immediate attention.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0260",
+    "message_0185"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"promotion\", \"reason\": \"The user has opened similar promotional messages from Target before, indicating interest but not requiring immediate attention.\", \"confidence\": 0.86, \"evidence_message_ids\": [\"message_0260\", \"message_0185\"]}"
+}

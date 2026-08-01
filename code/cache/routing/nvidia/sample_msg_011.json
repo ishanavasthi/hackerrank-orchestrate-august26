@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "business_update",
+  "reason": "The user regularly opens similar feedback requests from this verified cinema but does not reply, indicating low urgency.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0011"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"business_update\", \"reason\": \"The user regularly opens similar feedback requests from this verified cinema but does not reply, indicating low urgency.\", \"confidence\": 0.86, \"evidence_message_ids\": [\"message_0011\"]}"
+}

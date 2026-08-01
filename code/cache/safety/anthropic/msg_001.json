@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis appears to be a legitimate operational/logistical message in a group chat (likely a residential building or community). It's providing practical information about water supply timing with a reasonable explanation for urgency. There are no attempts to obtain credentials, impersonate institutions, coerce payments, or deceive. It's a straightforward utility notice.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

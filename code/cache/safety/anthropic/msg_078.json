@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"requests bank details\",\n    \"urgency language ('urgently')\",\n    \"impersonates official process ('benefit approval')\",\n    \"asks for screenshot evidence of submission\",\n    \"high forwarded count suggests mass distribution\",\n    \"typical phishing/credential harvesting pattern\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "requests bank details",
+      "urgency language ('urgently')",
+      "impersonates official process ('benefit approval')",
+      "asks for screenshot evidence of submission",
+      "high forwarded count suggests mass distribution",
+      "typical phishing/credential harvesting pattern"
+    ],
+    "kind": "scam"
+  }
+}

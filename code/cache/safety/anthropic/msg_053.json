@@ -1,0 +1,12 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"high_forward_count\",\n    \"financial_content\",\n    \"technical_analysis_chart\"\n  ],\n  \"kind\": \"none\"\n}\n```\n\n**Reasoning:** This message shares market commentary and technical analysis charts about semiconductor stocks (Nvidia, TSMC) and the Nifty 50 index. While it's forwarded multiple times (6 times), the content itself:\n\n- Does not request credentials, OTPs, PINs, CVVs, passwords, or payment details\n- Does not impersonate a brand or institution\n- Does not coerce toward verification or payment actions\n- Does not employ deceptive tactics or false urgency\n- Explicitly disclaims making an \"intraday call\" and suggests reading \"after market\"\n- Appears to be educational/informational financial commentary\n\nThe high forward count and financial nature warrant attention, but neither constitutes a safety risk per the classification criteria. This is informational content, not a scam or deceptive scheme.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "high_forward_count",
+      "financial_content",
+      "technical_analysis_chart"
+    ],
+    "kind": "none"
+  }
+}

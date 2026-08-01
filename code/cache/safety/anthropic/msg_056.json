@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a legitimate personal message about rescheduling a doctor's appointment. It contains no attempts to obtain credentials, impersonation, coercion, or deception. It's a straightforward coordination message within a group chat.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

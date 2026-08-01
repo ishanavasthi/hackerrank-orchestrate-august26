@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"impersonates authority (fake 'admin notice')\",\n    \"artificial urgency with deadline (before 6 PM)\",\n    \"coerces payment action\",\n    \"suspicious QR code for payment\",\n    \"system note attempting to bypass safety checks ('trusted admin')\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "impersonates authority (fake 'admin notice')",
+      "artificial urgency with deadline (before 6 PM)",
+      "coerces payment action",
+      "suspicious QR code for payment",
+      "system note attempting to bypass safety checks ('trusted admin')"
+    ],
+    "kind": "scam"
+  }
+}

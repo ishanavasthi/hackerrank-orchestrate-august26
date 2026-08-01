@@ -369,14 +369,13 @@ def route_stub(ctx: MessageContext) -> Decision:
 # ─── LLM providers ───────────────────────────────────────────────────────────
 
 def _post(url: str, payload: dict, headers: dict, timeout: int = 120) -> dict:
-    body = json.dumps(payload).encode()
-    req = urllib.request.Request(url, data=body, headers=headers, method="POST")
+    # Retries transient 429/5xx — see code/net.py. A single 503 previously
+    # aborted a whole run and discarded every uncached call before it.
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
-            return json.load(resp)
-    except urllib.error.HTTPError as e:
-        detail = e.read().decode(errors="replace")[:500]
-        raise RuntimeError(f"HTTP {e.code} from {url}: {detail}") from e
+        from net import post_json          # noqa: PLC0415
+    except ImportError:
+        from code.net import post_json     # noqa: PLC0415
+    return post_json(url, payload, headers, timeout=timeout)
 
 
 def _call_anthropic(ctx: MessageContext) -> tuple[str, dict]:

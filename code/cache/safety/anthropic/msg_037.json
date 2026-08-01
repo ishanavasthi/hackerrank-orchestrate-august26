@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a casual, contextual message in a group chat about a water tank delivery. The sender is asking someone to bring a bucket quickly because the driver needs to leave in 10 minutes, otherwise the next delivery slot is in the evening. This is a legitimate domestic/household coordination message with no deceptive intent, credential requests, impersonation, or coercion toward unsafe actions.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

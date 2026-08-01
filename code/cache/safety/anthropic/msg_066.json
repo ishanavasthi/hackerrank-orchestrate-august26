@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"impersonation: sender claims to be Target but image shows Amazon Prime Day promotion\",\n    \"brand mismatch: message body references generic 'account' and 'shopping offer' while image advertises Amazon/Shopcash\",\n    \"deceptive framing: uses verified Target identity to promote competing retailer's offer\",\n    \"call-to-action pressure: 'Tap below' directs to unverified offer details\",\n    \"forwarded multiple times: message has been forwarded 3 times, increasing manipulation risk\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "impersonation: sender claims to be Target but image shows Amazon Prime Day promotion",
+      "brand mismatch: message body references generic 'account' and 'shopping offer' while image advertises Amazon/Shopcash",
+      "deceptive framing: uses verified Target identity to promote competing retailer's offer",
+      "call-to-action pressure: 'Tap below' directs to unverified offer details",
+      "forwarded multiple times: message has been forwarded 3 times, increasing manipulation risk"
+    ],
+    "kind": "scam"
+  }
+}

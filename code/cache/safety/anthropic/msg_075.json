@@ -1,0 +1,16 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"legitimate_ride_service_notification\",\n    \"verified_sender\",\n    \"official_domain_match\",\n    \"established_account\",\n    \"no_credential_requests\",\n    \"no_impersonation\",\n    \"no_coercion_or_deadlines\"\n  ],\n  \"kind\": \"none\"\n}\n```",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "legitimate_ride_service_notification",
+      "verified_sender",
+      "official_domain_match",
+      "established_account",
+      "no_credential_requests",
+      "no_impersonation",
+      "no_coercion_or_deadlines"
+    ],
+    "kind": "none"
+  }
+}

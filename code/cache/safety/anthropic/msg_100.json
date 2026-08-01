@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis appears to be a legitimate work message from a colleague requesting urgent assistance with a technical issue (payment worker retries and client escalation). There are no attempts to obtain credentials, impersonate institutions, coerce through false deadlines, or engage in deception. It's a straightforward professional communication.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

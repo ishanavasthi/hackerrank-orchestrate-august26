@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"legitimate_school_context\",\n    \"reasonable_deadline\",\n    \"request_for_documentation_not_credentials\",\n    \"no_impersonation\",\n    \"no_coercion_toward_payment\"\n  ],\n  \"kind\": \"none\"\n}\n```\n\nThis is a straightforward administrative message from what appears to be a school or parent group requesting submission of an existing receipt. It does not attempt to obtain credentials, impersonate an institution deceptively, or coerce payment\u2014it references an already-initiated field trip process and asks for documentation of a payment already made.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "legitimate_school_context",
+      "reasonable_deadline",
+      "request_for_documentation_not_credentials",
+      "no_impersonation",
+      "no_coercion_toward_payment"
+    ],
+    "kind": "none"
+  }
+}

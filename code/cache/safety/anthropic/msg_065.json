@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"promotional_message\",\n    \"legitimate_sender_verified\",\n    \"official_domain_match\",\n    \"established_account\",\n    \"unsubscribe_option_provided\"\n  ],\n  \"kind\": \"spam\"\n}\n```",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "promotional_message",
+      "legitimate_sender_verified",
+      "official_domain_match",
+      "established_account",
+      "unsubscribe_option_provided"
+    ],
+    "kind": "spam"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "action": "mute",
+  "message_type": "scam",
+  "reason": "The message contains a suspicious link urging urgent account verification, typical of phishing scams.",
+  "confidence": 0.9,
+  "evidence_message_ids": [
+    "message_0334"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"scam\", \"reason\": \"The message contains a suspicious link urging urgent account verification, typical of phishing scams.\", \"confidence\": 0.9, \"evidence_message_ids\": [\"message_0334\"]}"
+}

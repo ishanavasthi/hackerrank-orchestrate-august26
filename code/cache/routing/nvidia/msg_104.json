@@ -1,0 +1,13 @@
+{
+  "action": "mute",
+  "message_type": "personal",
+  "reason": "The user has repeatedly ignored similar requests to pick up items, indicating low priority.",
+  "confidence": 0.82,
+  "evidence_message_ids": [
+    "message_0224",
+    "message_0050"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"personal\", \"reason\": \"The user has repeatedly ignored similar requests to pick up items, indicating low priority.\", \"confidence\": 0.82, \"evidence_message_ids\": [\"message_0224\", \"message_0050\"]}"
+}

@@ -1,0 +1,12 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"artificial urgency with time pressure\",\n    \"request for immediate action\",\n    \"vague context\"\n  ],\n  \"kind\": \"none\"\n}\n```\n\n**Reasoning:** While this message uses urgency tactics and pressure, it does not attempt to obtain credentials, impersonate an institution, coerce toward verification/payment, or employ deceptive tactics characteristic of scams. It appears to be a personal message requesting a phone call. The urgency and vagueness are concerning from a communication perspective, but do not constitute the specific safety risks this classifier targets.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "artificial urgency with time pressure",
+      "request for immediate action",
+      "vague context"
+    ],
+    "kind": "none"
+  }
+}

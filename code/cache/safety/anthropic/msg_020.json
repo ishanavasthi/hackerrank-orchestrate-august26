@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"urgency language ('Urgent')\",\n    \"shortened URL (bit.ly) - obfuscates destination\",\n    \"vague reference to 'pending account check'\",\n    \"pressure to act immediately ('Open today')\",\n    \"forwarded message (2x) - typical phishing distribution pattern\",\n    \"deceptive framing suggesting account verification requirement\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "urgency language ('Urgent')",
+      "shortened URL (bit.ly) - obfuscates destination",
+      "vague reference to 'pending account check'",
+      "pressure to act immediately ('Open today')",
+      "forwarded message (2x) - typical phishing distribution pattern",
+      "deceptive framing suggesting account verification requirement"
+    ],
+    "kind": "scam"
+  }
+}

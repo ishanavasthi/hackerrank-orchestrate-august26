@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a legitimate personal message from someone at a pottery workshop notifying the recipient about a lost item. It contains:\n- A specific, verifiable detail (blue water bottle at table 4)\n- A reasonable time constraint based on actual operational procedures\n- No requests for credentials, payments, or personal information\n- No impersonation or deception",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

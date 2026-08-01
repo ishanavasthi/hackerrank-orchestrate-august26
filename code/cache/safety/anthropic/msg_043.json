@@ -1,0 +1,12 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"forwarded_message (11 times)\",\n    \"time-sensitive language ('15 mins', 'now')\",\n    \"operational/logistical content\"\n  ],\n  \"kind\": \"none\"\n}\n```\n\nThis appears to be a legitimate operational notification about water/fuel tanker delivery in a residential community group. While it uses urgency, it's not attempting to obtain credentials, impersonate institutions deceptively, or coerce payment/verification. The time pressure is contextual to actual logistics, not a manipulation tactic.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "forwarded_message (11 times)",
+      "time-sensitive language ('15 mins', 'now')",
+      "operational/logistical content"
+    ],
+    "kind": "none"
+  }
+}

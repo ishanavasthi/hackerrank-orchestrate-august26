@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "business_update",
+  "reason": "The user has opened and replied to similar Amazon delivery updates, indicating they find them relevant but not urgent.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0031"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"digest\",\n  \"message_type\": \"business_update\",\n  \"reason\": \"The user has opened and replied to similar Amazon delivery updates, indicating they find them relevant but not urgent.\",\n  \"confidence\": 0.86,\n  \"evidence_message_ids\": [\"message_0031\"]\n}"
+}

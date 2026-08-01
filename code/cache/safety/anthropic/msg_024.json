@@ -1,0 +1,16 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"legitimate_sender_verified\",\n    \"official_domain_match\",\n    \"promotional_content\",\n    \"unsubscribe_option_provided\",\n    \"no_credential_requests\",\n    \"no_impersonation\",\n    \"no_coercion_or_urgency\"\n  ],\n  \"kind\": \"spam\"\n}\n```",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "legitimate_sender_verified",
+      "official_domain_match",
+      "promotional_content",
+      "unsubscribe_option_provided",
+      "no_credential_requests",
+      "no_impersonation",
+      "no_coercion_or_urgency"
+    ],
+    "kind": "spam"
+  }
+}

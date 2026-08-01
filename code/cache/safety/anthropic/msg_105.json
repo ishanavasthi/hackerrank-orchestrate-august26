@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Medical advice that contradicts standard healthcare (stop all tablets)\",\n    \"Dangerous health guidance that could harm vulnerable populations (elders)\",\n    \"Urgency framing (before night)\",\n    \"Viral forwarding pattern (7 forwards) typical of health misinformation\",\n    \"Unsubstantiated herbal remedy promotion\",\n    \"Potential to cause medication non-compliance with serious health consequences\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Medical advice that contradicts standard healthcare (stop all tablets)",
+      "Dangerous health guidance that could harm vulnerable populations (elders)",
+      "Urgency framing (before night)",
+      "Viral forwarding pattern (7 forwards) typical of health misinformation",
+      "Unsubstantiated herbal remedy promotion",
+      "Potential to cause medication non-compliance with serious health consequences"
+    ],
+    "kind": "scam"
+  }
+}

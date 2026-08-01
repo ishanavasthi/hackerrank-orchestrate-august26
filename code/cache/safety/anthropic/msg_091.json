@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests credential (6-digit login code)\",\n    \"Creates false urgency with 'expire today' deadline\",\n    \"Impersonates a workspace/account service\",\n    \"Coerces action toward verification to prevent account loss\",\n    \"Deceptive framing - legitimate services don't request OTPs via reply\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests credential (6-digit login code)",
+      "Creates false urgency with 'expire today' deadline",
+      "Impersonates a workspace/account service",
+      "Coerces action toward verification to prevent account loss",
+      "Deceptive framing - legitimate services don't request OTPs via reply"
+    ],
+    "kind": "scam"
+  }
+}

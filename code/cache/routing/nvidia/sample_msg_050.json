@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "personal",
+  "reason": "The sender indicates no immediate response needed, so the message can be reviewed later.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_00359"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"personal\", \"reason\": \"The sender indicates no immediate response needed, so the message can be reviewed later.\", \"confidence\": 0.86, \"evidence_message_ids\": [\"message_00359\"]}"
+}

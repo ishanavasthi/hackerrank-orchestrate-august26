@@ -1,0 +1,13 @@
+{
+  "action": "digest",
+  "message_type": "business_update",
+  "reason": "The user engages with similar health updates from this verified sender, but the message does not require immediate interruption.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0246",
+    "message_0394"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"digest\",\n  \"message_type\": \"business_update\",\n  \"reason\": \"The user engages with similar health updates from this verified sender, but the message does not require immediate interruption.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0246\", \"message_0394\"]\n}"
+}

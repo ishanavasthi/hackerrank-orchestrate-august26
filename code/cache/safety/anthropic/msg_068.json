@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a casual message in a group chat discussing plans to meet after a match, with no urgency mentioned. The sender is proposing to create a poll later to see who can attend. There are no attempts to obtain credentials, impersonate anyone, coerce action, or engage in deception.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

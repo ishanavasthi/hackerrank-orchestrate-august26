@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a straightforward personal message about arranging to pick up a jacket. There are no attempts to obtain credentials, impersonate institutions, create false urgency around verification/payment, or employ deceptive tactics. It's a genuine coordination message between individuals.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

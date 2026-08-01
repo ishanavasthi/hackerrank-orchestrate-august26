@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "personal",
+  "reason": "A member is holding a denim jacket for you with a deadline, requiring timely action.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0231",
+    "message_0049"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"personal\",\n  \"reason\": \"A member is holding a denim jacket for you with a deadline, requiring timely action.\",\n  \"confidence\": 0.86,\n  \"evidence_message_ids\": [\"message_0231\", \"message_0049\"]\n}"
+}

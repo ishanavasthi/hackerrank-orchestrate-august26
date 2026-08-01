@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"promotional_travel_offer\",\n    \"limited_time_urgency\",\n    \"unsubscribe_option_provided\",\n    \"verified_sender\",\n    \"established_account\",\n    \"legitimate_business_category\"\n  ],\n  \"kind\": \"spam\"\n}\n```\n\nThis is a promotional travel marketing message. While it uses urgency (\"limited time\") and includes a discount offer, it does not attempt to obtain credentials, impersonate a brand (sender is verified), coerce payment through false account threats, or employ deceptive tactics. The message includes a clear unsubscribe mechanism and legitimate contact information. It is promotional/marketing content rather than a safety risk.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "promotional_travel_offer",
+      "limited_time_urgency",
+      "unsubscribe_option_provided",
+      "verified_sender",
+      "established_account",
+      "legitimate_business_category"
+    ],
+    "kind": "spam"
+  }
+}

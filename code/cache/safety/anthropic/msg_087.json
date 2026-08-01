@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"Promotional real estate message\",\n    \"Includes unsubscribe option (dial 8)\",\n    \"Clear call-to-action options\",\n    \"No credential requests\",\n    \"No impersonation or deception detected\",\n    \"No urgency or coercion tactics\"\n  ],\n  \"kind\": \"spam\"\n}\n```",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "Promotional real estate message",
+      "Includes unsubscribe option (dial 8)",
+      "Clear call-to-action options",
+      "No credential requests",
+      "No impersonation or deception detected",
+      "No urgency or coercion tactics"
+    ],
+    "kind": "spam"
+  }
+}

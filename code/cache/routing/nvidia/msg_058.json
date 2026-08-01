@@ -1,0 +1,12 @@
+{
+  "action": "mute",
+  "message_type": "forward",
+  "reason": "The message is a mass-forwarded health chain that the user usually ignores.",
+  "confidence": 0.82,
+  "evidence_message_ids": [
+    "message_0123"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"forward\", \"reason\": \"The message is a mass-forwarded health chain that the user usually ignores.\", \"confidence\": 0.82, \"evidence_message_ids\": [\"message_0123\"]}"
+}

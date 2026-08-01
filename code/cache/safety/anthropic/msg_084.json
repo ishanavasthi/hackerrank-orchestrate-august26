@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Impersonation of HDFC Bank - sender claims to be HDFC Bank but is delivering unsolicited promotional offer via WhatsApp voice message\",\n    \"Coercive urgency - 'Press 1 now' creates artificial time pressure and immediate action demand\",\n    \"Unsolicited financial product offer - unexpected credit card offer to unverified recipient\",\n    \"Voice message format - audio-based delivery reduces traceability and verification\",\n    \"Recent reports against sender - 4 reports in last 30 days indicates pattern of complaints\",\n    \"Credential/verification risk - 'Press 1' response initiates interactive engagement that could lead to data collection or verification requests\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Impersonation of HDFC Bank - sender claims to be HDFC Bank but is delivering unsolicited promotional offer via WhatsApp voice message",
+      "Coercive urgency - 'Press 1 now' creates artificial time pressure and immediate action demand",
+      "Unsolicited financial product offer - unexpected credit card offer to unverified recipient",
+      "Voice message format - audio-based delivery reduces traceability and verification",
+      "Recent reports against sender - 4 reports in last 30 days indicates pattern of complaints",
+      "Credential/verification risk - 'Press 1' response initiates interactive engagement that could lead to data collection or verification requests"
+    ],
+    "kind": "scam"
+  }
+}

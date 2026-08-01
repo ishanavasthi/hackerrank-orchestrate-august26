@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests OTP credential\",\n    \"Impersonates support/verification authority\",\n    \"Uses urgency and threat of account closure\",\n    \"Coerces action via deadline pressure\",\n    \"Deceptive framing as 'help' while requesting sensitive credential\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests OTP credential",
+      "Impersonates support/verification authority",
+      "Uses urgency and threat of account closure",
+      "Coerces action via deadline pressure",
+      "Deceptive framing as 'help' while requesting sensitive credential"
+    ],
+    "kind": "scam"
+  }
+}

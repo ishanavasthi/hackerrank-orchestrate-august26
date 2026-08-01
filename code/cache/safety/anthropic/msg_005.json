@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a straightforward message about holding a clothing item for pickup. It contains:\n- A legitimate transaction (blue denim jacket)\n- A specific pickup location and time\n- A reasonable deadline based on other interested buyers\n- No requests for credentials, payments, or sensitive information\n- No impersonation or deception\n- Supporting image of actual clothing inventory\n\nThis is a normal peer-to-peer transaction message with no safety risks.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

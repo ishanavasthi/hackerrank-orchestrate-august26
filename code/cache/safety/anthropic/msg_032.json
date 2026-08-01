@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a straightforward academic request in a group chat. The sender is asking classmates to share lecture materials they missed due to a technical issue. There are no attempts to obtain credentials, impersonate anyone, create false urgency, or engage in deception.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

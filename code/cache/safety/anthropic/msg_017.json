@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests payment/financial action\",\n    \"Creates false urgency with deadline ('today')\",\n    \"Threatens service loss to coerce compliance\",\n    \"Vague 'pending charge' and 'clearance amount' language typical of deceptive messages\",\n    \"Impersonates a service provider\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests payment/financial action",
+      "Creates false urgency with deadline ('today')",
+      "Threatens service loss to coerce compliance",
+      "Vague 'pending charge' and 'clearance amount' language typical of deceptive messages",
+      "Impersonates a service provider"
+    ],
+    "kind": "scam"
+  }
+}

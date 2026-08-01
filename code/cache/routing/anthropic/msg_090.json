@@ -1,0 +1,10 @@
+{
+  "action": "digest",
+  "message_type": "personal",
+  "reason": "A personal contact is asking a straightforward clarification question about a package mix-up with no urgency indicated, suitable for later response.",
+  "confidence": 0.82,
+  "evidence_message_ids": [],
+  "provider": "anthropic",
+  "model": "claude-haiku-4-5-20251001",
+  "raw_text": "```json\n{\"action\": \"digest\", \"message_type\": \"personal\", \"reason\": \"A personal contact is asking a straightforward clarification question about a package mix-up with no urgency indicated, suitable for later response.\", \"confidence\": 0.82, \"evidence_message_ids\": []}\n```"
+}

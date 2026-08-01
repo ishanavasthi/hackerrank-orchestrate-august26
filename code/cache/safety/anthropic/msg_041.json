@@ -1,0 +1,16 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"URL shortener (weurl.co) used instead of official domain (polaris.school)\",\n    \"Generic greeting suggesting mass outreach despite claimed prior interaction\",\n    \"Vague reference to interaction method ('may have interacted')\",\n    \"Pressure tactic: 'short 3-minute' framing to encourage quick action\",\n    \"7 reports against sender in last 30 days\",\n    \"Domain mismatch between verified official domain and actual sender domain\",\n    \"Link shared in chat without transparency about destination\"\n  ],\n  \"kind\": \"scam\"\n}\n```\n\n**Reasoning:** While the sender has account history and verification, the combination of domain mismatch (official domain vs. URL shortener), vague interaction claims, and recent reports creates phishing risk. The URL shortener obscures the actual destination, preventing verification that the survey link is legitimate. This pattern is consistent with credential harvesting or malware distribution campaigns impersonating educational institutions.",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "URL shortener (weurl.co) used instead of official domain (polaris.school)",
+      "Generic greeting suggesting mass outreach despite claimed prior interaction",
+      "Vague reference to interaction method ('may have interacted')",
+      "Pressure tactic: 'short 3-minute' framing to encourage quick action",
+      "7 reports against sender in last 30 days",
+      "Domain mismatch between verified official domain and actual sender domain",
+      "Link shared in chat without transparency about destination"
+    ],
+    "kind": "scam"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "business_update",
+  "reason": "The user has opened similar feedback requests from this cinema before, indicating they find them useful but not urgent.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0011"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\":\"digest\",\"message_type\":\"business_update\",\"reason\":\"The user has opened similar feedback requests from this cinema before, indicating they find them useful but not urgent.\",\"confidence\":0.86,\"evidence_message_ids\":[\"message_0011\"]}"
+}

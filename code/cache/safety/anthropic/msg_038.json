@@ -1,0 +1,13 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"chain message format\",\n    \"artificial urgency ('before midnight')\",\n    \"social pressure ('do not break the chain')\",\n    \"forwarding request\"\n  ],\n  \"kind\": \"spam\"\n}\n```\n\nThis is a classic chain message with manipulative framing, but it does not attempt to obtain credentials, impersonate institutions, coerce payment/verification, or employ deceptive tactics for financial or account harm. It's annoying and low-value, but not unsafe.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "chain message format",
+      "artificial urgency ('before midnight')",
+      "social pressure ('do not break the chain')",
+      "forwarding request"
+    ],
+    "kind": "spam"
+  }
+}

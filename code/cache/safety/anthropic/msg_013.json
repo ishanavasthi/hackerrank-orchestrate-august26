@@ -1,0 +1,12 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"promotional_offer\",\n    \"urgency_language\",\n    \"local_transaction\"\n  ],\n  \"kind\": \"spam\"\n}\n```\n\nThis is a straightforward product sales message. While it uses urgency tactics (\"today only\", \"need to clear it fast\"), it does not:\n- Request credentials, OTPs, PINs, or payment details\n- Impersonate a brand or institution\n- Coerce toward verification or payment through account loss threats\n- Employ deceptive tactics\n\nIt's a local marketplace listing with typical sales language. Annoying or low-value, but not unsafe.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "promotional_offer",
+      "urgency_language",
+      "local_transaction"
+    ],
+    "kind": "spam"
+  }
+}

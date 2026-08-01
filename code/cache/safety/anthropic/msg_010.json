@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"legitimate_business_category\",\n    \"verified_sender\",\n    \"official_domain_match\",\n    \"established_account_age\",\n    \"generic_feedback_request\"\n  ],\n  \"kind\": \"none\"\n}\n```\n\nThis is a standard post-transaction feedback request from a verified cinema chain using their official domain. While there are 8 reports against the sender in 30 days (which could indicate spam volume), the message itself contains no deceptive elements, credential requests, impersonation, or coercive tactics. It's a routine business communication asking for feedback.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "legitimate_business_category",
+      "verified_sender",
+      "official_domain_match",
+      "established_account_age",
+      "generic_feedback_request"
+    ],
+    "kind": "none"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Urgency language ('Urgent', 'Pay today')\",\n    \"Account loss threat ('avoid account lock')\",\n    \"Requests credential/payment action via QR code\",\n    \"Asks for screenshot evidence of payment\",\n    \"Impersonates service provider authority\",\n    \"Coercive deadline pressure\",\n    \"Suspicious payment collection method\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Urgency language ('Urgent', 'Pay today')",
+      "Account loss threat ('avoid account lock')",
+      "Requests credential/payment action via QR code",
+      "Asks for screenshot evidence of payment",
+      "Impersonates service provider authority",
+      "Coercive deadline pressure",
+      "Suspicious payment collection method"
+    ],
+    "kind": "scam"
+  }
+}

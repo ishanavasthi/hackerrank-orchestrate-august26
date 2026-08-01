@@ -1,0 +1,13 @@
+{
+  "action": "digest",
+  "message_type": "promotion",
+  "reason": "The user has opened similar travel promotions before and allows promotions, so it's potentially relevant but not urgent.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0272",
+    "message_0033"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"promotion\", \"reason\": \"The user has opened similar travel promotions before and allows promotions, so it's potentially relevant but not urgent.\", \"confidence\": 0.86, \"evidence_message_ids\": [\"message_0272\", \"message_0033\"]}"
+}

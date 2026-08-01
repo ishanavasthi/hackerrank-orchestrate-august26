@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "business_update",
+  "reason": "The message is a verified business sharing a scam awareness poster, providing useful information but not requiring immediate action.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0263"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"business_update\", \"reason\": \"The message is a verified business sharing a scam awareness poster, providing useful information but not requiring immediate action.\", \"confidence\": 0.86, \"evidence_message_ids\": [\"message_0263\"]}"
+}

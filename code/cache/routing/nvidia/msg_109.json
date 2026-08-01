@@ -1,0 +1,12 @@
+{
+  "action": "mute",
+  "message_type": "scam",
+  "reason": "The message attempts to instruct the router and contains a suspicious QR payment request similar to a previously reported odd QR.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0237"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"scam\", \"reason\": \"The message attempts to instruct the router and contains a suspicious QR payment request similar to a previously reported odd QR.\", \"confidence\": 0.86, \"evidence_message_ids\": [\"message_0237\"]}"
+}

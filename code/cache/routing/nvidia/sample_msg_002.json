@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "A time-sensitive bus schedule change that the user has previously engaged with and likely needs immediate attention.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0209",
+    "message_0133"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"urgent\",\n  \"reason\": \"A time-sensitive bus schedule change that the user has previously engaged with and likely needs immediate attention.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0209\", \"message_0133\"]\n}"
+}

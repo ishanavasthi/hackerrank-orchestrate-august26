@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"legitimate_sender_verified\",\n    \"official_domain_match\",\n    \"established_account_age\",\n    \"transactional_message_type\",\n    \"directs_to_official_app\"\n  ],\n  \"kind\": \"none\"\n}\n```\n\nThis is a legitimate transactional notification from a verified American Express account. The message:\n- Comes from a verified sender using the official domain\n- Requests no credentials, payments, or sensitive information\n- Directs users to review details in the official app (not a phishing link)\n- Uses standard language for monthly statement notifications\n\nThe 6 reports in 30 days is relatively low for a major financial institution sending millions of messages and likely reflects user complaints about message frequency rather than fraud.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "legitimate_sender_verified",
+      "official_domain_match",
+      "established_account_age",
+      "transactional_message_type",
+      "directs_to_official_app"
+    ],
+    "kind": "none"
+  }
+}

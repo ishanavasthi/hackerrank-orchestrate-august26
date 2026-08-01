@@ -1,0 +1,13 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"forwarded message (high count: 9)\",\n    \"vague health claim\",\n    \"social pressure to share\",\n    \"appeal to family concern\"\n  ],\n  \"kind\": \"spam\"\n}\n```\n\nThis is a typical chain message/viral content pattern. While it uses manipulative tactics (urgency, family appeals, vagueness), it does not attempt to:\n- Obtain credentials or sensitive information\n- Impersonate a specific brand/institution\n- Coerce toward payment or account verification\n- Employ deceptive credential harvesting\n\nIt's annoying and low-value spam, not a safety risk.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "forwarded message (high count: 9)",
+      "vague health claim",
+      "social pressure to share",
+      "appeal to family concern"
+    ],
+    "kind": "spam"
+  }
+}

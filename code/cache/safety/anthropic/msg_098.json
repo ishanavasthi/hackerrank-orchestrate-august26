@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a legitimate personal message requesting a phone call about a medical appointment decision. It contains no attempts to obtain credentials, impersonation, coercion, or deception. It's a straightforward request for input on a healthcare matter.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

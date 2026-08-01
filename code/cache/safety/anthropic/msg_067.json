@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Impersonates authority (admin)\",\n    \"Creates artificial urgency with deadline (5 PM today)\",\n    \"Threatens penalty (late fee)\",\n    \"Coerces action toward payment\",\n    \"Unusual instruction to not share receipt in group (reduces transparency)\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Impersonates authority (admin)",
+      "Creates artificial urgency with deadline (5 PM today)",
+      "Threatens penalty (late fee)",
+      "Coerces action toward payment",
+      "Unusual instruction to not share receipt in group (reduces transparency)"
+    ],
+    "kind": "scam"
+  }
+}

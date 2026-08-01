@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "business_update",
+  "reason": "The user has previously opened and replied to similar health updates from this sender, indicating the message is relevant and may require timely attention.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0155",
+    "message_0279"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"business_update\",\n  \"reason\": \"The user has previously opened and replied to similar health updates from this sender, indicating the message is relevant and may require timely attention.\",\n  \"confidence\": 0.86,\n  \"evidence_message_ids\": [\"message_0155\", \"message_0279\"]\n}"
+}

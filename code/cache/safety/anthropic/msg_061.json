@@ -1,0 +1,12 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"forwarded_count_high\",\n    \"chain_message_pattern\",\n    \"deadline_pressure\"\n  ],\n  \"kind\": \"spam\"\n}\n```\n\nThis is a chain message with typical characteristics (high forward count, deadline, request to share), but it does not attempt to obtain credentials, impersonate institutions, or coerce toward verification/payment. It's repetitive and low-value rather than deceptive or unsafe.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "forwarded_count_high",
+      "chain_message_pattern",
+      "deadline_pressure"
+    ],
+    "kind": "spam"
+  }
+}

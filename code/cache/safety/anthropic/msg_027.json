@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"legitimate_travel_brand\",\n    \"verified_sender\",\n    \"promotional_content\",\n    \"unsubscribe_option_provided\",\n    \"clear_pricing_disclosed\",\n    \"established_account\"\n  ],\n  \"kind\": \"spam\"\n}\n```\n\nThis is a promotional travel message from an established, verified travel brand (Thrillophilia). While it uses a URL shortener (link.wame.pro) rather than the official domain, the message contains:\n- Clear pricing and package details\n- Legitimate unsubscribe mechanism\n- No credential requests\n- No impersonation or coercion\n- No false urgency or account loss threats\n\nThe message is promotional/marketing content (spam category) but not deceptive or unsafe.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "legitimate_travel_brand",
+      "verified_sender",
+      "promotional_content",
+      "unsubscribe_option_provided",
+      "clear_pricing_disclosed",
+      "established_account"
+    ],
+    "kind": "spam"
+  }
+}

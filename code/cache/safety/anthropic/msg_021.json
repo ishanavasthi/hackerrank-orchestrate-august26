@@ -1,0 +1,12 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"deadline_pressure\",\n    \"payment_request\",\n    \"warning_against_unofficial_links\"\n  ],\n  \"kind\": \"none\"\n}\n```\n\n**Reasoning:** This appears to be a legitimate group notification (likely from a building/community manager or administrator). While it contains a deadline and payment request, it:\n- Does not request credentials, OTPs, PINs, or sensitive financial details\n- Does not impersonate a brand or institution\n- Actually warns against unofficial payment links (a safety measure)\n- Provides an out (\"if already paid, ignore\")\n- Is contextually appropriate for a group setting\n\nThe deadline and payment mention are normal administrative communication, not deceptive coercion.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "deadline_pressure",
+      "payment_request",
+      "warning_against_unofficial_links"
+    ],
+    "kind": "none"
+  }
+}

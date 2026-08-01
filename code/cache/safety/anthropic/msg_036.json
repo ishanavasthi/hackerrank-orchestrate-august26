@@ -1,0 +1,19 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Impersonates legitimate brand (RazorpayX)\",\n    \"Domain mismatch: razorpayx-payouts.com vs official razorpayx.com\",\n    \"Sender not verified despite claiming to be official team\",\n    \"Suspicious domain age: 9 days old\",\n    \"Requests verification via external link\",\n    \"Creates urgency with 'final verification step' language\",\n    \"High report volume: 20 reports in 30 days\",\n    \"Message forwarded multiple times (2x) - typical phishing distribution\",\n    \"Young account age: 34 days\",\n    \"Credential harvesting pattern: verification step + link\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Impersonates legitimate brand (RazorpayX)",
+      "Domain mismatch: razorpayx-payouts.com vs official razorpayx.com",
+      "Sender not verified despite claiming to be official team",
+      "Suspicious domain age: 9 days old",
+      "Requests verification via external link",
+      "Creates urgency with 'final verification step' language",
+      "High report volume: 20 reports in 30 days",
+      "Message forwarded multiple times (2x) - typical phishing distribution",
+      "Young account age: 34 days",
+      "Credential harvesting pattern: verification step + link"
+    ],
+    "kind": "scam"
+  }
+}

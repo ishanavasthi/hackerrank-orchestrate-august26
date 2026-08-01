@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests OTP (One-Time Password) - credential extraction attempt\",\n    \"Impersonates a platform/institution with account verification claim\",\n    \"Uses urgency and deadline pressure ('time kam hai', 'jaldi karo')\",\n    \"Threatens account loss/blocking to coerce action\",\n    \"Hindi language used - common in regional phishing attacks\",\n    \"Deceptive social engineering tactics\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests OTP (One-Time Password) - credential extraction attempt",
+      "Impersonates a platform/institution with account verification claim",
+      "Uses urgency and deadline pressure ('time kam hai', 'jaldi karo')",
+      "Threatens account loss/blocking to coerce action",
+      "Hindi language used - common in regional phishing attacks",
+      "Deceptive social engineering tactics"
+    ],
+    "kind": "scam"
+  }
+}

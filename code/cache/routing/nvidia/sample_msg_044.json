@@ -1,0 +1,12 @@
+{
+  "action": "mute",
+  "message_type": "promotion",
+  "reason": "The user usually dismisses similar kurta set sale posts in this group and is disengaged, so it can be muted.",
+  "confidence": 0.78,
+  "evidence_message_ids": [
+    "message_0095"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"promotion\", \"reason\": \"The user usually dismisses similar kurta set sale posts in this group and is disengaged, so it can be muted.\", \"confidence\": 0.78, \"evidence_message_ids\": [\"message_0095\"]}"
+}

@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests immediate payment (token/deposit) before documentation\",\n    \"Registry papers promised only after payment - reverses normal transaction order\",\n    \"High forwarding count (7) suggests mass distribution pattern\",\n    \"Urgency messaging ('Final few plots', 'today')\",\n    \"Unverifiable company details (generic website, placeholder phone format)\",\n    \"Typical real estate advance-fee scam structure\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests immediate payment (token/deposit) before documentation",
+      "Registry papers promised only after payment - reverses normal transaction order",
+      "High forwarding count (7) suggests mass distribution pattern",
+      "Urgency messaging ('Final few plots', 'today')",
+      "Unverifiable company details (generic website, placeholder phone format)",
+      "Typical real estate advance-fee scam structure"
+    ],
+    "kind": "scam"
+  }
+}

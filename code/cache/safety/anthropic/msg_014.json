@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"promotional_offer\",\n    \"urgency_language\",\n    \"verified_sender\",\n    \"established_account\",\n    \"unsubscribe_option\"\n  ],\n  \"kind\": \"spam\"\n}\n```\n\nThis is a promotional message from a verified food delivery service. While it uses urgency tactics (\"might expire soon\") and promotional language typical of marketing campaigns, it does not attempt to:\n- Obtain credentials or sensitive information\n- Impersonate a brand deceptively\n- Coerce toward payment through false account loss threats\n- Employ deceptive tactics\n\nThe sender is verified, has an established account (4378 days old), uses their official domain, and provides an unsubscribe option. The message is low-value marketing rather than a safety risk.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "promotional_offer",
+      "urgency_language",
+      "verified_sender",
+      "established_account",
+      "unsubscribe_option"
+    ],
+    "kind": "spam"
+  }
+}

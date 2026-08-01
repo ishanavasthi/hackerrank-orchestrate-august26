@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"legitimate_sender_verified\",\n    \"official_domain_match\",\n    \"transactional_order_update\",\n    \"no_credential_requests\",\n    \"no_urgency_coercion\",\n    \"no_impersonation_attempt\"\n  ],\n  \"kind\": \"none\"\n}\n```",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "legitimate_sender_verified",
+      "official_domain_match",
+      "transactional_order_update",
+      "no_credential_requests",
+      "no_urgency_coercion",
+      "no_impersonation_attempt"
+    ],
+    "kind": "none"
+  }
+}

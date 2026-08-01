@@ -1,0 +1,13 @@
+{
+  "action": "mute",
+  "message_type": "promotion",
+  "reason": "The user routinely dismisses time‑sensitive promotional offers, indicating this is likely noise for them.",
+  "confidence": 0.82,
+  "evidence_message_ids": [
+    "message_0223",
+    "message_0389"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"promotion\", \"reason\": \"The user routinely dismisses time‑sensitive promotional offers, indicating this is likely noise for them.\", \"confidence\": 0.82, \"evidence_message_ids\": [\"message_0223\", \"message_0389\"]}"
+}

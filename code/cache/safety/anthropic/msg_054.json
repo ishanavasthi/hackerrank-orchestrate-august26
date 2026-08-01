@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests payment (processing fee) to release funds\",\n    \"Creates artificial urgency with time pressure ('before evening')\",\n    \"Uses 'limited window' language to coerce action\",\n    \"Typical advance-fee loan scam pattern\",\n    \"Suspicious link for payment collection\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests payment (processing fee) to release funds",
+      "Creates artificial urgency with time pressure ('before evening')",
+      "Uses 'limited window' language to coerce action",
+      "Typical advance-fee loan scam pattern",
+      "Suspicious link for payment collection"
+    ],
+    "kind": "scam"
+  }
+}

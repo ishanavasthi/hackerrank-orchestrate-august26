@@ -1,0 +1,13 @@
+{
+  "action": "digest",
+  "message_type": "personal",
+  "reason": "It's a personal work note that can be read later before the standup.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0118",
+    "message_0055"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"personal\", \"reason\": \"It's a personal work note that can be read later before the standup.\", \"confidence\": 0.86, \"evidence_message_ids\": [\"message_0118\", \"message_0055\"]}"
+}

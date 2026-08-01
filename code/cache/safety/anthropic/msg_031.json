@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a legitimate work message in a group chat reminding colleagues about an internal meeting. The message:\n- References an internal incident review meeting with specific attendees\n- Requests work-related documentation (deployment notes, incident summary)\n- Discusses operational coordination (closing action items)\n- Contains no credential requests, impersonation, coercion, or deceptive elements\n- The attached calendar screenshot confirms this is a genuine internal meeting",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

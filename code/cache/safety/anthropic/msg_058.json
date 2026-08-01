@@ -1,0 +1,16 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Forwarded message with high forward count (10) - typical of viral scams\",\n    \"Vague health claim without specifics\",\n    \"Appeals to secrecy ('Doctors don't usually tell')\",\n    \"Urgency tactic ('before night')\",\n    \"Pressure to share widely ('Share in family groups')\",\n    \"Anecdotal evidence ('many people said it worked') without proof\",\n    \"Classic structure of health misinformation/scam chain message\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Forwarded message with high forward count (10) - typical of viral scams",
+      "Vague health claim without specifics",
+      "Appeals to secrecy ('Doctors don't usually tell')",
+      "Urgency tactic ('before night')",
+      "Pressure to share widely ('Share in family groups')",
+      "Anecdotal evidence ('many people said it worked') without proof",
+      "Classic structure of health misinformation/scam chain message"
+    ],
+    "kind": "scam"
+  }
+}

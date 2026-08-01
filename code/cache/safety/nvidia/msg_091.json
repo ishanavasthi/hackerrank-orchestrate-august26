@@ -1,0 +1,12 @@
+{
+  "raw": "{\n  \"risky\": true,\n  \"signals\": [\"request for OTP/login code\", \"urgency/threat of account expiration\", \"impersonation of service to solicit credentials\"],\n  \"kind\": \"scam\"\n}",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "request for OTP/login code",
+      "urgency/threat of account expiration",
+      "impersonation of service to solicit credentials"
+    ],
+    "kind": "scam"
+  }
+}

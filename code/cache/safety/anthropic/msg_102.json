@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis appears to be a legitimate work-related message about a technical rollback procedure. It contains no attempts to obtain credentials, impersonation, coercion, or deception. The message is contextual communication between colleagues about monitoring a system operation.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

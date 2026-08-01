@@ -1,0 +1,13 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"Legitimate operational instruction\",\n    \"Directs users to official channels (society app, office QR)\",\n    \"Clear deadline for service closure\",\n    \"Guidance on proper documentation procedures\"\n  ],\n  \"kind\": \"none\"\n}\n```",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "Legitimate operational instruction",
+      "Directs users to official channels (society app, office QR)",
+      "Clear deadline for service closure",
+      "Guidance on proper documentation procedures"
+    ],
+    "kind": "none"
+  }
+}

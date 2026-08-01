@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"unsolicited reward claim\",\n    \"artificial urgency with expiration deadline\",\n    \"high forwarded count (9) suggests mass distribution\",\n    \"vague reward offer without context\",\n    \"typical phishing/scam pattern\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "unsolicited reward claim",
+      "artificial urgency with expiration deadline",
+      "high forwarded count (9) suggests mass distribution",
+      "vague reward offer without context",
+      "typical phishing/scam pattern"
+    ],
+    "kind": "scam"
+  }
+}

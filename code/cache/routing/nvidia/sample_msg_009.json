@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "greeting",
+  "reason": "It's a friendly good‑morning note with no action required, suitable for later reading.",
+  "confidence": 0.78,
+  "evidence_message_ids": [
+    "message_0009"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"greeting\", \"reason\": \"It's a friendly good‑morning note with no action required, suitable for later reading.\", \"confidence\": 0.78, \"evidence_message_ids\": [\"message_0009\"]}"
+}

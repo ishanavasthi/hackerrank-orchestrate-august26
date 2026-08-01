@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "A time-sensitive internship deadline reminder from Faculty Advising that the user has previously acted on.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0404",
+    "message_0284"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"notify\", \"message_type\": \"urgent\", \"reason\": \"A time-sensitive internship deadline reminder from Faculty Advising that the user has previously acted on.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0404\", \"message_0284\"]}"
+}

@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests credential (wallet PIN)\",\n    \"Impersonates payment/banking service\",\n    \"Suspicious domain (pay-check-secure.com)\",\n    \"Creates urgency with 'verification failed'\",\n    \"Deceptive framing as system notification\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests credential (wallet PIN)",
+      "Impersonates payment/banking service",
+      "Suspicious domain (pay-check-secure.com)",
+      "Creates urgency with 'verification failed'",
+      "Deceptive framing as system notification"
+    ],
+    "kind": "scam"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "action": "notify",
+  "message_type": "personal",
+  "reason": "A personal contact asked a straightforward question about a package mix-up that likely requires a response.",
+  "confidence": 0.86,
+  "evidence_message_ids": [],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\":\"notify\",\"message_type\":\"personal\",\"reason\":\"A personal contact asked a straightforward question about a package mix-up that likely requires a response.\",\"confidence\":0.86,\"evidence_message_ids\":[]}"
+}

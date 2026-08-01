@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "promotion",
+  "reason": "The user opened a similar helmet sale before, indicating interest but no immediate need.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0012"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"promotion\", \"reason\": \"The user opened a similar helmet sale before, indicating interest but no immediate need.\", \"confidence\": 0.86, \"evidence_message_ids\": [\"message_0012\"]}"
+}

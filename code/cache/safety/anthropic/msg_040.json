@@ -1,0 +1,13 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"chain message format\",\n    \"forwarded multiple times (7)\",\n    \"superstitious appeal\",\n    \"social pressure to share\"\n  ],\n  \"kind\": \"spam\"\n}\n```\n\nThis is a typical chain message with superstitious framing. While annoying and manipulative in tone, it does not attempt to obtain credentials, impersonate institutions, coerce toward payments/verification, or employ deceptive tactics for financial or account harm. It's repetitive spam rather than a safety risk.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "chain message format",
+      "forwarded multiple times (7)",
+      "superstitious appeal",
+      "social pressure to share"
+    ],
+    "kind": "spam"
+  }
+}

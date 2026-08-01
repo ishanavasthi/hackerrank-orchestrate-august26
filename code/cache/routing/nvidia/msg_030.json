@@ -1,0 +1,13 @@
+{
+  "action": "mute",
+  "message_type": "promotion",
+  "reason": "The user consistently dismisses similar marketplace promotions, indicating low interest.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0050",
+    "message_0335"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"promotion\", \"reason\": \"The user consistently dismisses similar marketplace promotions, indicating low interest.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0050\", \"message_0335\"]}"
+}

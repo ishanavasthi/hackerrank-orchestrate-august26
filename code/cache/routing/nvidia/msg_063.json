@@ -1,0 +1,12 @@
+{
+  "action": "mute",
+  "message_type": "scam",
+  "reason": "The message demands urgent payment via QR and threatens account lock, typical of a scam.",
+  "confidence": 0.85,
+  "evidence_message_ids": [
+    "message_0365"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"scam\", \"reason\": \"The message demands urgent payment via QR and threatens account lock, typical of a scam.\", \"confidence\": 0.85, \"evidence_message_ids\": [\"message_0365\"]}"
+}

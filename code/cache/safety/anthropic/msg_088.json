@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a straightforward personal message about holding an item (blue jacket) with a simple request for confirmation. There are no attempts to obtain credentials, impersonate institutions, create false urgency through threats, or engage in deception. It's a normal peer-to-peer communication in a group context.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

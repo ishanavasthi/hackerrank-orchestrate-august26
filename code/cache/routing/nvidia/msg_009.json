@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "event",
+  "reason": "The user opened a similar cricket highlights suggestion before, indicating possible interest, but the group is muted and they usually dismiss its notifications, so it can wait.",
+  "confidence": 0.78,
+  "evidence_message_ids": [
+    "message_0074"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\":\"digest\",\"message_type\":\"event\",\"reason\":\"The user opened a similar cricket highlights suggestion before, indicating possible interest, but the group is muted and they usually dismiss its notifications, so it can wait.\",\"confidence\":0.78,\"evidence_message_ids\":[\"message_0074\"]}"
+}

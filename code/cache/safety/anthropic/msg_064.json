@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests credential verification (wallet and card details)\",\n    \"Creates artificial urgency with midnight deadline\",\n    \"Threatens service closure if action not taken\",\n    \"Impersonates legitimate brand (PVR/INOX cinema)\",\n    \"Combines refund pretext with credential harvesting\",\n    \"Message forwarded twice (reduced authenticity)\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests credential verification (wallet and card details)",
+      "Creates artificial urgency with midnight deadline",
+      "Threatens service closure if action not taken",
+      "Impersonates legitimate brand (PVR/INOX cinema)",
+      "Combines refund pretext with credential harvesting",
+      "Message forwarded twice (reduced authenticity)"
+    ],
+    "kind": "scam"
+  }
+}

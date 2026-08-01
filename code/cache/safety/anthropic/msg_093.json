@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"sender_verified_true\",\n    \"official_domain_matches\",\n    \"established_account_age_3490_days\",\n    \"explicitly_states_no_otp_required\",\n    \"explicitly_states_no_payment_required\",\n    \"legitimate_delivery_notification_content\"\n  ],\n  \"kind\": \"none\"\n}\n```",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "sender_verified_true",
+      "official_domain_matches",
+      "established_account_age_3490_days",
+      "explicitly_states_no_otp_required",
+      "explicitly_states_no_payment_required",
+      "legitimate_delivery_notification_content"
+    ],
+    "kind": "none"
+  }
+}

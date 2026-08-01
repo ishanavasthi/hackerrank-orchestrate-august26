@@ -1,0 +1,12 @@
+{
+  "action": "notify",
+  "message_type": "personal",
+  "reason": "Direct personal request from a group member that the user has historically opened and replied to.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0006"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"personal\",\n  \"reason\": \"Direct personal request from a group member that the user has historically opened and replied to.\",\n  \"confidence\": 0.86,\n  \"evidence_message_ids\": [\"message_0006\"]\n}"
+}

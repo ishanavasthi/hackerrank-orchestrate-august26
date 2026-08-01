@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"Operational instruction from established service\",\n    \"No credential requests\",\n    \"No impersonation indicators\",\n    \"No coercion or urgency tactics\",\n    \"Legitimate logistical update\"\n  ],\n  \"kind\": \"none\"\n}\n```",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "Operational instruction from established service",
+      "No credential requests",
+      "No impersonation indicators",
+      "No coercion or urgency tactics",
+      "Legitimate logistical update"
+    ],
+    "kind": "none"
+  }
+}

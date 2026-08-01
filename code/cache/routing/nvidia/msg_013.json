@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "promotion",
+  "reason": "The message is a promotional offer that is not urgent and can be reviewed later.",
+  "confidence": 0.8,
+  "evidence_message_ids": [
+    "message_0341"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"promotion\", \"reason\": \"The message is a promotional offer that is not urgent and can be reviewed later.\", \"confidence\": 0.8, \"evidence_message_ids\": [\"message_0341\"]}"
+}

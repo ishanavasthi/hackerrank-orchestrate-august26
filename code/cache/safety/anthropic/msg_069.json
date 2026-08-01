@@ -1,0 +1,12 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"forwarded_message_high_count\",\n    \"request_to_share_widely\",\n    \"generic_blessing_content\"\n  ],\n  \"kind\": \"spam\"\n}\n```\n\nThis is a low-risk message. It's a generic good morning blessing in Hindi/Urdu asking people to share it across groups for \"positive energy.\" While it exhibits characteristics of chain message spam (high forward count, explicit request to share), it contains no deceptive elements, credential harvesting, impersonation, coercion, or financial/account threats. It's merely annoying/repetitive content.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "forwarded_message_high_count",
+      "request_to_share_widely",
+      "generic_blessing_content"
+    ],
+    "kind": "spam"
+  }
+}

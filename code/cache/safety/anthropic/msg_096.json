@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Impersonation of building staff/authority\",\n    \"Creates urgency with deadline (before 18h)\",\n    \"Requests physical presence under false pretense\",\n    \"Potential setup for theft, identity fraud, or physical harm\",\n    \"Unsolicited claim about lost document\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Impersonation of building staff/authority",
+      "Creates urgency with deadline (before 18h)",
+      "Requests physical presence under false pretense",
+      "Potential setup for theft, identity fraud, or physical harm",
+      "Unsolicited claim about lost document"
+    ],
+    "kind": "scam"
+  }
+}

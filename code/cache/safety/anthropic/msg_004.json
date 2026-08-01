@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"verified_sender\",\n    \"legitimate_healthcare_provider\",\n    \"generic_notification_language\",\n    \"no_credential_requests\",\n    \"no_urgency_coercion\",\n    \"no_impersonation_indicators\"\n  ],\n  \"kind\": \"none\"\n}\n```\n\nThis is a legitimate transactional notification from a verified healthcare provider. While there are 6 reports against the sender in 30 days (which could indicate spam complaints from users), the message itself contains no deceptive elements, does not request credentials, does not impersonate, and does not coerce action through false deadlines or account loss threats. It is a standard appointment/prescription reminder notification.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "verified_sender",
+      "legitimate_healthcare_provider",
+      "generic_notification_language",
+      "no_credential_requests",
+      "no_urgency_coercion",
+      "no_impersonation_indicators"
+    ],
+    "kind": "none"
+  }
+}

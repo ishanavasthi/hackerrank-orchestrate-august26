@@ -1,0 +1,8 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [],\n  \"kind\": \"none\"\n}\n```\n\nThis is a benign personal message. It's a casual greeting with a request to call later and a friendly sentiment. The high forwarded count suggests it may be a mass-forwarded message, but the content itself contains no deceptive elements, credential requests, impersonation, coercion, or urgency tactics designed to manipulate action.",
+  "parsed": {
+    "risky": false,
+    "signals": [],
+    "kind": "none"
+  }
+}

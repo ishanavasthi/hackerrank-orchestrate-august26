@@ -1,0 +1,13 @@
+{
+  "action": "digest",
+  "message_type": "promotion",
+  "reason": "The user has previously opened similar travel promotions from this verified business, indicating interest.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0272",
+    "message_0033"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"promotion\", \"reason\": \"The user has previously opened similar travel promotions from this verified business, indicating interest.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0272\", \"message_0033\"]}"
+}

@@ -92,6 +92,30 @@ Alternatives considered: Forcing a split by routing bulk promotional risk to `sp
 Why: The gate fires on deception, and everything it caught in this dataset is deception rather than bulk nuisance. Unwanted promotions are handled by personalization as `mute`/`promotion`, which is the more accurate label. Manufacturing a `spam` bucket to fill the enum would mean mislabelling rows to look thorough.
 Trade-off / what we gave up: If the hidden ground truth uses `spam` for opted-out promotional blasts, we lose those rows. This is a genuine coin-flip about the grader's taxonomy and is flagged as an M5 item to revisit against the sample vocabulary.
 
+## The provider selects HOW a decision is made, never WHETHER personalization runs
+Decision: Personalization signals are computed for every message and rendered into every LLM prompt by `prompts.build_user_prompt`. The `--provider` flag chooses the reasoning engine, not the pipeline shape.
+Alternatives considered: The original wiring, where `--provider stub` ran M3 and any other provider took a different branch into the M1 router.
+Why: That branch silently deleted M3. With `ROUTER_PROVIDER=nvidia` set — which is what the user's `.env` actually contained — group mute state, promotion consent, DND and the spec carve-out would not have run, and nothing would have errored. It was hidden only by a second bug (`.env` was loaded after argparse resolved the default, so the setting was ignored entirely). Fixing either bug alone would have shipped a worse system than leaving both.
+Trade-off / what we gave up: The LLM prompt is longer and now depends on `personalize.signals_for`, so a bug in signal computation degrades both paths at once instead of one.
+
+## Safety stays deterministic; the LLM does personalization
+Decision: The safety gate always runs the rules engine regardless of `--provider`. A separate `--safety-provider` exists only to re-measure the alternative.
+Alternatives considered: Using the selected LLM for both stages, which is what `--provider` originally implied.
+Why: Measured on all 110 rows, the LLM safety classifier force-muted 44 against 22 for rules and failed M2 assertion 3 with 6 false positives on verified, clean-domain senders — HDFC muted for "vague urgency framing", Green Cross Pharmacy for being an "unverified sender claiming to be healthcare provider". Neither is scam evidence. The gate's entire contract is that a trusted sender is never falsely muted, and a classifier that breaks it 6 times in 23 cannot hold that contract however good its prose is.
+Trade-off / what we gave up: We lose two genuinely good catches the rules cannot make — the LLM noticed that msg_049 claims to be Shopee while its image shows JioMart branding, and that msg_066 claims Target while showing an Amazon promotion. Text/image brand mismatch is a real signal and we are leaving it on the table. It should be added to the rules gate deterministically by comparing `display_name`/`brand_name` against the OCR text, not by re-enabling the LLM gate.
+
+## Hybrid shipping path, chosen on measurement
+Decision: Ship rules safety gate + NVIDIA NIM personalization.
+Alternatives considered: Pure rules (deterministic, offline, zero cost); pure LLM for both stages.
+Why: Scored against the 30 labelled sample rows, rules give 70% action / 47% message_type and NIM personalization gives 93% / 83%. That is +23 and +36 points, and it corrects the specific systematic error the audit found — rules mis-sent 6 of 9 misses as notify-to-digest, while the LLM gets 8 of 9 notifies right. The gap is far too large to attribute to noise on 30 rows.
+Trade-off / what we gave up: We are now dependent on a provider and a quota for the headline result. Mitigated by the response cache (a rerun is free and byte-identical) and by the rules path remaining fully functional as an offline fallback that still produces a valid `output.csv` with no key at all. Also note the 93%/83% is measured on 30 rows we did not tune against, but it is still 30 rows.
+
+## Transient HTTP failures must not discard a run
+Decision: All provider calls go through `code/net.py`, which retries 429 and 5xx with exponential backoff and honours `Retry-After`.
+Alternatives considered: Letting the exception propagate, which is what the original code did.
+Why: A single `HTTP 503` from Anthropic aborted a 110-message gate run partway through and discarded every uncached call before it. Provider APIs return 429/5xx routinely under load, so this is a normal operating condition rather than an exceptional one. Retrying is safe precisely because every call site is idempotent and cached by `message_id`.
+Trade-off / what we gave up: A genuinely broken request now takes four attempts and up to ~30 seconds to surface. Non-retryable 4xx statuses are excluded so a malformed request still fails fast.
+
 ## Blindness is enforced structurally, not by intention
 Decision: The gate reads a `SafetyContext` that enumerates every field it may see, built by one function that touches only message/media/business/group. An `assert_blind()` tripwire re-checks the rendered prompt against 21 engagement field names, and the M2 gate runs it over all 110 prompts.
 Alternatives considered: Passing the full `MessageContext` and simply not mentioning engagement in the prompt; or relying on code-review convention.

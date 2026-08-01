@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "A society admin shared a time-sensitive maintenance notice that the user has previously engaged with.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0029",
+    "message_0044"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"urgent\",\n  \"reason\": \"A society admin shared a time-sensitive maintenance notice that the user has previously engaged with.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0029\", \"message_0044\"]\n}"
+}

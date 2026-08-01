@@ -1,0 +1,10 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "A delivery person needs immediate confirmation to drop off a package, requiring prompt action.",
+  "confidence": 0.85,
+  "evidence_message_ids": [],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\":\"notify\",\"message_type\":\"urgent\",\"reason\":\"A delivery person needs immediate confirmation to drop off a package, requiring prompt action.\",\"confidence\":0.85,\"evidence_message_ids\":[]}"
+}

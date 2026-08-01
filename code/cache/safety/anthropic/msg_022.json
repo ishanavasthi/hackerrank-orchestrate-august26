@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Artificial urgency with specific deadline (5 PM)\",\n    \"Requests credential/proof (screenshot) to be sent to sender\",\n    \"Unspecified link (potential phishing)\",\n    \"Coercion via implied consequences of non-payment\",\n    \"Requests user action in group chat with screenshot sharing\",\n    \"Impersonates authority figure collecting payments\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Artificial urgency with specific deadline (5 PM)",
+      "Requests credential/proof (screenshot) to be sent to sender",
+      "Unspecified link (potential phishing)",
+      "Coercion via implied consequences of non-payment",
+      "Requests user action in group chat with screenshot sharing",
+      "Impersonates authority figure collecting payments"
+    ],
+    "kind": "scam"
+  }
+}

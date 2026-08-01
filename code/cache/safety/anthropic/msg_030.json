@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"legitimate secondhand marketplace listing\",\n    \"specific product details provided\",\n    \"clear pricing and pickup location\",\n    \"no credential requests\",\n    \"no impersonation\",\n    \"no urgency or coercion tactics\"\n  ],\n  \"kind\": \"none\"\n}\n```",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "legitimate secondhand marketplace listing",
+      "specific product details provided",
+      "clear pricing and pickup location",
+      "no credential requests",
+      "no impersonation",
+      "no urgency or coercion tactics"
+    ],
+    "kind": "none"
+  }
+}

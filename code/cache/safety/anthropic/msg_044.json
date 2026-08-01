@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests OTP credential\",\n    \"Impersonates account security/verification process\",\n    \"Creates false urgency with deadline ('today')\",\n    \"Threatens account loss/restriction to coerce action\",\n    \"Suspicious link included\",\n    \"High forwarded count (2) suggests mass distribution\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests OTP credential",
+      "Impersonates account security/verification process",
+      "Creates false urgency with deadline ('today')",
+      "Threatens account loss/restriction to coerce action",
+      "Suspicious link included",
+      "High forwarded count (2) suggests mass distribution"
+    ],
+    "kind": "scam"
+  }
+}

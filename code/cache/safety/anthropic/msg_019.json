@@ -1,0 +1,17 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Impersonates legitimate bank (Chase) with unverified sender\",\n    \"Domain mismatch: claims to be Chase but uses chase-secure-alert.com (not official chase.com)\",\n    \"Suspicious domain age: 10 days old, recently created\",\n    \"Urgency tactic: threatens access restriction without specific timeframe\",\n    \"Credential harvesting pattern: directs to link for 'security update' on banking profile\",\n    \"High abuse reports: 55 reports in 30 days indicates known malicious activity\",\n    \"Young account age: 24 days suggests throwaway account\",\n    \"Deceptive sender name: 'Chase Security Center' falsely implies official status\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Impersonates legitimate bank (Chase) with unverified sender",
+      "Domain mismatch: claims to be Chase but uses chase-secure-alert.com (not official chase.com)",
+      "Suspicious domain age: 10 days old, recently created",
+      "Urgency tactic: threatens access restriction without specific timeframe",
+      "Credential harvesting pattern: directs to link for 'security update' on banking profile",
+      "High abuse reports: 55 reports in 30 days indicates known malicious activity",
+      "Young account age: 24 days suggests throwaway account",
+      "Deceptive sender name: 'Chase Security Center' falsely implies official status"
+    ],
+    "kind": "scam"
+  }
+}

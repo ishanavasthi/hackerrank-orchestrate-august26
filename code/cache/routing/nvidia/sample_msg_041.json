@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "personal",
+  "reason": "The message is a casual personal check‑in that does not require immediate attention.",
+  "confidence": 0.8,
+  "evidence_message_ids": [
+    "message_0046"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"personal\", \"reason\": \"The message is a casual personal check‑in that does not require immediate attention.\", \"confidence\": 0.8, \"evidence_message_ids\": [\"message_0046\"]}"
+}

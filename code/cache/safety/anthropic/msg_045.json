@@ -1,0 +1,14 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Impersonates delivery service (Amazon)\",\n    \"Creates artificial urgency with 10-minute deadline\",\n    \"Requests confirmation/action under time pressure\",\n    \"Typical social engineering tactic to bypass security\",\n    \"Seeks to manipulate recipient into granting access\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Impersonates delivery service (Amazon)",
+      "Creates artificial urgency with 10-minute deadline",
+      "Requests confirmation/action under time pressure",
+      "Typical social engineering tactic to bypass security",
+      "Seeks to manipulate recipient into granting access"
+    ],
+    "kind": "scam"
+  }
+}

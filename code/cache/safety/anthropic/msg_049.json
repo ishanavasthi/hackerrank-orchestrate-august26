@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Impersonation: Message claims to be from Shopee but image shows JioMart branding (different company)\",\n    \"Credential harvesting: Requests 'pickup code' sharing, which could be used to intercept returns or commit fraud\",\n    \"Urgency/deadline: Time-limited window (2-5 PM today) pressures quick action\",\n    \"Deceptive instruction: Advising to share sensitive code 'only after courier arrives' is atypical and suspicious\",\n    \"Mismatch between sender and content: Shopee verified account but JioMart imagery suggests compromise or spoofing\",\n    \"Recent reports: 8 reports against sender in last 30 days indicates pattern of abuse\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Impersonation: Message claims to be from Shopee but image shows JioMart branding (different company)",
+      "Credential harvesting: Requests 'pickup code' sharing, which could be used to intercept returns or commit fraud",
+      "Urgency/deadline: Time-limited window (2-5 PM today) pressures quick action",
+      "Deceptive instruction: Advising to share sensitive code 'only after courier arrives' is atypical and suspicious",
+      "Mismatch between sender and content: Shopee verified account but JioMart imagery suggests compromise or spoofing",
+      "Recent reports: 8 reports against sender in last 30 days indicates pattern of abuse"
+    ],
+    "kind": "scam"
+  }
+}

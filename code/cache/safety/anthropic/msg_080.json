@@ -1,0 +1,12 @@
+{
+  "raw": "```json\n{\n  \"risky\": false,\n  \"signals\": [\n    \"Urgent tone with time pressure (10 min)\",\n    \"Instruction to move vehicle\",\n    \"Mention of security/enforcement action\"\n  ],\n  \"kind\": \"none\"\n}\n```\n\n**Reasoning:** This appears to be a legitimate group notification about a gate repair/maintenance situation requiring vehicle movement. While it uses urgency and mentions consequences (security action), it does not:\n- Request credentials, OTPs, PINs, or payment details\n- Impersonate a brand or institution\n- Coerce toward verification or payment\n- Contain deceptive elements\n\nIt's a practical operational message, likely from building management or a resident alerting others to move vehicles. The urgency is contextually appropriate for the situation described.",
+  "parsed": {
+    "risky": false,
+    "signals": [
+      "Urgent tone with time pressure (10 min)",
+      "Instruction to move vehicle",
+      "Mention of security/enforcement action"
+    ],
+    "kind": "none"
+  }
+}

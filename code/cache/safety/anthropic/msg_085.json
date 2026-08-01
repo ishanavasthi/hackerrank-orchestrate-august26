@@ -1,0 +1,17 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests OTP credential\",\n    \"Impersonates bank (HDFC Bank)\",\n    \"Sender not verified despite claiming to be official helpdesk\",\n    \"Domain mismatch: claims hdfc.bank.in but uses hdfcbank-kyc.in\",\n    \"Suspicious domain age: 17 days old\",\n    \"Coercion via account loss threat and urgency ('today', 'immediately')\",\n    \"High report volume: 38 reports in 30 days\",\n    \"New account: 20 days old\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests OTP credential",
+      "Impersonates bank (HDFC Bank)",
+      "Sender not verified despite claiming to be official helpdesk",
+      "Domain mismatch: claims hdfc.bank.in but uses hdfcbank-kyc.in",
+      "Suspicious domain age: 17 days old",
+      "Coercion via account loss threat and urgency ('today', 'immediately')",
+      "High report volume: 38 reports in 30 days",
+      "New account: 20 days old"
+    ],
+    "kind": "scam"
+  }
+}

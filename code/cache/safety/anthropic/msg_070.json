@@ -1,0 +1,15 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests OTP/verification code\",\n    \"Impersonates account security/institution\",\n    \"Creates urgency with account loss threat\",\n    \"Coerces action via deadline (block threat)\",\n    \"Suspicious link to confirm credentials\",\n    \"Deceptive social engineering tactic\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests OTP/verification code",
+      "Impersonates account security/institution",
+      "Creates urgency with account loss threat",
+      "Coerces action via deadline (block threat)",
+      "Suspicious link to confirm credentials",
+      "Deceptive social engineering tactic"
+    ],
+    "kind": "scam"
+  }
+}

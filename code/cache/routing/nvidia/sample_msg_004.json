@@ -1,0 +1,12 @@
+{
+  "action": "notify",
+  "message_type": "business_update",
+  "reason": "The user previously opened and replied to a similar Amazon order update, indicating they find such business updates useful and timely.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0105"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"business_update\",\n  \"reason\": \"The user previously opened and replied to a similar Amazon order update, indicating they find such business updates useful and timely.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0105\"]\n}"
+}

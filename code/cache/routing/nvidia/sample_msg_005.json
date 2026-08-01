@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "business_update",
+  "reason": "A verified healthcare sender sent a health-related update relevant to the user's upcoming appointment.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0246",
+    "message_0394"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"business_update\",\n  \"reason\": \"A verified healthcare sender sent a health-related update relevant to the user's upcoming appointment.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0246\", \"message_0394\"]\n}"
+}

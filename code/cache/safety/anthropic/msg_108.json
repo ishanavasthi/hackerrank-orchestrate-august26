@@ -1,0 +1,17 @@
+{
+  "raw": "```json\n{\n  \"risky\": true,\n  \"signals\": [\n    \"Requests PIN credential\",\n    \"Uses lookalike domain (chase-secure-alert.com vs official chase.com)\",\n    \"Domain is newly registered (10 days old)\",\n    \"Creates false urgency with deadline ('expire today')\",\n    \"Sender not verified despite claiming to be Chase\",\n    \"High report volume against sender (55 reports in 30 days)\",\n    \"Impersonates legitimate financial institution\",\n    \"Contains internal metadata spoofing to appear legitimate\"\n  ],\n  \"kind\": \"scam\"\n}\n```",
+  "parsed": {
+    "risky": true,
+    "signals": [
+      "Requests PIN credential",
+      "Uses lookalike domain (chase-secure-alert.com vs official chase.com)",
+      "Domain is newly registered (10 days old)",
+      "Creates false urgency with deadline ('expire today')",
+      "Sender not verified despite claiming to be Chase",
+      "High report volume against sender (55 reports in 30 days)",
+      "Impersonates legitimate financial institution",
+      "Contains internal metadata spoofing to appear legitimate"
+    ],
+    "kind": "scam"
+  }
+}
