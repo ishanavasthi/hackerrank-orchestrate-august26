@@ -2,7 +2,7 @@
 
 Status of the Message Notification Router. Every claim below was verified by
 running the command shown, not asserted from memory. Last verified against
-commit `17e97a5`.
+commit `d00dae6`.
 
 ---
 
@@ -14,7 +14,7 @@ commit `17e97a5`.
 | Exactly one row per `message_id` in `messages.csv` (110) | PASS | validator: set equality, no dupes, no extras |
 | Every `action` in {notify, digest, mute} | PASS | validator |
 | Every `message_type` in the 11 allowed values | PASS | validator |
-| `confidence` numeric and within [0,1] | PASS | validator (shipping path range 0.50–0.91) |
+| `confidence` numeric and within [0,1] | PASS | validator (shipping path range 0.84–0.91, calibrated) |
 | `evidence_message_ids` resolve in `message_history.csv` | PASS | validator: 0 dangling ids |
 | Runnable from the terminal | PASS | `python code/main.py` |
 | Reads only from `dataset/` | PASS | no organizer-only files exist in this repo |
@@ -55,10 +55,11 @@ the submission's floor — see DECISIONS.md.
 - 14/14 hand-checked cases.
 - Shipping path distribution over 110: notify 34 / digest 25 / mute 51.
 
-### M4 — evidence + confidence — NOT STARTED
-- Evidence selection in `personalize._evidence()` is an explicit placeholder: same-conversation history filtered by whether the outcome matches the action. It does not do similarity ranking or outcome-informativeness scoring as specified in DECISIONS.md.
-- 23/110 rows currently emit `none` for evidence.
-- Confidence is a small lookup table keyed on action, not calibrated.
+### M4 — evidence + confidence — DONE
+- `code/evidence.py`: scored retrieval (topical similarity + same-conversation + outcome support). Rows with no evidence 28 -> 3; same-conversation citations 98 -> 199; unrelated-thread 21 -> 8; 0 dangling.
+- `code/confidence.py`: certainty from evidence count, signal agreement/conflict and structural grounding, mapped monotonically onto the observed 0.78-0.91 band. Range 0.50-0.91 -> 0.84-0.91 across 7 distinct values, none below the sample floor.
+- Applied on both paths and to gate-forced mutes (which previously emitted `none` for all 22 rows).
+- Runs after the response cache read, so the ranking can be revised without re-calling the API.
 
 ### M5 — edge cases + eval harness — PARTIAL
 - `code/score_samples.py` now exists (added during this audit).
