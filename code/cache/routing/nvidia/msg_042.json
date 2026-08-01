@@ -1,0 +1,12 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "A time-sensitive maintenance alert requiring immediate action to avoid car being towed.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0057"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"notify\", \"message_type\": \"urgent\", \"reason\": \"A time-sensitive maintenance alert requiring immediate action to avoid car being towed.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0057\"]}"
+}

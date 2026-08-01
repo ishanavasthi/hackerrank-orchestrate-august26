@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "The user needs to act within 10 minutes to receive water delivery, making it time-sensitive.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0129",
+    "message_0216"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"notify\", \"message_type\": \"urgent\", \"reason\": \"The user needs to act within 10 minutes to receive water delivery, making it time-sensitive.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0129\", \"message_0216\"]}"
+}

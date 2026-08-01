@@ -12,23 +12,32 @@ and is retried again. Retrying does not affect determinism.
 from __future__ import annotations
 
 import json
+import socket
 import time
 import urllib.error
 import urllib.request
+
+# On Python 3.10+ socket.timeout IS TimeoutError; on 3.9 (what this repo runs)
+# it is a distinct class, so catching only TimeoutError misses read timeouts
+# entirely. That gap killed the first full 110-message run.
+_TRANSIENT_EXC = (urllib.error.URLError, socket.timeout, TimeoutError, ConnectionError)
 
 # Transient by nature: rate limiting, and the 5xx family. A 4xx other than 429
 # means the request itself is wrong and retrying just burns quota.
 RETRYABLE_STATUS = frozenset({408, 409, 425, 429, 500, 502, 503, 504, 529})
 
-DEFAULT_ATTEMPTS = 4
+DEFAULT_ATTEMPTS = 5
 BASE_DELAY_SECONDS = 2.0
+# Large NIM models can take well over a minute on a long prompt; 120s produced
+# read timeouts mid-run.
+DEFAULT_TIMEOUT_SECONDS = 300
 
 
 def post_json(
     url: str,
     payload: dict,
     headers: dict,
-    timeout: int = 120,
+    timeout: int = DEFAULT_TIMEOUT_SECONDS,
     attempts: int = DEFAULT_ATTEMPTS,
     verbose: bool = True,
 ) -> dict:
@@ -58,7 +67,7 @@ def post_json(
             except (TypeError, ValueError):
                 delay = BASE_DELAY_SECONDS * (2 ** (attempt - 1))
 
-        except (urllib.error.URLError, TimeoutError, ConnectionError) as exc:
+        except _TRANSIENT_EXC as exc:
             if attempt == attempts:
                 raise RuntimeError(f"connection error from {url}: {exc}") from exc
             last_error = exc

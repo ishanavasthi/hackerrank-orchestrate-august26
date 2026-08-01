@@ -368,14 +368,17 @@ def route_stub(ctx: MessageContext) -> Decision:
 
 # ─── LLM providers ───────────────────────────────────────────────────────────
 
-def _post(url: str, payload: dict, headers: dict, timeout: int = 120) -> dict:
-    # Retries transient 429/5xx — see code/net.py. A single 503 previously
-    # aborted a whole run and discarded every uncached call before it.
+def _post(url: str, payload: dict, headers: dict, timeout: int | None = None) -> dict:
+    # Retries transient 429/5xx and read timeouts — see code/net.py. A single
+    # 503 previously aborted a whole run and discarded every uncached call.
+    # timeout defaults to net.DEFAULT_TIMEOUT_SECONDS; 120s was too short for
+    # the larger NIM models and produced mid-run socket timeouts.
     try:
-        from net import post_json          # noqa: PLC0415
+        from net import DEFAULT_TIMEOUT_SECONDS, post_json          # noqa: PLC0415
     except ImportError:
-        from code.net import post_json     # noqa: PLC0415
-    return post_json(url, payload, headers, timeout=timeout)
+        from code.net import DEFAULT_TIMEOUT_SECONDS, post_json     # noqa: PLC0415
+    return post_json(url, payload, headers,
+                     timeout=timeout or DEFAULT_TIMEOUT_SECONDS)
 
 
 def _call_anthropic(ctx: MessageContext) -> tuple[str, dict]:
