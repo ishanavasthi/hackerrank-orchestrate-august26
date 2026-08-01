@@ -93,8 +93,16 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  force-muted {len(gated)}/{len(contexts)} on risk grounds")
 
         passthrough = [c for c in contexts if not verdicts[c.message.message_id].force_mute]
-        print(f"Routing {len(passthrough)} via provider={args.provider} ...")
-        routed = {d.message_id: d for d in route_all(passthrough, provider=args.provider)}
+
+        # M3 — personalization. Only reached by messages the gate cleared, so
+        # this stage never needs to consider risk and never emits scam/spam.
+        if args.provider == "stub":
+            from personalize import personalize_all   # noqa: PLC0415
+            print(f"Personalizing {len(passthrough)} (rules) ...")
+            routed = {d.message_id: d for d in personalize_all(passthrough)}
+        else:
+            print(f"Routing {len(passthrough)} via provider={args.provider} ...")
+            routed = {d.message_id: d for d in route_all(passthrough, provider=args.provider)}
 
         decisions = []
         for c in contexts:

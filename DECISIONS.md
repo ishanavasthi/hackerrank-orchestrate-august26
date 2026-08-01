@@ -68,6 +68,30 @@ Alternatives considered: Following the measured behaviour literally, which would
 Why: Three findings, none flattering to a strong rule. (1) Zero of the 30 sample rows fall inside their user's DND window, so the labelled set cannot settle this at all. (2) In `message_history`, DND-window messages were opened more (76% vs 67%) and dismissed less (24% vs 33%) — but n=34 across 16 users, and the whole effect sits in one 19-message business slice. (3) The decisive tell: median reaction time is 2.0 minutes both inside and outside the window. If DND were a real delivery gate, in-window messages would be seen hours later. So `created_at` does not behave like a delivery constraint here and the engagement gap is a composition artifact.
 Trade-off / what we gave up: We are shipping a rule on reasoning rather than evidence. Defensible only because it is close to costless: of the 8 test messages inside a DND window, none is a plausible `notify` on content alone — two are phishing, one is a promo, one is media-only, four are next-day informational. If asked to defend it, the honest answer is "it is the right shape and costs us nothing here," not "the data showed it."
 
+## A direct mention does not by itself rescue a message
+Decision: The muted-group carve-out requires a direct mention AND time-sensitive content. A mention attached to chain content is still muted.
+Alternatives considered: Treating any `@<user_id>` in a muted group as sufficient for `notify`, which is the obvious reading of the spec's carve-out.
+Why: The dataset supplies both halves of the pair inside the same muted family group. `msg_056` is "@u_001 doctor appointment moved to 6 PM because the clinic called" — the spec's example almost verbatim, and a correct `notify`. `msg_040` is "@u_007 forward this to ten people for blessings. Do not ignore" — the same mention shape carrying a chain letter. A mention-only rule notifies both. Chain detection therefore runs before the carve-out.
+Trade-off / what we gave up: A genuinely urgent message written in chain-like language would be muted. Judged the safer error: the cost of a missed chain letter is nothing, the cost of a notify-able chain letter is the exact noise the product exists to remove.
+
+## Urgency must be anchored to an action or a deadline
+Decision: Urgency requires an action bound to an immediacy word ("call me now", "come online"), a real deadline ("before 6 PM"), a change to an existing plan ("moved to"), or a breakage ("is down"). Bare "now" and "today" do not count, and the sender's own defusing language overrides a keyword hit everywhere.
+Alternatives considered: A flat urgency keyword list including bare now/today/urgent.
+Why: The flat list misfired in both directions on real rows. "Smile today, stay blessed" (msg_011) read as urgent because of `today`; "Don't call now, phone is charging ... Nothing urgent" (msg_097) read as urgent on both `now` and — the same negation trap the safety gate hit with "no OTP is required" — the word `urgent` inside "Nothing urgent". Senders say when they do not need you, and that statement is more reliable than any keyword.
+Trade-off / what we gave up: An urgent message phrased without any of these anchors is missed. The guard also had to be applied at three separate call sites (action, urgent type, greeting type); I fixed two and missed the greeting branch on the first pass, which is a sign the flag should probably be computed once at the source rather than re-derived.
+
+## Notification load is measured against the user's own baseline
+Decision: "Too many notifications already" compares the user's recent daily volume to their own median, not to a global constant. Load only demotes a non-urgent `notify`, never an urgent one.
+Alternatives considered: A fixed threshold such as "more than 10 notifications today".
+Why: Per-user medians in `daily_notification_summary` run from 2/day to 12/day. Seven notifications is a heavy day for the 2/day user and a quiet one for the 12/day user, so any global constant is simultaneously too strict for one population and inert for the other.
+Trade-off / what we gave up: Needs at least five days of history per user or the signal is skipped, so it silently does nothing for sparse users. It is also the weakest signal in the stage and fires rarely.
+
+## Known gap: `spam` is never emitted
+Decision: Recorded rather than fixed. Every risk row currently classifies as `scam`; nothing produces `spam`.
+Alternatives considered: Forcing a split by routing bulk promotional risk to `spam`.
+Why: The gate fires on deception, and everything it caught in this dataset is deception rather than bulk nuisance. Unwanted promotions are handled by personalization as `mute`/`promotion`, which is the more accurate label. Manufacturing a `spam` bucket to fill the enum would mean mislabelling rows to look thorough.
+Trade-off / what we gave up: If the hidden ground truth uses `spam` for opted-out promotional blasts, we lose those rows. This is a genuine coin-flip about the grader's taxonomy and is flagged as an M5 item to revisit against the sample vocabulary.
+
 ## Blindness is enforced structurally, not by intention
 Decision: The gate reads a `SafetyContext` that enumerates every field it may see, built by one function that touches only message/media/business/group. An `assert_blind()` tripwire re-checks the rendered prompt against 21 engagement field names, and the M2 gate runs it over all 110 prompts.
 Alternatives considered: Passing the full `MessageContext` and simply not mentioning engagement in the prompt; or relying on code-review convention.

@@ -203,18 +203,26 @@ _CREDENTIAL = (
     r"verification code", r"login code", r"\b6[- ]digit\b", r"six digit",
     r"share the code", r"send.{0,15}code", r"reply with.{0,25}code",
     r"card details", r"wallet.{0,15}details", r"net ?banking password",
+    # Found while reviewing M3 inputs: msg_078 asks to "fill bank details on
+    # first page and send screenshot", forwarded 10x, and cleared the gate
+    # because only card/wallet details were covered.
+    r"bank details", r"account details", r"\bupi (?:pin|id)\b",
 )
 _COERCION = (
     r"account (?:will be )?(?:blocked|suspended|frozen|deactivated)",
     r"before midnight", r"within \d+ (?:minutes|hours)", r"expires? today",
     r"immediately|urgently|right now", r"last (?:chance|warning)",
     r"failure to (?:comply|verify)", r"legal action",
+    # msg_017: "Service stops today if clearance amount is not received."
+    r"service (?:will )?stops?", r"stops? today", r"not received",
 )
 _LURE = (
     r"click (?:the )?link", r"verify (?:your )?(?:account|wallet|card|kyc)",
     r"complete (?:your )?verification", r"update (?:your )?kyc",
     r"claim (?:your )?(?:refund|prize|reward)", r"you have won",
     r"lottery", r"refund (?:approved|processing)",
+    r"scan (?:and|to) pay", r"pending (?:charge|amount|dues)",
+    r"clearance amount", r"send (?:a |the )?screenshot",
 )
 # A message that addresses the router rather than the recipient is trying to
 # manipulate the classifier. That is a safety concern, so it belongs here
