@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -34,12 +35,26 @@ def load_dotenv(path: Path) -> None:
         if not line or line.startswith("#") or "=" not in line:
             continue
         key, _, value = line.partition("=")
-        key, value = key.strip(), value.strip().strip('"').strip("'")
+        key, value = key.strip(), value.strip()
+        if value[:1] in {'"', "'"} and value[-1:] == value[:1]:
+            value = value[1:-1]                      # quoted: take verbatim
+        else:
+            # Unquoted values may carry a trailing comment. .env.example ships
+            # `ROUTER_PROVIDER=nvidia   # anthropic | nvidia`, which without
+            # this produced the literal provider name "nvidia   # anthropic |
+            # nvidia" and blew up at provider dispatch.
+            value = re.split(r"\s+#", value, maxsplit=1)[0].strip()
         if key and key not in os.environ:
             os.environ[key] = value
 
 
 def main(argv: list[str] | None = None) -> int:
+    # MUST happen before the parser is built: the --provider default reads
+    # ROUTER_PROVIDER from the environment at add_argument() time. Loading .env
+    # afterwards meant a ROUTER_PROVIDER set in .env was silently ignored and
+    # every run quietly used the default.
+    load_dotenv(REPO_ROOT / ".env")
+
     parser = argparse.ArgumentParser(description="WhatsApp message notification router")
     parser.add_argument("--dataset", type=Path, default=REPO_ROOT / "dataset")
     parser.add_argument("--out", type=Path, default=REPO_ROOT / "output.csv")
@@ -57,7 +72,14 @@ def main(argv: list[str] | None = None) -> int:
                         help="Skip routing; just validate the existing --out file.")
     args = parser.parse_args(argv)
 
-    load_dotenv(REPO_ROOT / ".env")
+    # argparse does NOT validate defaults against `choices`, so a bad
+    # ROUTER_PROVIDER in the environment would sail past and only fail deep in
+    # provider dispatch. Check it here, where the error is legible.
+    if args.provider not in {"stub", "anthropic", "nvidia"}:
+        parser.error(
+            f"invalid provider {args.provider!r} (from ROUTER_PROVIDER); "
+            "expected one of: stub, anthropic, nvidia"
+        )
 
     if not args.validate_only:
         # Imported here so --validate-only still works if a worker module is
@@ -95,13 +117,20 @@ def main(argv: list[str] | None = None) -> int:
         passthrough = [c for c in contexts if not verdicts[c.message.message_id].force_mute]
 
         # M3 — personalization. Only reached by messages the gate cleared, so
-        # this stage never needs to consider risk and never emits scam/spam.
+        # this stage never considers risk and never emits scam/spam.
+        #
+        # The provider selects HOW the decision is made, not WHETHER
+        # personalization runs. `stub` applies the rules directly; the LLM
+        # providers receive the same signals rendered into their prompt (see
+        # prompts.build_user_prompt). Previously `--provider nvidia` took a
+        # branch that skipped M3 altogether.
+        from personalize import personalize_all       # noqa: PLC0415
+
         if args.provider == "stub":
-            from personalize import personalize_all   # noqa: PLC0415
-            print(f"Personalizing {len(passthrough)} (rules) ...")
+            print(f"Personalizing {len(passthrough)} (rules, offline) ...")
             routed = {d.message_id: d for d in personalize_all(passthrough)}
         else:
-            print(f"Routing {len(passthrough)} via provider={args.provider} ...")
+            print(f"Personalizing {len(passthrough)} (signals + {args.provider}) ...")
             routed = {d.message_id: d for d in route_all(passthrough, provider=args.provider)}
 
         decisions = []

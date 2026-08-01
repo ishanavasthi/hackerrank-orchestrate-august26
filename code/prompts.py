@@ -252,7 +252,17 @@ def build_user_prompt(ctx: MessageContext) -> str:
     if m.conversation_type == "personal" and m.sender_user_id:
         sections.append(f"Sender: personal contact, user {m.sender_user_id!r}")
 
+    # M3 signals are injected unconditionally. Selecting an LLM provider used
+    # to take a branch that skipped personalization entirely; computing the
+    # signals here means no provider choice can bypass that stage.
+    try:
+        from personalize import render_signals          # noqa: PLC0415
+    except ImportError:
+        from code.personalize import render_signals     # noqa: PLC0415
+
     sections += [
+        "",
+        render_signals(ctx),
         "",
         "Recent history for this user (id, text, recorded outcome):",
         _fmt_history(ctx),

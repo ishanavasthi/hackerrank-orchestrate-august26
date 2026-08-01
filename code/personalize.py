@@ -360,3 +360,35 @@ def _evidence(ctx: MessageContext, action: str, limit: int = 2) -> list[str]:
 
 def personalize_all(contexts: list[MessageContext]) -> list[Decision]:
     return [personalize(c) for c in contexts]
+
+
+def render_signals(ctx: MessageContext) -> str:
+    """Render the personalization signals for an LLM prompt.
+
+    This exists so that choosing an LLM provider cannot bypass M3. The signals
+    are computed here and injected into every routing prompt, so the model
+    reasons over the same structured evidence the rules use rather than
+    re-deriving it from raw CSV rows.
+    """
+    s = signals_for(ctx)
+    flags = [
+        ("directly names the recipient", s.direct_mention),
+        ("user has MUTED this group", s.group_muted),
+        ("user is disengaged from this group", s.group_disengaged),
+        ("mass-forwarded / chain content", s.is_chain or s.heavily_forwarded),
+        ("time-sensitive", s.urgent and not s.defuses_urgency),
+        ("sender says no immediate response needed", s.defuses_urgency),
+        ("promotional", s.promo),
+        ("user does NOT accept promotions from this sender", s.promo_unwanted),
+        ("dormant relationship with this sender", s.relationship_stale),
+        ("active relationship with this sender", s.relationship_active),
+        ("arrived during the user's quiet hours", s.in_dnd),
+        ("user already above their normal notification volume", s.load_high),
+        ("no prior history with this sender", s.unknown_sender),
+    ]
+    on = [label for label, value in flags if value]
+    lines = ["Personalization signals (precomputed, treat as reliable):"]
+    lines += [f"  - {label}" for label in on] or ["  - (none)"]
+    if s.group_dismissal_rate is not None:
+        lines.append(f"  - dismisses {s.group_dismissal_rate:.0%} of this group's notifications")
+    return "\n".join(lines)
