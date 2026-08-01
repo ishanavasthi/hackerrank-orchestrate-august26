@@ -13,7 +13,7 @@ msg_070,mute,scam,Safety gate: requests a credential/OTP/card detail,0.90,messag
 msg_003,digest,business_update,"The user has opened and replied to similar Amazon delivery updates, indicating they find them relevant but not urgent.",0.88,message_0031;message_0400
 msg_099,digest,personal,It's a personal work note that can be read later before the standup.,0.88,message_0227;message_0055
 msg_008,digest,business_update,"The user has opened similar review requests before, so this feedback request is useful but not urgent.",0.88,message_0296;message_0072
-msg_092,digest,unknown,Model output was not valid JSON; used a safe fallback decision.,0.84,message_0346
+msg_092,digest,business_update,This is a routine card statement notification that can be reviewed later and does not require immediate attention.,0.88,message_0346
 msg_060,notify,urgent,A time-sensitive internship deadline reminder from Faculty Advising that the user has previously acted on.,0.88,message_0284;message_0176
 msg_004,digest,business_update,"The user engages with similar health updates from this verified sender, but the message does not require immediate interruption.",0.88,message_0005;message_0245
 msg_030,mute,promotion,"The user consistently dismisses similar marketplace promotions, indicating low interest.",0.89,message_0115;message_0335
@@ -42,7 +42,7 @@ msg_109,mute,scam,The message attempts to instruct the router and contains a sus
 msg_108,mute,scam,Safety gate: sender domain chase-secure-alert.com does not match official chase.com; account unverified; account only 24d old,0.91,message_0094;message_0093
 msg_019,mute,scam,Safety gate: sender domain chase-secure-alert.com does not match official chase.com; account unverified; account only 24d old,0.91,message_0277;message_0093
 msg_088,mute,promotion,"The user has consistently dismissed similar jacket offers from this group, indicating low interest.",0.89,message_0224;message_0025
-msg_056,digest,unknown,Model output was not valid JSON; used a safe fallback decision.,0.85,message_0054;message_0225
+msg_056,notify,personal,Direct mention with a time-sensitive request that needs immediate confirmation despite the group being muted.,0.89,message_0167;message_0168
 msg_027,digest,promotion,"The user has opened similar travel promotions before and allows promotions, so it's potentially relevant but not urgent.",0.88,message_0007;message_0033
 msg_050,notify,business_update,"The user has previously opened and replied to similar health updates from this sender, indicating the message is relevant and may require timely attention.",0.88,message_0279;message_0278
 msg_083,digest,personal,The message is a personal request from a coworker that the user has previously engaged with but does not require immediate attention.,0.87,message_0219
@@ -69,7 +69,7 @@ msg_064,mute,scam,Safety gate: requests a credential/OTP/card detail; applies ac
 msg_103,notify,personal,"A personal contact made a time-sensitive request for the jacket, requiring a prompt response.",0.88,message_0065;message_0382
 msg_031,notify,urgent,"The sender is a coworker admin requesting timely action for a work sync, and the user typically engages with similar messages.",0.88,message_0118;message_0249
 msg_057,notify,urgent,"Direct request for immediate help on a failing build from a coworker, time-sensitive and relevant to the user's work.",0.89,message_0003;message_0059
-msg_087,mute,promotion,The user has muted the group and consistently dismisses similar promotional real estate messages.,0.89,message_0164;message_0203
+msg_087,mute,promotion,The user has muted the group and consistently dismisses similar promotional real estate messages.,0.88,message_0164;message_0203
 msg_067,notify,urgent,Admin reminder about maintenance payment deadline within 16 minutes requires immediate attention.,0.88,message_0068;message_0098
 msg_039,notify,urgent,A direct request from a group member asking for immediate action on a time-sensitive school payment.,0.88,message_0364;message_0051
 msg_082,notify,urgent,A coworker sent an urgent incident alert requiring immediate attention.,0.88,message_0218;message_0397
@@ -107,5 +107,5 @@ msg_043,notify,urgent,A time-sensitive water supply notice from the admin desk t
 msg_077,notify,urgent,"Time-sensitive school circular requiring immediate action (consent, ID card, bus list deadline).",0.88,message_0051;message_0403
 msg_081,notify,urgent,A time-sensitive school transport update about pickup gate change that may affect child pickup.,0.88,message_0217;message_0058
 msg_025,notify,business_update,"The user has previously opened and replied to similar order updates from Amazon, indicating relevance.",0.88,message_0004;message_0239
-msg_084,mute,promotion,User has opted out of promotions from HDFC Bank and this promotional offer matches previously dismissed messages.,0.89,message_0220
+msg_084,mute,promotion,User has opted out of promotions from HDFC Bank and this promotional offer matches previously dismissed messages.,0.88,message_0220
 msg_022,notify,payment,Time-sensitive payment request from the society that requires action before the 5 PM deadline.,0.88,message_0150;message_0149

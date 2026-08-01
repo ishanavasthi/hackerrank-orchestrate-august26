@@ -402,6 +402,9 @@ def _call_nvidia(ctx: MessageContext) -> tuple[str, dict]:
     payload = {
         "model": model,
         "temperature": 0,
+        # Explicit budget: without it the provider default truncated replies
+        # mid-JSON (msg_056), and the salvage path had to recover the answer.
+        "max_tokens": 1024,
         "messages": [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": build_user_prompt(ctx)},
@@ -417,20 +420,80 @@ def _call_nvidia(ctx: MessageContext) -> tuple[str, dict]:
     return text, {"model": model}
 
 
+#: Field-level salvage for output that is valid enough to read but not to parse.
+_SALVAGE = {
+    "action": r'"action"\s*:\s*"([a-z_]+)"',
+    "message_type": r'"message_type"\s*:\s*"([a-z_]+)"',
+    "reason": r'"reason"\s*:\s*"((?:[^"\\]|\\.)*)"',
+    "confidence": r'"confidence"\s*:\s*([0-9]*\.?[0-9]+)',
+}
+
+
+def _balanced_objects(text: str):
+    """Yield every brace-balanced span, string-aware, outermost-first."""
+    depth = 0
+    start = -1
+    in_string = False
+    escaped = False
+    for i, ch in enumerate(text):
+        if in_string:
+            if escaped:
+                escaped = False
+            elif ch == "\\":
+                escaped = True
+            elif ch == '"':
+                in_string = False
+            continue
+        if ch == '"':
+            in_string = True
+        elif ch == "{":
+            if depth == 0:
+                start = i
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0 and start != -1:
+                yield text[start:i + 1]
+                start = -1
+
+
 def _extract_json(text: str) -> dict:
-    """Tolerant best-effort JSON object extraction from model output.
-    Never raises — malformed output falls back to a safe Decision instead."""
+    """Tolerant JSON extraction from model output. Never raises.
+
+    Two real failures motivated this. The naive first-brace-to-last-brace scan
+    returned nothing when the reply was **truncated** mid-string (msg_056 —
+    whose salvageable content was `"action":"notify"`, the correct answer), and
+    grabbed a malformed outer span when the model **thought aloud before
+    committing** (msg_092 — `{"action: Wait, need correct key...` followed by a
+    valid object). Both were silently replaced by a constant decision.
+    """
     if not text:
         return {}
-    start = text.find("{")
-    end = text.rfind("}")
-    if start == -1 or end == -1 or end < start:
-        return {}
-    try:
-        parsed = json.loads(text[start:end + 1])
-    except json.JSONDecodeError:
-        return {}
-    return parsed if isinstance(parsed, dict) else {}
+
+    # 1. Prefer a genuinely parseable object. Later objects win: a model that
+    #    corrects itself puts the real answer last.
+    best: dict = {}
+    for span in _balanced_objects(text):
+        try:
+            parsed = json.loads(span)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(parsed, dict) and parsed.get("action"):
+            best = parsed
+    if best:
+        return best
+
+    # 2. Nothing parsed — salvage individual fields from the raw text. A
+    #    truncated reply still carries the decision in its first few keys.
+    salvaged: dict = {}
+    for key, pattern in _SALVAGE.items():
+        match = re.search(pattern, text)
+        if match:
+            salvaged[key] = match.group(1)
+    ids = re.search(r'"evidence_message_ids"\s*:\s*\[([^\]]*)\]', text)
+    if ids:
+        salvaged["evidence_message_ids"] = re.findall(r'"([^"]+)"', ids.group(1))
+    return salvaged if salvaged.get("action") else {}
 
 
 def _coerce_confidence(value) -> Optional[float]:
@@ -545,6 +608,17 @@ def _apply_m4(ctx: MessageContext, decision: Decision) -> Decision:
     return decision
 
 
+def _rules_fallback(ctx: MessageContext) -> Decision:
+    """Deterministic rules decision, used when the model output cannot be read."""
+    try:
+        from personalize import personalize      # noqa: PLC0415
+    except ImportError:
+        from code.personalize import personalize  # noqa: PLC0415
+    decision = personalize(ctx)
+    decision.reason = f"[rules fallback: model output unreadable] {decision.reason}"
+    return decision
+
+
 def _route_llm(ctx: MessageContext, provider: str, call_fn) -> Decision:
     message_id = ctx.message.message_id
     cached = _load_cache(provider, message_id)
@@ -553,7 +627,14 @@ def _route_llm(ctx: MessageContext, provider: str, call_fn) -> Decision:
 
     text, meta = call_fn(ctx)  # RuntimeError on missing key propagates, by design
     raw = _extract_json(text)
-    decision = _validate_decision(raw, message_id)
+    if not raw:
+        # Unparseable and unsalvageable. Falling back to a constant
+        # digest/unknown silently answered the spec's own carve-out example
+        # with an error handler. We have a working rules engine — use it, and
+        # say so in the reason so the degradation is visible in the output.
+        decision = _rules_fallback(ctx)
+    else:
+        decision = _validate_decision(raw, message_id)
     _save_cache(provider, message_id, {
         "action": decision.action,
         "message_type": decision.message_type,

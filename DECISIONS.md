@@ -98,7 +98,7 @@ Alternatives considered: A fixed threshold such as "more than 10 notifications t
 Why: Per-user medians in `daily_notification_summary` run from 2/day to 12/day. Seven notifications is a heavy day for the 2/day user and a quiet one for the 12/day user, so any global constant is simultaneously too strict for one population and inert for the other.
 Trade-off / what we gave up: Needs at least five days of history per user or the signal is skipped, so it silently does nothing for sparse users. It is also the weakest signal in the stage and fires rarely.
 
-## Known gap: `spam` is never emitted
+## Resolved: `spam` is not implementable on this dataset [was: known gap]
 Decision: Recorded rather than fixed. Every risk row currently classifies as `scam`; nothing produces `spam`.
 Alternatives considered: Forcing a split by routing bulk promotional risk to `spam`.
 Why: The gate fires on deception, and everything it caught in this dataset is deception rather than bulk nuisance. Unwanted promotions are handled by personalization as `mute`/`promotion`, which is the more accurate label. Manufacturing a `spam` bucket to fill the enum would mean mislabelling rows to look thorough.
@@ -133,6 +133,30 @@ Decision: All provider calls go through `code/net.py`, which retries 429 and 5xx
 Alternatives considered: Letting the exception propagate, which is what the original code did.
 Why: A single `HTTP 503` from Anthropic aborted a 110-message gate run partway through and discarded every uncached call before it. Provider APIs return 429/5xx routinely under load, so this is a normal operating condition rather than an exceptional one. Retrying is safe precisely because every call site is idempotent and cached by `message_id`.
 Trade-off / what we gave up: A genuinely broken request now takes four attempts and up to ~30 seconds to surface. Non-retryable 4xx statuses are excluded so a malformed request still fails fast.
+
+## A decision produced by an error handler is a bug, not a fallback
+Decision: No shipped row may carry a decision that came from an error path. `code/edge_cases.py` asserts it, and unparseable model output now falls back to the deterministic rules decision with the degradation stated in the `reason`, rather than to a constant.
+Alternatives considered: The previous behaviour — substitute `digest`/`unknown`/0.5 and continue.
+Why: Two rows were silently answered by the error handler, and one of them was `msg_056`, the spec's own carve-out example. Every other check passed: the contract validator was green, the M2 gate was green, `output.csv` was valid. Nothing in the pipeline distinguishes "we decided digest" from "we failed to read the model and defaulted to digest". Worse, the model had answered correctly — its reply began `{"action":"notify"` and was truncated mid-string, so the right answer was discarded by a naive first-brace-to-last-brace parse. `_extract_json` now prefers the last parseable balanced object (handling a model that thinks aloud then commits) and salvages individual fields from truncated text.
+Trade-off / what we gave up: Field salvage will accept a partial reply the model might have revised had it finished. Judged clearly better than discarding a correct answer, and the rules fallback beneath it is a working system rather than a constant.
+
+## Resolved: `spam` cannot be triggered on this dataset
+Decision: Do not implement a `spam` rule. Recorded as resolved-negative.
+Alternatives considered: Emitting `spam` for opted-out promotional blasts, which the sample labels do use (`sample_msg_043`).
+Why: The boundary is derivable — `sample_msg_043` is `spam` from an unverified sender with 23 reports and an `ignored_loan_message` relationship, while `sample_msg_015` is `promotion` from a verified sender with 6 reports and `food_promotions_opted_out`. So `spam` needs sender disrepute, not merely unwanted marketing. Both discriminators find nothing in the test set: of the 23 gate-cleared business rows exactly one is unverified and it has 0 reports, and the test set contains only `*_opted_out` relationships with no `ignored_*` at all. Every heavily-reported unverified sender is already gate-muted as `scam`. The rule would have no trigger, and the rows it might touch already match the labelled `promotion` precedent.
+Trade-off / what we gave up: If the hidden labels apply `spam` on a criterion we have not inferred, we lose those rows. Accepted rather than shipping a rule fitted to a single labelled example. This is the second appealing gap in this project that evaporated on inspection, after the brand-mismatch episode.
+
+## Incomplete media is flagged, not hidden
+Decision: `media_cache` marks a transcript that begins mid-sentence as `truncated`; the flag rides on `Signals` and reduces confidence.
+Alternatives considered: Ignoring it (the prior state); or dropping the media text entirely for those rows.
+Why: Two transcripts lost their opening audio, and the two affected rows were shipping at 0.89 — indistinguishable from decisions made on complete content. Dropping the text would be worse: the surviving content is enough to route on, and both rows are muted promotions where the partial text is sufficient. Putting the flag on `Signals` rather than threading a parameter avoids adding call sites, which is how the urgency flag drifted across nine branches.
+Trade-off / what we gave up: The detector is a heuristic — a transcript legitimately starting with a lowercase word would be flagged. It fires on 2 of 13 voice notes, and the cost of a false flag is 0.01 of confidence.
+
+## One harness, one exit code
+Decision: `code/eval_harness.py` runs contract validation, the M2 gate, the M5 edge cases and the sample smoke test, returning a single exit code.
+Alternatives considered: Leaving four separate scripts documented in the README.
+Why: The silent-fallback bug survived because each individual check passed and nobody ran them together against the same artifact. A single command makes "did anything regress" answerable in one step. The smoke test is explicitly a floor rather than a target — it warns below 60% action accuracy and otherwise just prints, so it can never become something we tune toward.
+Trade-off / what we gave up: The harness re-runs the sample scoring, which on an LLM provider means live calls; `--skip-smoke` exists for that. It also does not run the pipeline itself, so it validates the artifact on disk rather than regenerating it.
 
 ## Blindness is enforced structurally, not by intention
 Decision: The gate reads a `SafetyContext` that enumerates every field it may see, built by one function that touches only message/media/business/group. An `assert_blind()` tripwire re-checks the rendered prompt against 21 engagement field names, and the M2 gate runs it over all 110 prompts.

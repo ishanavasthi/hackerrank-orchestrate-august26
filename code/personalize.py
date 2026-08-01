@@ -113,6 +113,7 @@ class Signals:
     load_high: bool = False
     unknown_sender: bool = False
     heavily_forwarded: bool = False
+    media_truncated: bool = False
     notes: list[str] = field(default_factory=list)
 
 
@@ -141,6 +142,10 @@ def signals_for(ctx: MessageContext) -> Signals:
     m = ctx.message
     text = f"{m.message_text}\n{ctx.media.text if (ctx.media and ctx.media.available) else ''}"
     s = Signals()
+
+    if ctx.media is not None and getattr(ctx.media, "truncated", False):
+        s.media_truncated = True
+        s.notes.append("media transcript is incomplete")
 
     s.urgent = _hit(_URGENT, text)
     s.defuses_urgency = _hit(_NO_REPLY_NEEDED, text)

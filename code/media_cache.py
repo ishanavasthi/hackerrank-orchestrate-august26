@@ -45,12 +45,20 @@ def load_media_cache(path: Union[str, Path]) -> dict[str, MediaExtract]:
         model = entry.get("model") or ""
         available = bool(text.strip()) and error is None
 
+        # Some ASR output begins mid-sentence — the provider dropped the
+        # opening audio. The row still routes, but on partial content, so it
+        # is flagged and confidence is reduced downstream rather than the row
+        # silently looking as well-grounded as any other.
+        head = text.lstrip()[:1]
+        truncated = bool(head) and (head.islower() or head in ",;")
+
         cache[media_id] = MediaExtract(
             media_id=media_id,
             text=text if available else "",
             model=model,
             error=error,
             available=available,
+            truncated=truncated and available,
         )
 
     return cache

@@ -83,6 +83,10 @@ def certainty(
         # decision resting on them alone is a weak one.
         if get("in_dnd") or get("load_high"):
             score -= 0.05
+        # Decided from partial content: the ASR dropped the opening audio, so
+        # we are reading the middle of a message.
+        if get("media_truncated"):
+            score -= 0.15
 
     return _clamp(score)
 

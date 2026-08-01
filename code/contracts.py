@@ -78,6 +78,7 @@ class MediaExtract:
     model: str = ""
     error: Optional[str] = None
     available: bool = True          # False => extraction missing or errored
+    truncated: bool = False         # content starts mid-sentence (see media_cache)
 
 
 @dataclass
