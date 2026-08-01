@@ -96,12 +96,6 @@ SCAM_KEYWORDS = (
     "reattempt fee", "release package",
 )
 
-INJECTION_PATTERNS = (
-    "ignore all previous", "ignore previous instructions", "ignore the routing rules",
-    "disregard the above", "disregard previous", "mark this message as notify",
-    "mark this as notify", "mark this as urgent",
-)
-
 PROMO_KEYWORDS = (
     "% off", "percent off", "sale", "discount", "offer ends", "limited time",
     "buy now", "shop now", "book now", "deal of the day", "promo code",
@@ -151,17 +145,6 @@ def _combined_text(ctx: MessageContext) -> str:
     if ctx.media is not None and ctx.media.available and ctx.media.text:
         parts.append(ctx.media.text)
     return "\n".join(parts)
-
-
-def _domain_mismatch(ctx: MessageContext) -> bool:
-    biz = ctx.business
-    if not biz:
-        return False
-    official = (biz.get("official_domain") or "").strip().lower()
-    used = (biz.get("domain_used_by_sender") or "").strip().lower()
-    if not official or not used:
-        return False
-    return official != used
 
 
 def _mentions_user(text_lower: str, user_id: str) -> bool:

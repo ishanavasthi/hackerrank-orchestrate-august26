@@ -123,10 +123,11 @@ Ordered by risk to the submission.
    records that three transcripts begin mid-sentence. Those rows route on
    truncated content and nothing currently flags them.
 
-5. **Dead code left in `router.py`.** `INJECTION_PATTERNS` and `_domain_mismatch`
-   are now defined but unreferenced after M2 moved risk ownership to
-   `safety.py`; `SCAM_KEYWORDS` is nearly so. Harmless at runtime, but it
-   invites someone to re-enable the exact duplicate-risk bug we removed.
+5. ~~Dead code left in `router.py`.~~ **RESOLVED (P4).** `INJECTION_PATTERNS`
+   and `_domain_mismatch` were unreferenced and are removed. The earlier claim
+   that `SCAM_KEYWORDS` was "nearly" dead was wrong — it has a live use in
+   evidence selection (matching scam-like history when the type is already
+   `scam`), which is not risk classification, so it stays.
 
 6. **`code/evaluation/main.py` is an empty organizer scaffold** (0 bytes,
    committed). Either use it or leave it clearly alone; right now it looks
@@ -136,9 +137,14 @@ Ordered by risk to the submission.
    dependencies** (stdlib only, `urllib` not `requests`), which is a strength
    — but it needs stating, or a reviewer will assume something is missing.
 
-8. **The urgency-defusing guard is re-derived at three call sites.** Noted in
-   DECISIONS.md: I applied it to two and missed the greeting branch on the
-   first pass. It should be computed once in `Signals`.
+8. ~~The urgency-defusing guard is re-derived at three call sites.~~
+   **RESOLVED (P4), and it was worse than recorded.** Nine decision branches
+   read the raw `s.urgent` keyword hit instead of the defused value — so a
+   muted-group message saying "Nothing urgent" was digested rather than muted.
+   Now computed once as `Signals.really_urgent`; the raw flag is marked
+   do-not-branch-on. Latent only: no sample row exercises it, so scores are
+   unchanged (14/14 hand cases, gate PASS, 70%/47% rules, output.csv
+   byte-identical).
 
 9. **DECISIONS.md was silently overwritten once.** Two DND entries were lost
    when a parallel session rewrote the file from an older base; recovered.

@@ -93,8 +93,14 @@ class Signals:
     group_dismissal_rate: Optional[float] = None
     group_disengaged: bool = False
     is_chain: bool = False
-    urgent: bool = False
+    urgent: bool = False               # raw keyword hit — do NOT branch on this
     defuses_urgency: bool = False
+    #: The only urgency flag decision logic should read. A keyword hit that the
+    #: sender themselves defuses ("Nothing urgent", "no need to reply") is not
+    #: urgency. This used to be re-derived at each call site, and 9 of them
+    #: read the raw flag instead — so a muted-group message saying "Nothing
+    #: urgent" was digested rather than muted.
+    really_urgent: bool = False
     promo: bool = False
     promo_unwanted: bool = False
     relationship_stale: bool = False
@@ -134,6 +140,7 @@ def signals_for(ctx: MessageContext) -> Signals:
 
     s.urgent = _hit(_URGENT, text)
     s.defuses_urgency = _hit(_NO_REPLY_NEEDED, text)
+    s.really_urgent = s.urgent and not s.defuses_urgency
     s.is_chain = _hit(_CHAIN, text)
     s.promo = _hit(_PROMO, text)
     s.heavily_forwarded = (m.forwarded_count or 0) >= 5
@@ -207,11 +214,9 @@ def classify_type(ctx: MessageContext, s: Signals) -> str:
     # reply") beats a keyword hit everywhere, not just in the urgent branch:
     # msg_033 is "Good morning beta ... Call me later when free, nothing
     # urgent" and must read as a greeting, not as urgent.
-    really_urgent = s.urgent and not s.defuses_urgency
-
     if s.is_chain or s.heavily_forwarded:
         return "forward"
-    if _hit(_GREETING, text) and not really_urgent:
+    if _hit(_GREETING, text) and not s.really_urgent:
         return "greeting"
     if _hit(_PAYMENT, text):
         return "payment"
@@ -219,7 +224,7 @@ def classify_type(ctx: MessageContext, s: Signals) -> str:
         return "promotion"
     if _hit(_EVENT, text):
         return "event"
-    if really_urgent and m.conversation_type != "business":
+    if s.really_urgent and m.conversation_type != "business":
         return "urgent"
     if m.conversation_type == "business":
         return "business_update" if _hit(_TRANSACTIONAL, text) else "promotion"
@@ -243,14 +248,14 @@ def personalize(ctx: MessageContext) -> Decision:
 
     # 1. Chain letters and mass forwards are low value regardless of source.
     #    This is the msg_040 case: a direct mention does not rescue a chain letter.
-    if s.is_chain or (s.heavily_forwarded and not s.urgent):
+    if s.is_chain or (s.heavily_forwarded and not s.really_urgent):
         action = "mute"
         why.append("mass-forwarded chain content with no personal relevance")
         why += s.notes[:1]
 
     # 2. The spec's carve-out: a muted group can still carry an urgent direct
     #    mention (msg_056 — "@u_001 doctor appointment moved to 6 PM").
-    elif s.direct_mention and s.urgent:
+    elif s.direct_mention and s.really_urgent:
         action = "notify"
         why.append("directly addresses the recipient with time-sensitive information")
         if s.group_muted:
@@ -264,21 +269,21 @@ def personalize(ctx: MessageContext) -> Decision:
 
     # 4. Muted group, nothing addressed to the user.
     elif s.group_muted:
-        action = "mute" if not s.urgent else "digest"
+        action = "mute" if not s.really_urgent else "digest"
         why.append("user has muted this group and the message is not addressed to them")
 
     # 5. Disengaged group — the user reads little and dismisses most of it.
-    elif s.group_disengaged and not s.urgent:
+    elif s.group_disengaged and not s.really_urgent:
         action = "digest"
         why.append(f"user dismisses most notifications from this group")
 
     # 6. Stale business relationship.
-    elif s.relationship_stale and not s.urgent:
+    elif s.relationship_stale and not s.really_urgent:
         action = "digest" if not s.promo else "mute"
         why.append("dormant relationship with this sender")
 
     # 7. Genuinely urgent, and the sender is not disqualified.
-    elif s.urgent and not s.defuses_urgency:
+    elif s.really_urgent:
         action = "notify"
         why.append("time-sensitive and expects a response now")
 
@@ -308,20 +313,20 @@ def personalize(ctx: MessageContext) -> Decision:
     # DND: tie-breaker, with the urgency carve-out. See DECISIONS.md — the
     # historical data does not support a strong rule, so it only demotes a
     # notify that is not itself urgent.
-    if action == "notify" and s.in_dnd and not (s.urgent or s.direct_mention):
+    if action == "notify" and s.in_dnd and not (s.really_urgent or s.direct_mention):
         action = "digest"
         why.append("held for the digest because it arrived during quiet hours")
 
     # Notification fatigue raises the bar for interrupting, but never
     # suppresses something urgent.
-    if action == "notify" and s.load_high and not s.urgent:
+    if action == "notify" and s.load_high and not s.really_urgent:
         action = "digest"
         why.append("user is already above their normal notification volume")
 
     confidence = 0.86 if action == "notify" else 0.83 if action == "mute" else 0.80
     if mtype == "unknown":
         confidence = 0.78
-    if s.direct_mention and s.urgent:
+    if s.direct_mention and s.really_urgent:
         confidence = 0.89
 
     return Decision(
@@ -376,7 +381,7 @@ def render_signals(ctx: MessageContext) -> str:
         ("user has MUTED this group", s.group_muted),
         ("user is disengaged from this group", s.group_disengaged),
         ("mass-forwarded / chain content", s.is_chain or s.heavily_forwarded),
-        ("time-sensitive", s.urgent and not s.defuses_urgency),
+        ("time-sensitive", s.really_urgent),
         ("sender says no immediate response needed", s.defuses_urgency),
         ("promotional", s.promo),
         ("user does NOT accept promotions from this sender", s.promo_unwanted),
