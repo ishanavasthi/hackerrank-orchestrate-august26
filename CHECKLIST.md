@@ -83,6 +83,16 @@ DECISIONS.md we do not tune against them.
 On the full 110 rows the shipping path gives notify 34 / digest 25 / mute 51,
 with `unknown` collapsing from 15 to 2 and zero dangling evidence ids.
 
+**No systematic error remains.** The 2 action misses and 5 message_type misses
+on the shipping path are all distinct one-offs (`event`->`urgent`,
+`event`->`business_update`, `personal`->`event`, `spam`->`promotion`,
+`unknown`->`personal`). The planned "P3" accuracy pass was defined against the
+rules path, where the error WAS systematic (6 of 9 action misses in one
+direction, 47% type accuracy). Switching the personalization engine resolved
+that, so P3 was dropped rather than executed: chasing scattered one-offs across
+30 rows is the per-row fitting DECISIONS.md commits against, and would likely
+hurt the hidden set.
+
 ---
 
 ## 4. Gaps and misses found in earlier work
@@ -94,11 +104,13 @@ Ordered by risk to the submission.
    verification, configuration, and known limitations. The root `README.md`
    now links to it; the organizer's content was not modified.
 
-2. **`spam` is still never emitted — confirmed to cost us.** It was
-   logged in DECISIONS.md as a coin-flip on the grader's taxonomy. The sample
-   scoring settles it: `sample_msg_043` is labelled `mute`/`spam` and we
-   produce `digest`/`promotion`. The ground truth does use `spam` for
-   promotional blasts. **Resolve in M5.**
+2. **`spam` is still never emitted — confirmed to cost us, deferred to M5.**
+   The sample scoring settles the taxonomy question: ground truth does use
+   `spam` for promotional blasts, and we produce `promotion` instead. On the
+   shipping path this is **1 of 5 message_type misses (~3% of rows)**.
+   Deferred deliberately: it is a taxonomy question (when does an opted-out
+   promotional blast become `spam` rather than `mute`/`promotion`?) rather
+   than an accuracy patch, so it belongs with the M5 edge-case sweep.
 
 3. ~~The provider paths have never executed.~~ **RESOLVED (P1).** Both now
    run. Findings: the LLM *safety* classifier fails the M2 gate (6 false
