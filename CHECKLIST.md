@@ -5,7 +5,11 @@ running the command shown, not asserted from memory.
 
 **Maintenance rule:** every non-trivial trade-off, known weakness or accepted
 cost goes in §7 as it is made — not at the end. §7 is the polish backlog we
-work through once implementation is complete. Last verified against
+work through once implementation is complete.
+
+**Active work plan:** see [`NEXT.md`](./NEXT.md) for the ordered subset of §7
+that warrants action now, plus the submission-integrity items that are not
+trade-offs at all. Last verified against
 commit `d00dae6`.
 
 ---
@@ -224,9 +228,9 @@ tell whether it is a problem.
 
 | # | Item | Why it exists | What fixing looks like |
 |---|---|---|---|
-| A1 | **[GAP]** `spam` is never emitted; opted-out promotional blasts come out `mute`/`promotion` | The gate fires on deception only; promo handling lives in personalization | Decide the taxonomy boundary and emit `spam` for unsolicited bulk with consent violation. Confirmed to cost rows (`sample_msg_043`) |
+| A1 | ~~`spam` is never emitted~~ **RESOLVED-NEGATIVE (M5)** | Boundary is sender disrepute, not unwanted marketing | **Do not implement** — zero triggers in the test set on either discriminator |
 | A2 | **[GAP]** Rules fallback is materially weaker than the shipping path (70%/47% vs 93%/83%) | It is a heuristic floor, not a peer | Either accept it as a floor explicitly, or port the LLM's better `message_type` discrimination into rules |
-| A3 | **[GAP]** Three voice transcripts begin mid-sentence; those rows route on truncated content, unflagged | Groq returned partial output; recorded in `cache/asr_comparison.md` | Flag truncation in `media_cache`, surface it in the prompt, and lower confidence on affected rows |
+| A3 | ~~Voice transcripts begin mid-sentence, unflagged~~ **RESOLVED (M5)** | 2 transcripts (not 3) lost opening audio | Done: `media_cache` flags them, confidence penalised on the 2 affected rows |
 | A4 | **[GAP]** Risk no longer has exactly one owner | LLM personalization labels `scam` on 7 gate-cleared rows (all groups with no business record) | Either accept it as a documented second net, or move those detections into the deterministic gate |
 | A5 | **[ACCEPTED]** Safety gate is biased toward false positives | Blindness is what enforces "muted regardless of usual engagement"; it cannot use a long trust relationship to clear a message | Only revisit if false mutes are observed on real trusted senders — currently 0 of 23 |
 | A6 | **[ACCEPTED]** Urgency requires an explicit anchor; unanchored urgent phrasing is missed | Bare `now`/`today` produced false positives on "Smile today" | Broaden anchors only with evidence; the loose version was measurably worse |
