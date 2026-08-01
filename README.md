@@ -14,6 +14,20 @@ Read [`problem_statement.md`](./problem_statement.md) for the full task spec, in
 
 ---
 
+## Solution
+
+This fork contains a working solution. Setup and run instructions:
+**[`code/README.md`](./code/README.md)**.
+
+```bash
+python code/main.py --provider stub   # offline, no API keys required
+```
+
+Design rationale is in [`DECISIONS.md`](./DECISIONS.md); verified status and
+known gaps are in [`CHECKLIST.md`](./CHECKLIST.md).
+
+---
+
 ## Repository Layout
 
 ```text

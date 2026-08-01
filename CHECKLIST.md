@@ -21,7 +21,7 @@ commit `17e97a5`.
 | No hardcoded labels | PASS | no sample label is copied to any test row (id namespaces disjoint) |
 | Secrets from environment only | PASS | `git grep` for key-shaped strings returns nothing; `.env` untracked |
 | Deterministic | PASS | two consecutive runs produce byte-identical `output.csv` |
-| **Setup/run instructions in the package** | **MISSING** | §6.3 requires it; `README.md` is the organizer's, not ours |
+| Setup/run instructions in the package | PASS | `code/README.md`; root README links to it |
 
 **Runs with zero API keys.** Verified with every provider variable unset:
 the default `stub`/rules path produces a valid `output.csv` offline. This is
@@ -89,9 +89,10 @@ with `unknown` collapsing from 15 to 2 and zero dangling evidence ids.
 
 Ordered by risk to the submission.
 
-1. **No setup/run instructions for our solution.** §6.3 of AGENTS.md and the
-   README submission checklist both require them. `README.md` is the
-   organizer's file. **This is a submission blocker, not a nicety.**
+1. ~~No setup/run instructions for our solution.~~ **RESOLVED (P2).**
+   `code/README.md` covers requirements, quick start, architecture,
+   verification, configuration, and known limitations. The root `README.md`
+   now links to it; the organizer's content was not modified.
 
 2. **`spam` is still never emitted — confirmed to cost us.** It was
    logged in DECISIONS.md as a coin-flip on the grader's taxonomy. The sample
@@ -168,3 +169,14 @@ python code/score_samples.py                     # rules   -> 70% / 47%
 python code/score_samples.py --provider nvidia   # shipping -> 93% / 83%
 md5 -q output.csv && python code/main.py --provider nvidia >/dev/null && md5 -q output.csv
 ```
+
+12. **Text/image brand mismatch — investigated, disproved, closed.** The LLM
+    safety gate flagged msg_049 (Shopee sender, JioMart image) and msg_066
+    (Target sender, Amazon image), and I twice recorded this as a real signal
+    worth implementing in the rules gate. It is not. `img_010` is used by
+    Myntra in `sample_msg_047`, ground truth `mute`/`promotion`, and reused by
+    Target in msg_065/msg_066; the only other brand-mismatched sample,
+    `sample_msg_048`, is `digest`/`business_update`. The dataset recycles stock
+    imagery across unrelated senders, so mismatch is a construction artifact.
+    Building the rule would have pushed msg_066 to `scam` against the only
+    labelled example of that image. **Do not implement. Do not revisit in M5.**
