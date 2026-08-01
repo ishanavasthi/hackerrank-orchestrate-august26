@@ -1,0 +1,10 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "A personal contact reports a found passport needing pickup before 6pm, which is time-sensitive.",
+  "confidence": 0.85,
+  "evidence_message_ids": [],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"urgent\",\n  \"reason\": \"A personal contact reports a found passport needing pickup before 6pm, which is time-sensitive.\",\n  \"confidence\": 0.85,\n  \"evidence_message_ids\": []\n}"
+}

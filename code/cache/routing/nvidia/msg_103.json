@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "personal",
+  "reason": "A personal contact made a time-sensitive request for the jacket, requiring a prompt response.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0231",
+    "message_0049"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"personal\",\n  \"reason\": \"A personal contact made a time-sensitive request for the jacket, requiring a prompt response.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0231\", \"message_0049\"]\n}"
+}

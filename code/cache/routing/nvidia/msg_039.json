@@ -1,0 +1,12 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "A direct request from a group member asking for immediate action on a time-sensitive school payment.",
+  "confidence": 0.9,
+  "evidence_message_ids": [
+    "message_0051"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"notify\", \"message_type\": \"urgent\", \"reason\": \"A direct request from a group member asking for immediate action on a time-sensitive school payment.\", \"confidence\": 0.9, \"evidence_message_ids\": [\"message_0051\"]}"
+}

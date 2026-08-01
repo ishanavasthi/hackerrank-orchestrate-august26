@@ -1,0 +1,12 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "A society admin sent a time-sensitive payment reminder that the user typically opens and replies to.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0029"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"notify\", \"message_type\": \"urgent\", \"reason\": \"A society admin sent a time-sensitive payment reminder that the user typically opens and replies to.\", \"confidence\": 0.86, \"evidence_message_ids\": [\"message_0029\"]}"
+}

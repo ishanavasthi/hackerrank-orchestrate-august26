@@ -1,0 +1,12 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "The sender informs of an imminent gate closure requiring immediate action, matching past opened maintenance notices.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0216"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"notify\", \"message_type\": \"urgent\", \"reason\": \"The sender informs of an imminent gate closure requiring immediate action, matching past opened maintenance notices.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0216\"]}"
+}

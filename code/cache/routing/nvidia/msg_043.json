@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "A time-sensitive water supply notice from the admin desk that requires immediate action.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0129",
+    "message_0216"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"urgent\",\n  \"reason\": \"A time-sensitive water supply notice from the admin desk that requires immediate action.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0129\", \"message_0216\"]\n}"
+}

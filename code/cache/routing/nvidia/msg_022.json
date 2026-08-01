@@ -1,0 +1,12 @@
+{
+  "action": "notify",
+  "message_type": "payment",
+  "reason": "Time-sensitive payment request from the society that requires action before the 5 PM deadline.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0029"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"payment\",\n  \"reason\": \"Time-sensitive payment request from the society that requires action before the 5 PM deadline.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0029\"]\n}"
+}

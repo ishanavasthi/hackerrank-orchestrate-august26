@@ -1,0 +1,12 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "A time-sensitive water supply notice that requires immediate action to fill drinking water.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0057"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"notify\", \"message_type\": \"urgent\", \"reason\": \"A time-sensitive water supply notice that requires immediate action to fill drinking water.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0057\"]}"
+}

@@ -1,0 +1,13 @@
+{
+  "action": "digest",
+  "message_type": "event",
+  "reason": "The message is a scheduled fire alarm test notice and missing person alert that is useful but not time-critical, so it can wait.",
+  "confidence": 0.82,
+  "evidence_message_ids": [
+    "message_0029",
+    "message_0129"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"event\", \"reason\": \"The message is a scheduled fire alarm test notice and missing person alert that is useful but not time-critical, so it can wait.\", \"confidence\": 0.82, \"evidence_message_ids\": [\"message_0029\", \"message_0129\"]}"
+}

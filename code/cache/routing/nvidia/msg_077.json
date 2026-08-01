@@ -1,0 +1,12 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "Time-sensitive school circular requiring immediate action (consent, ID card, bus list deadline).",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0051"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"urgent\",\n  \"reason\": \"Time-sensitive school circular requiring immediate action (consent, ID card, bus list deadline).\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0051\"]\n}"
+}

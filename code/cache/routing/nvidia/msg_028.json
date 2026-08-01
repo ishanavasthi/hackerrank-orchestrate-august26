@@ -1,0 +1,13 @@
+{
+  "action": "mute",
+  "message_type": "promotion",
+  "reason": "User has opted out of promotions from this sender and has repeatedly dismissed similar travel promo messages.",
+  "confidence": 0.89,
+  "evidence_message_ids": [
+    "message_0034",
+    "message_0258"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"promotion\", \"reason\": \"User has opted out of promotions from this sender and has repeatedly dismissed similar travel promo messages.\", \"confidence\": 0.89, \"evidence_message_ids\": [\"message_0034\", \"message_0258\"]}"
+}

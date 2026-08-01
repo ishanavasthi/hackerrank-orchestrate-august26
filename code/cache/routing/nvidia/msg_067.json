@@ -1,0 +1,12 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "Admin reminder about maintenance payment deadline within 16 minutes requires immediate attention.",
+  "confidence": 0.91,
+  "evidence_message_ids": [
+    "message_0029"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"urgent\",\n  \"reason\": \"Admin reminder about maintenance payment deadline within 16 minutes requires immediate attention.\",\n  \"confidence\": 0.91,\n  \"evidence_message_ids\": [\"message_0029\"]\n}"
+}

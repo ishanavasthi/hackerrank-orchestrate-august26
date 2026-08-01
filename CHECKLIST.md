@@ -67,28 +67,25 @@ the submission's floor — see DECISIONS.md.
 
 ---
 
-## 3. Measured quality — the number we did not have until now
+## 3. Measured quality
 
-`python code/score_samples.py`
+`python code/score_samples.py [--provider nvidia]`
 
-```
-action        : 21/30 = 70%
-message_type  : 14/30 = 47%
-```
+| path | action | message_type |
+|---|---|---|
+| rules (offline fallback) | 70% | 47% |
+| **rules gate + NIM personalization (shipping)** | **93%** | **83%** |
+
+The LLM corrects the systematic conservatism the rules path showed: 8 of 9
+notifies correct against 3 of 9. Caveat unchanged — 30 rows is thin, and per
+DECISIONS.md we do not tune against them.
 
 Read this with the caveat from DECISIONS.md: 30 rows is thin and the sample
 action split (9/11/10) is too uniform to be the real class balance. Per-row
 correctness is signal; the distribution is not.
 
-**The dominant error is systematic, not random: 6 of 9 action misses are
-`notify` → `digest`.** The ground truth interrupts the user considerably more
-readily than we do — it notifies for a packed order, a school circular, and
-"@u_004 when you get 5 mins can you call? Nothing dramatic" (which our
-defusing-language rule explicitly demotes). Our conservatism is costing roughly
-20 points of action accuracy and is the highest-value thing to fix in M4/M5.
-
-**`message_type` at 47% is the weaker half** and has had no dedicated work at
-all — it has been a by-product of the action rules rather than a target.
+On the full 110 rows the shipping path gives notify 34 / digest 25 / mute 51,
+with `unknown` collapsing from 15 to 2 and zero dangling evidence ids.
 
 ---
 
@@ -100,16 +97,18 @@ Ordered by risk to the submission.
    README submission checklist both require them. `README.md` is the
    organizer's file. **This is a submission blocker, not a nicety.**
 
-2. **`spam` is never emitted — and this is now confirmed to cost us.** It was
+2. **`spam` is still never emitted — confirmed to cost us.** It was
    logged in DECISIONS.md as a coin-flip on the grader's taxonomy. The sample
    scoring settles it: `sample_msg_043` is labelled `mute`/`spam` and we
    produce `digest`/`promotion`. The ground truth does use `spam` for
    promotional blasts. **Resolve in M5.**
 
-3. **The `anthropic` and `nvidia` provider paths have never executed.** No
-   `code/cache/routing/` or `code/cache/safety/` directory exists, which proves
-   no live call has ever been made. Both code paths are unexercised and may be
-   broken. Everything measured so far is the offline rules path.
+3. ~~The provider paths have never executed.~~ **RESOLVED (P1).** Both now
+   run. Findings: the LLM *safety* classifier fails the M2 gate (6 false
+   positives on 23 trusted senders), so the gate stays deterministic; the LLM
+   *personalization* is far better (93%/83% vs 70%/47%) and is now the
+   shipping path. Retry/backoff added after a 503 and then a Python-3.9
+   `socket.timeout` each killed a full run.
 
 4. **Media-driven rows may be weaker than they look.** `code/cache/asr_comparison.md`
    records that three transcripts begin mid-sentence. Those rows route on
@@ -146,4 +145,30 @@ python code/validate.py output.csv   # standalone grader-style check
 python code/gate_m2.py         # M2 safety gate assertions         -> PASS
 python code/score_samples.py   # accuracy vs 30 labelled rows      -> 70% / 47%
 md5 -q output.csv && python code/main.py >/dev/null && md5 -q output.csv   # determinism
+```
+
+10. **Risk no longer has exactly one owner — and the DECISIONS.md entry saying
+    it does is now inaccurate.** The LLM personalization stage labelled 7
+    gate-cleared rows as `scam` (QR-payment demands, phishing links, a
+    prompt-injection attempt). All 7 are group messages with no business
+    record — precisely where the structural gate is blind — so these look like
+    genuine gate misses the LLM caught, not false positives. The safety
+    property still holds end-to-end: **0 of 23 trusted senders are labelled
+    scam/spam by any stage.** But the clean ownership story is no longer
+    literally true and should be restated rather than defended.
+
+11. **Confidence is out of band on the LLM path.** Two rows come back at 0.50
+    against a 0.78 sample floor — one of them `msg_056`, the spec carve-out
+    case. Confidence calibration is M4; this is the concrete evidence for it.
+
+---
+
+## 6. Verified end-to-end assertions
+
+```
+110 rows, exact columns, all enums valid, 0 dangling evidence ids
+0 of 23 trusted senders labelled scam/spam by any stage
+M2 gate: 8/8 must-mute, 0/23 false positives, blindness over 110 prompts
+determinism: rerun replays cache byte-identically
+offline: runs with every provider key unset
 ```

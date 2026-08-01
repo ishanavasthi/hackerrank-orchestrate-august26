@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "event",
+  "reason": "The message is a casual plan discussion with no immediate action needed, similar to past opened messages.",
+  "confidence": 0.82,
+  "evidence_message_ids": [
+    "message_0191"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"digest\",\n  \"message_type\": \"event\",\n  \"reason\": \"The message is a casual plan discussion with no immediate action needed, similar to past opened messages.\",\n  \"confidence\": 0.82,\n  \"evidence_message_ids\": [\"message_0191\"]\n}"
+}

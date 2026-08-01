@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "The sender is a coworker admin requesting timely action for a work sync, and the user typically engages with similar messages.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0006",
+    "message_0118"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"urgent\",\n  \"reason\": \"The sender is a coworker admin requesting timely action for a work sync, and the user typically engages with similar messages.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0006\", \"message_0118\"]\n}"
+}

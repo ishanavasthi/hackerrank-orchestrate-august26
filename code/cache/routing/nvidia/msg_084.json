@@ -1,0 +1,12 @@
+{
+  "action": "mute",
+  "message_type": "promotion",
+  "reason": "User has opted out of promotions from HDFC Bank and this promotional offer matches previously dismissed messages.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0220"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"promotion\", \"reason\": \"User has opted out of promotions from HDFC Bank and this promotional offer matches previously dismissed messages.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0220\"]}"
+}

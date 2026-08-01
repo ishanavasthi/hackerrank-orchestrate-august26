@@ -1,0 +1,13 @@
+{
+  "action": "digest",
+  "message_type": "promotion",
+  "reason": "The message is a promotional update from a verified business that the user has previously engaged with and does not require immediate action.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0125",
+    "message_0126"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"promotion\", \"reason\": \"The message is a promotional update from a verified business that the user has previously engaged with and does not require immediate action.\", \"confidence\": 0.86, \"evidence_message_ids\": [\"message_0125\", \"message_0126\"]}"
+}

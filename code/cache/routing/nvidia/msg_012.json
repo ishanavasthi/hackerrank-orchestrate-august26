@@ -1,0 +1,13 @@
+{
+  "action": "mute",
+  "message_type": "forward",
+  "reason": "The user has repeatedly dismissed similar forwarded health‑tip chains that ask for sharing.",
+  "confidence": 0.86,
+  "evidence_message_ids": [
+    "message_0194",
+    "message_0080"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"forward\", \"reason\": \"The user has repeatedly dismissed similar forwarded health‑tip chains that ask for sharing.\", \"confidence\": 0.86, \"evidence_message_ids\": [\"message_0194\", \"message_0080\"]}"
+}

@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "forward",
+  "reason": "The message is a forwarded market update with research links that is useful but not time‑sensitive.",
+  "confidence": 0.82,
+  "evidence_message_ids": [
+    "message_0253"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"forward\", \"reason\": \"The message is a forwarded market update with research links that is useful but not time‑sensitive.\", \"confidence\": 0.82, \"evidence_message_ids\": [\"message_0253\"]}"
+}

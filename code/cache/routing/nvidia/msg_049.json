@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "business_update",
+  "reason": "A verified Shopee business message about a time-sensitive return pickup today that the user usually opens and acts on.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0153",
+    "message_0291"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"business_update\",\n  \"reason\": \"A verified Shopee business message about a time-sensitive return pickup today that the user usually opens and acts on.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0153\", \"message_0291\"]\n}"
+}

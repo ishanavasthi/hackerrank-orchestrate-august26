@@ -1,0 +1,13 @@
+{
+  "action": "mute",
+  "message_type": "scam",
+  "reason": "The message urges immediate verification via a suspicious link, matching known phishing patterns the user has ignored/reported.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0201",
+    "message_0202"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"scam\", \"reason\": \"The message urges immediate verification via a suspicious link, matching known phishing patterns the user has ignored/reported.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0201\", \"message_0202\"]}"
+}

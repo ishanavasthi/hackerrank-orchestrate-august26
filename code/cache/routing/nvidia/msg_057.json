@@ -1,0 +1,12 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "Direct request for immediate help on a failing build from a coworker, time-sensitive and relevant to the user's work.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0003"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"notify\",\n  \"message_type\": \"urgent\",\n  \"reason\": \"Direct request for immediate help on a failing build from a coworker, time-sensitive and relevant to the user's work.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0003\"]\n}"
+}

@@ -1,0 +1,13 @@
+{
+  "action": "mute",
+  "message_type": "scam",
+  "reason": "The message urges payment of a processing fee via a link, a typical loan scam pattern.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0220",
+    "message_0163"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"scam\", \"reason\": \"The message urges payment of a processing fee via a link, a typical loan scam pattern.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0220\", \"message_0163\"]}"
+}

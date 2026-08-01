@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "business_update",
+  "reason": "The message is a routine survey request from a verified business that does not require immediate attention.",
+  "confidence": 0.82,
+  "evidence_message_ids": [
+    "message_0138"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"business_update\", \"reason\": \"The message is a routine survey request from a verified business that does not require immediate attention.\", \"confidence\": 0.82, \"evidence_message_ids\": [\"message_0138\"]}"
+}

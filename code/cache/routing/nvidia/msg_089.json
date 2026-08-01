@@ -1,0 +1,10 @@
+{
+  "action": "notify",
+  "message_type": "personal",
+  "reason": "A personal contact informed about a lost item that needs to be retrieved before 7 PM today.",
+  "confidence": 0.88,
+  "evidence_message_ids": [],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\":\"notify\",\"message_type\":\"personal\",\"reason\":\"A personal contact informed about a lost item that needs to be retrieved before 7 PM today.\",\"confidence\":0.88,\"evidence_message_ids\":[]}"
+}

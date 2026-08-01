@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "A time-sensitive school transport update about pickup gate change that may affect child pickup.",
+  "confidence": 0.82,
+  "evidence_message_ids": [
+    "message_0057",
+    "message_0105"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"notify\", \"message_type\": \"urgent\", \"reason\": \"A time-sensitive school transport update about pickup gate change that may affect child pickup.\", \"confidence\": 0.82, \"evidence_message_ids\": [\"message_0057\", \"message_0105\"]}"
+}

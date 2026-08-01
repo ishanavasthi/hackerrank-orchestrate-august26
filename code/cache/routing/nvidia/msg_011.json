@@ -1,0 +1,12 @@
+{
+  "action": "mute",
+  "message_type": "greeting",
+  "reason": "The user has repeatedly dismissed similar forwarded greetings in this group and usually ignores them.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0123"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"greeting\", \"reason\": \"The user has repeatedly dismissed similar forwarded greetings in this group and usually ignores them.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0123\"]}"
+}

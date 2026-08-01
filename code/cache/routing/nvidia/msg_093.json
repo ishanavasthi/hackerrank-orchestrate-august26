@@ -1,0 +1,12 @@
+{
+  "action": "digest",
+  "message_type": "business_update",
+  "reason": "It's a legitimate FedEx delivery notice useful for planning but not urgent enough to break quiet hours.",
+  "confidence": 0.82,
+  "evidence_message_ids": [
+    "message_0398"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"digest\", \"message_type\": \"business_update\", \"reason\": \"It's a legitimate FedEx delivery notice useful for planning but not urgent enough to break quiet hours.\", \"confidence\": 0.82, \"evidence_message_ids\": [\"message_0398\"]}"
+}

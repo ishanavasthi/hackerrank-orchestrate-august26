@@ -1,0 +1,12 @@
+{
+  "action": "mute",
+  "message_type": "scam",
+  "reason": "The message urges sharing account number under a false deadline, a typical phishing scam.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0174"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"scam\", \"reason\": \"The message urges sharing account number under a false deadline, a typical phishing scam.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0174\"]}"
+}

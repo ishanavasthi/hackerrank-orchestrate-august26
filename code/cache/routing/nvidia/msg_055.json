@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "The sender requests an urgent decision within ten minutes, matching past time-sensitive messages the user acted on.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0166",
+    "message_0387"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\":\"notify\",\"message_type\":\"urgent\",\"reason\":\"The sender requests an urgent decision within ten minutes, matching past time-sensitive messages the user acted on.\",\"confidence\":0.88,\"evidence_message_ids\":[\"message_0166\",\"message_0387\"]}"
+}

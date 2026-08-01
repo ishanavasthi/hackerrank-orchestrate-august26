@@ -1,0 +1,13 @@
+{
+  "action": "mute",
+  "message_type": "promotion",
+  "reason": "The user has muted this group and consistently dismisses similar land‑plot promotion forwards, indicating low value.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0223",
+    "message_0389"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\n  \"action\": \"mute\",\n  \"message_type\": \"promotion\",\n  \"reason\": \"The user has muted this group and consistently dismisses similar land‑plot promotion forwards, indicating low value.\",\n  \"confidence\": 0.88,\n  \"evidence_message_ids\": [\"message_0223\", \"message_0389\"]\n}"
+}

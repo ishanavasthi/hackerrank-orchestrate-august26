@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "The sender is a personal contact asking for immediate help with a time‑sensitive payment issue, and the user has previously opened and replied to similar requests.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0006",
+    "message_0118"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"notify\", \"message_type\": \"urgent\", \"reason\": \"The sender is a personal contact asking for immediate help with a time‑sensitive payment issue, and the user has previously opened and replied to similar requests.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0006\", \"message_0118\"]}"
+}
