@@ -2,7 +2,7 @@
 
 Status of the Message Notification Router. Every claim below was verified by
 running the command shown, not asserted from memory. Last verified against
-commit `651ba9b` + working tree.
+commit `17e97a5`.
 
 ---
 
@@ -14,7 +14,7 @@ commit `651ba9b` + working tree.
 | Exactly one row per `message_id` in `messages.csv` (110) | PASS | validator: set equality, no dupes, no extras |
 | Every `action` in {notify, digest, mute} | PASS | validator |
 | Every `message_type` in the 11 allowed values | PASS | validator |
-| `confidence` numeric and within [0,1] | PASS | validator (actual range 0.78–0.89) |
+| `confidence` numeric and within [0,1] | PASS | validator (shipping path range 0.50–0.91) |
 | `evidence_message_ids` resolve in `message_history.csv` | PASS | validator: 0 dangling ids |
 | Runnable from the terminal | PASS | `python code/main.py` |
 | Reads only from `dataset/` | PASS | no organizer-only files exist in this repo |
@@ -49,11 +49,11 @@ the submission's floor — see DECISIONS.md.
 - Blindness enforced: 21 engagement field names checked across 110 rendered prompts.
 - 22/110 force-muted on risk.
 
-### M3 — personalization — DONE
+### M3 — personalization — DONE (rules + LLM)
 - 88 gate-clearing messages routed on group mute state, dismissal rates, promotion consent, relationship staleness, DND, per-user notification load.
 - Spec carve-out implemented and verified (`msg_056` notifies, `msg_040` does not).
 - 14/14 hand-checked cases.
-- Distribution: notify 28 / digest 36 / mute 46.
+- Shipping path distribution over 110: notify 34 / digest 25 / mute 51.
 
 ### M4 — evidence + confidence — NOT STARTED
 - Evidence selection in `personalize._evidence()` is an explicit placeholder: same-conversation history filtered by whether the outcome matches the action. It does not do similarity ranking or outcome-informativeness scoring as specified in DECISIONS.md.
@@ -79,10 +79,6 @@ the submission's floor — see DECISIONS.md.
 The LLM corrects the systematic conservatism the rules path showed: 8 of 9
 notifies correct against 3 of 9. Caveat unchanged — 30 rows is thin, and per
 DECISIONS.md we do not tune against them.
-
-Read this with the caveat from DECISIONS.md: 30 rows is thin and the sample
-action split (9/11/10) is too uniform to be the real class balance. Per-row
-correctness is signal; the distribution is not.
 
 On the full 110 rows the shipping path gives notify 34 / digest 25 / mute 51,
 with `unknown` collapsing from 15 to 2 and zero dangling evidence ids.
@@ -135,18 +131,6 @@ Ordered by risk to the submission.
    when a parallel session rewrote the file from an older base; recovered.
    Worth watching if parallel sessions resume.
 
----
-
-## 5. Reproduce every claim here
-
-```bash
-python code/main.py            # full pipeline + validation gate   -> PASS 110 rows
-python code/validate.py output.csv   # standalone grader-style check
-python code/gate_m2.py         # M2 safety gate assertions         -> PASS
-python code/score_samples.py   # accuracy vs 30 labelled rows      -> 70% / 47%
-md5 -q output.csv && python code/main.py >/dev/null && md5 -q output.csv   # determinism
-```
-
 10. **Risk no longer has exactly one owner — and the DECISIONS.md entry saying
     it does is now inaccurate.** The LLM personalization stage labelled 7
     gate-cleared rows as `scam` (QR-payment demands, phishing links, a
@@ -163,7 +147,7 @@ md5 -q output.csv && python code/main.py >/dev/null && md5 -q output.csv   # det
 
 ---
 
-## 6. Verified end-to-end assertions
+## 5. Verified end-to-end assertions
 
 ```
 110 rows, exact columns, all enums valid, 0 dangling evidence ids
@@ -171,4 +155,16 @@ md5 -q output.csv && python code/main.py >/dev/null && md5 -q output.csv   # det
 M2 gate: 8/8 must-mute, 0/23 false positives, blindness over 110 prompts
 determinism: rerun replays cache byte-identically
 offline: runs with every provider key unset
+```
+
+## 6. Reproduce every claim here
+
+```bash
+python code/main.py --provider nvidia    # shipping path  -> PASS 110 rows
+python code/main.py --provider stub      # offline fallback, no keys needed
+python code/validate.py output.csv       # standalone grader-style check
+python code/gate_m2.py                   # M2 gate assertions -> PASS
+python code/score_samples.py                     # rules   -> 70% / 47%
+python code/score_samples.py --provider nvidia   # shipping -> 93% / 83%
+md5 -q output.csv && python code/main.py --provider nvidia >/dev/null && md5 -q output.csv
 ```
