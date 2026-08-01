@@ -1,111 +1,111 @@
 message_id,action,message_type,reason,confidence,evidence_message_ids
-msg_023,digest,business_update,The user opened similar banking updates before and this is a non-urgent account update that can be reviewed later.,0.86,message_0102
-msg_091,mute,scam,Safety gate: requests a credential/OTP/card detail; applies account-loss or deadline pressure,0.83,none
-msg_090,notify,personal,A personal contact asked a straightforward question about a package mix-up that likely requires a response.,0.86,none
-msg_048,mute,scam,Safety gate: applies account-loss or deadline pressure; pushes a verification/claim action,0.83,none
-msg_040,mute,greeting,The user has muted the group and typically dismisses similar forward blessing chains.,0.88,message_0136
+msg_023,digest,business_update,The user opened similar banking updates before and this is a non-urgent account update that can be reviewed later.,0.88,message_0243;message_0102
+msg_091,mute,scam,Safety gate: requests a credential/OTP/card detail; applies account-loss or deadline pressure,0.91,message_0238;message_0381
+msg_090,notify,personal,A personal contact asked a straightforward question about a package mix-up that likely requires a response.,0.87,none
+msg_048,mute,scam,Safety gate: applies account-loss or deadline pressure; pushes a verification/claim action,0.91,message_0151;message_0152
+msg_040,mute,greeting,The user has muted the group and typically dismisses similar forward blessing chains.,0.89,message_0136;message_0135
 msg_075,notify,urgent,A verified business sender (Grab) sent a time-sensitive ride status update that may affect the user's current booking.,0.88,message_0206;message_0205
-msg_005,notify,personal,"A member is holding a denim jacket for you with a deadline, requiring timely action.",0.86,message_0231;message_0049
-msg_104,mute,personal,"The user has repeatedly ignored similar requests to pick up items, indicating low priority.",0.82,message_0224;message_0050
-msg_069,mute,greeting,The user usually ignores similar forwarded greetings in this group.,0.88,message_0080;message_0177
-msg_107,mute,scam,Safety gate: requests a credential/OTP/card detail,0.83,none
-msg_070,mute,scam,Safety gate: requests a credential/OTP/card detail,0.83,none
-msg_003,digest,business_update,"The user has opened and replied to similar Amazon delivery updates, indicating they find them relevant but not urgent.",0.86,message_0031
-msg_099,digest,personal,It's a personal work note that can be read later before the standup.,0.86,message_0118;message_0055
-msg_008,digest,business_update,"The user has opened similar review requests before, so this feedback request is useful but not urgent.",0.88,message_0296;message_0071
-msg_092,digest,unknown,Model output was not valid JSON; used a safe fallback decision.,0.50,none
-msg_060,notify,urgent,A time-sensitive internship deadline reminder from Faculty Advising that the user has previously acted on.,0.88,message_0404;message_0284
-msg_004,digest,business_update,"The user engages with similar health updates from this verified sender, but the message does not require immediate interruption.",0.88,message_0246;message_0394
-msg_030,mute,promotion,"The user consistently dismisses similar marketplace promotions, indicating low interest.",0.88,message_0050;message_0335
-msg_045,notify,urgent,"A delivery person needs immediate confirmation to drop off a package, requiring prompt action.",0.85,none
-msg_052,mute,scam,Safety gate: sender domain talabat-refund.com does not match official talabat.com; account unverified; account only 26d old,0.88,none
-msg_009,digest,event,"The user opened a similar cricket highlights suggestion before, indicating possible interest, but the group is muted and they usually dismiss its notifications, so it can wait.",0.78,message_0074
-msg_071,digest,personal,The message is a casual personal plan that does not require immediate attention.,0.82,message_0197
-msg_016,mute,scam,Safety gate: applies account-loss or deadline pressure; pushes a verification/claim action,0.83,none
-msg_065,digest,promotion,"The user has opened similar promotional messages from Target before, indicating interest but not requiring immediate attention.",0.86,message_0260;message_0185
-msg_038,mute,forward,The message is a mass-forwarded chain that the user has previously ignored and dismissed.,0.88,message_0131
-msg_086,notify,business_update,The verified travel business sent a time‑specific pickup change that the user has previously opened and replied to.,0.90,message_0222
-msg_014,mute,promotion,The user has opted out of promotions from this sender and similar promotional messages were previously dismissed.,0.88,message_0258
-msg_094,mute,promotion,"The user routinely dismisses time‑sensitive promotional offers, indicating this is likely noise for them.",0.82,message_0223;message_0389
-msg_029,mute,promotion,The user usually dismisses similar kurta sale promotions in this group and the message is mass-forwarded.,0.86,message_0095
-msg_105,mute,forward,"The user previously dismissed a nearly identical forwarded health tip, indicating they ignore such messages.",0.88,message_0373
-msg_002,notify,urgent,"Direct request from a coworker for a quick call before a client meeting, needing immediate attention.",0.88,message_0003
-msg_010,digest,business_update,"The user has opened similar feedback requests from this cinema before, indicating they find them useful but not urgent.",0.86,message_0011
-msg_078,mute,scam,Safety gate: forwarded 10 times; requests a credential/OTP/card detail; applies account-loss or deadline pressure,0.83,none
-msg_013,digest,promotion,The message is a promotional offer that is not urgent and can be reviewed later.,0.80,message_0341
-msg_018,mute,scam,The message is a mass-forwarded reward scam that the user has previously dismissed and reported.,0.86,message_0092
-msg_044,mute,scam,Safety gate: requests a credential/OTP/card detail,0.83,none
-msg_032,digest,personal,The request is a non-urgent ask for study materials that the user can address later.,0.84,message_0120
-msg_106,notify,urgent,A personal contact sent a time-sensitive schedule change that requires the user's attention before 7:15.,0.90,message_0376
+msg_005,notify,personal,"A member is holding a denim jacket for you with a deadline, requiring timely action.",0.88,message_0065;message_0066
+msg_104,mute,personal,"The user has repeatedly ignored similar requests to pick up items, indicating low priority.",0.88,message_0050;message_0224
+msg_069,mute,greeting,The user usually ignores similar forwarded greetings in this group.,0.90,message_0080;message_0177
+msg_107,mute,scam,Safety gate: requests a credential/OTP/card detail,0.91,message_0173;message_0174
+msg_070,mute,scam,Safety gate: requests a credential/OTP/card detail,0.90,message_0173;message_0174
+msg_003,digest,business_update,"The user has opened and replied to similar Amazon delivery updates, indicating they find them relevant but not urgent.",0.88,message_0031;message_0400
+msg_099,digest,personal,It's a personal work note that can be read later before the standup.,0.88,message_0227;message_0055
+msg_008,digest,business_update,"The user has opened similar review requests before, so this feedback request is useful but not urgent.",0.88,message_0296;message_0072
+msg_092,digest,unknown,Model output was not valid JSON; used a safe fallback decision.,0.84,message_0346
+msg_060,notify,urgent,A time-sensitive internship deadline reminder from Faculty Advising that the user has previously acted on.,0.88,message_0284;message_0176
+msg_004,digest,business_update,"The user engages with similar health updates from this verified sender, but the message does not require immediate interruption.",0.88,message_0005;message_0245
+msg_030,mute,promotion,"The user consistently dismisses similar marketplace promotions, indicating low interest.",0.89,message_0115;message_0335
+msg_045,notify,urgent,"A delivery person needs immediate confirmation to drop off a package, requiring prompt action.",0.88,message_0146;message_0145
+msg_052,mute,scam,Safety gate: sender domain talabat-refund.com does not match official talabat.com; account unverified; account only 26d old,0.91,message_0208;message_0207
+msg_009,digest,event,"The user opened a similar cricket highlights suggestion before, indicating possible interest, but the group is muted and they usually dismiss its notifications, so it can wait.",0.88,message_0074;message_0073
+msg_071,digest,personal,The message is a casual personal plan that does not require immediate attention.,0.88,message_0197;message_0198
+msg_016,mute,scam,Safety gate: applies account-loss or deadline pressure; pushes a verification/claim action,0.90,message_0024;message_0087
+msg_065,digest,promotion,"The user has opened similar promotional messages from Target before, indicating interest but not requiring immediate attention.",0.87,message_0261;message_0185
+msg_038,mute,forward,The message is a mass-forwarded chain that the user has previously ignored and dismissed.,0.89,message_0131;message_0132
+msg_086,notify,business_update,The verified travel business sent a time‑specific pickup change that the user has previously opened and replied to.,0.88,message_0222
+msg_014,mute,promotion,The user has opted out of promotions from this sender and similar promotional messages were previously dismissed.,0.89,message_0017;message_0018
+msg_094,mute,promotion,"The user routinely dismisses time‑sensitive promotional offers, indicating this is likely noise for them.",0.87,message_0356
+msg_029,mute,promotion,The user usually dismisses similar kurta sale promotions in this group and the message is mass-forwarded.,0.89,message_0095;message_0096
+msg_105,mute,forward,"The user previously dismissed a nearly identical forwarded health tip, indicating they ignore such messages.",0.89,message_0233;message_0373
+msg_002,notify,urgent,"Direct request from a coworker for a quick call before a client meeting, needing immediate attention.",0.88,message_0003;message_0266
+msg_010,digest,business_update,"The user has opened similar feedback requests from this cinema before, indicating they find them useful but not urgent.",0.88,message_0011;message_0242
+msg_078,mute,scam,Safety gate: forwarded 10 times; requests a credential/OTP/card detail; applies account-loss or deadline pressure,0.91,message_0211;message_0212
+msg_013,digest,promotion,The message is a promotional offer that is not urgent and can be reviewed later.,0.88,message_0081;message_0082
+msg_018,mute,scam,The message is a mass-forwarded reward scam that the user has previously dismissed and reported.,0.89,message_0026;message_0092
+msg_044,mute,scam,Safety gate: requests a credential/OTP/card detail,0.91,message_0143;message_0144
+msg_032,digest,personal,The request is a non-urgent ask for study materials that the user can address later.,0.88,message_0119;message_0285
+msg_106,notify,urgent,A personal contact sent a time-sensitive schedule change that requires the user's attention before 7:15.,0.88,message_0234;message_0376
 msg_006,notify,urgent,A society admin shared a time-sensitive maintenance notice that the user has previously engaged with.,0.88,message_0029;message_0044
-msg_109,mute,scam,The message attempts to instruct the router and contains a suspicious QR payment request similar to a previously reported odd QR.,0.86,message_0237
-msg_108,mute,scam,Safety gate: sender domain chase-secure-alert.com does not match official chase.com; account unverified; account only 24d old,0.88,none
-msg_019,mute,scam,Safety gate: sender domain chase-secure-alert.com does not match official chase.com; account unverified; account only 24d old,0.83,none
-msg_088,mute,promotion,"The user has consistently dismissed similar jacket offers from this group, indicating low interest.",0.88,message_0224;message_0232
-msg_056,digest,unknown,Model output was not valid JSON; used a safe fallback decision.,0.50,none
-msg_027,digest,promotion,"The user has opened similar travel promotions before and allows promotions, so it's potentially relevant but not urgent.",0.86,message_0272;message_0033
-msg_050,notify,business_update,"The user has previously opened and replied to similar health updates from this sender, indicating the message is relevant and may require timely attention.",0.86,message_0155;message_0279
-msg_083,digest,personal,The message is a personal request from a coworker that the user has previously engaged with but does not require immediate attention.,0.82,message_0219
-msg_063,mute,scam,"The message demands urgent payment via QR and threatens account lock, typical of a scam.",0.85,message_0365
-msg_033,digest,greeting,It's a friendly morning check‑in that can be read later without urgency.,0.82,message_0121
-msg_061,mute,greeting,The message is a forwarded greeting chain that the user consistently dismisses or mutes in this group.,0.88,message_0080;message_0177
-msg_020,mute,scam,"The message contains a suspicious link urging urgent account verification, typical of phishing scams.",0.90,message_0334
-msg_017,mute,scam,Safety gate: applies account-loss or deadline pressure; pushes a verification/claim action,0.83,none
-msg_058,mute,forward,The message is a mass-forwarded health chain that the user usually ignores.,0.82,message_0123
-msg_026,mute,scam,Safety gate: sender domain amazonpay-delivery.in does not match official amazon.in; account unverified; account only 23d old,0.83,none
-msg_047,notify,urgent,A time-sensitive maintenance notice that affects lift access and should be seen now.,0.88,message_0029;message_0216
-msg_046,mute,scam,Safety gate: requests a credential/OTP/card detail; pushes a verification/claim action,0.83,none
-msg_042,notify,urgent,A time-sensitive maintenance alert requiring immediate action to avoid car being towed.,0.88,message_0057
-msg_079,mute,scam,Safety gate: requests a credential/OTP/card detail,0.83,none
-msg_098,notify,urgent,"The sender is a personal contact asking for an immediate decision about a clinic appointment, indicating time-sensitive need.",0.88,message_0359;message_0057
-msg_037,notify,urgent,"The user needs to act within 10 minutes to receive water delivery, making it time-sensitive.",0.88,message_0129;message_0216
-msg_007,digest,event,It's a routine community event update that does not require immediate attention.,0.84,message_0070
-msg_085,mute,scam,Safety gate: sender domain hdfcbank-kyc.in does not match official hdfc.bank.in; account unverified; account only 20d old,0.88,none
-msg_001,notify,urgent,A time-sensitive water supply notice that requires immediate action to fill drinking water.,0.88,message_0057
-msg_021,notify,urgent,A society admin sent a time-sensitive payment reminder that the user typically opens and replies to.,0.86,message_0029
-msg_028,mute,promotion,User has opted out of promotions from this sender and has repeatedly dismissed similar travel promo messages.,0.89,message_0034;message_0258
-msg_012,mute,forward,The user has repeatedly dismissed similar forwarded health‑tip chains that ask for sharing.,0.86,message_0194;message_0080
-msg_064,mute,scam,Safety gate: requests a credential/OTP/card detail; applies account-loss or deadline pressure; pushes a verification/claim action,0.83,none
-msg_103,notify,personal,"A personal contact made a time-sensitive request for the jacket, requiring a prompt response.",0.88,message_0231;message_0049
-msg_031,notify,urgent,"The sender is a coworker admin requesting timely action for a work sync, and the user typically engages with similar messages.",0.88,message_0006;message_0118
-msg_057,notify,urgent,"Direct request for immediate help on a failing build from a coworker, time-sensitive and relevant to the user's work.",0.88,message_0003
-msg_087,mute,promotion,The user has muted the group and consistently dismisses similar promotional real estate messages.,0.90,message_0220;message_0223
-msg_067,notify,urgent,Admin reminder about maintenance payment deadline within 16 minutes requires immediate attention.,0.91,message_0029
-msg_039,notify,urgent,A direct request from a group member asking for immediate action on a time-sensitive school payment.,0.90,message_0051
-msg_082,notify,urgent,A coworker sent an urgent incident alert requiring immediate attention.,0.88,message_0218
-msg_066,mute,promotion,User has opted out of promotions from this sender and historically dismisses similar promotional messages.,0.88,message_0187;message_0258
-msg_049,notify,business_update,A verified Shopee business message about a time-sensitive return pickup today that the user usually opens and acts on.,0.88,message_0153;message_0291
-msg_015,mute,scam,Safety gate: requests a credential/OTP/card detail,0.83,none
-msg_051,mute,promotion,User has opted out of promotions from Flipkart and has consistently dismissed similar offers.,0.89,message_0157;message_0258
-msg_097,digest,personal,The sender indicates no immediate response needed and the content is a casual personal update.,0.86,message_0359
-msg_089,notify,personal,A personal contact informed about a lost item that needs to be retrieved before 7 PM today.,0.88,none
-msg_053,digest,forward,The message is a forwarded market update with research links that is useful but not time‑sensitive.,0.82,message_0253
-msg_059,mute,scam,"The message urges sharing account number under a false deadline, a typical phishing scam.",0.88,message_0174
-msg_024,mute,promotion,User has opted out of promotions from this sender and consistently dismisses similar offers.,0.88,message_0157;message_0258
-msg_072,mute,scam,Safety gate: requests a credential/OTP/card detail,0.83,none
-msg_036,mute,scam,Safety gate: sender domain razorpayx-payouts.com does not match official razorpayx.com; account unverified; account only 34d old,0.83,none
-msg_076,mute,scam,Safety gate: sender domain talabat-refund.com does not match official talabat.com; account unverified; account only 26d old,0.88,none
-msg_055,notify,urgent,"The sender requests an urgent decision within ten minutes, matching past time-sensitive messages the user acted on.",0.88,message_0166;message_0387
-msg_102,notify,urgent,A personal contact sent a time-sensitive request to stay online for rollback monitoring.,0.88,message_0003
-msg_080,notify,urgent,"The sender informs of an imminent gate closure requiring immediate action, matching past opened maintenance notices.",0.88,message_0216
-msg_093,digest,business_update,It's a legitimate FedEx delivery notice useful for planning but not urgent enough to break quiet hours.,0.82,message_0398
-msg_034,mute,greeting,The sender repeatedly sends forwarded greetings that the user usually ignores or dismisses.,0.86,message_0123
-msg_035,digest,promotion,The message is a promotional update from a verified business that the user has previously engaged with and does not require immediate action.,0.86,message_0125;message_0126
-msg_101,digest,personal,It's a friendly check-in that doesn't require immediate response and can be read later.,0.86,message_0268
-msg_041,digest,business_update,The message is a routine survey request from a verified business that does not require immediate attention.,0.82,message_0138
-msg_011,mute,greeting,The user has repeatedly dismissed similar forwarded greetings in this group and usually ignores them.,0.88,message_0123
-msg_110,mute,scam,Safety gate: requests a credential/OTP/card detail,0.83,none
-msg_095,mute,scam,Safety gate: requests a credential/OTP/card detail; addresses the router rather than the recipient,0.83,none
-msg_074,mute,promotion,"The user has muted this group and consistently dismisses similar land‑plot promotion forwards, indicating low value.",0.88,message_0223;message_0389
-msg_073,mute,scam,"The message urges immediate verification via a suspicious link, matching known phishing patterns the user has ignored/reported.",0.88,message_0201;message_0202
-msg_054,mute,scam,"The message urges payment of a processing fee via a link, a typical loan scam pattern.",0.88,message_0220;message_0163
-msg_068,digest,event,"The message is a casual plan discussion with no immediate action needed, similar to past opened messages.",0.82,message_0191
-msg_100,notify,urgent,"The sender is a personal contact asking for immediate help with a time‑sensitive payment issue, and the user has previously opened and replied to similar requests.",0.88,message_0006;message_0118
-msg_062,digest,event,"The message is a scheduled fire alarm test notice and missing person alert that is useful but not time-critical, so it can wait.",0.82,message_0029;message_0129
-msg_096,notify,urgent,"A personal contact reports a found passport needing pickup before 6pm, which is time-sensitive.",0.85,none
-msg_043,notify,urgent,A time-sensitive water supply notice from the admin desk that requires immediate action.,0.88,message_0129;message_0216
-msg_077,notify,urgent,"Time-sensitive school circular requiring immediate action (consent, ID card, bus list deadline).",0.88,message_0051
-msg_081,notify,urgent,A time-sensitive school transport update about pickup gate change that may affect child pickup.,0.82,message_0057;message_0105
-msg_025,notify,business_update,"The user has previously opened and replied to similar order updates from Amazon, indicating relevance.",0.86,message_0105
-msg_084,mute,promotion,User has opted out of promotions from HDFC Bank and this promotional offer matches previously dismissed messages.,0.88,message_0220
-msg_022,notify,payment,Time-sensitive payment request from the society that requires action before the 5 PM deadline.,0.88,message_0029
+msg_109,mute,scam,The message attempts to instruct the router and contains a suspicious QR payment request similar to a previously reported odd QR.,0.88,message_0151;message_0152
+msg_108,mute,scam,Safety gate: sender domain chase-secure-alert.com does not match official chase.com; account unverified; account only 24d old,0.91,message_0094;message_0093
+msg_019,mute,scam,Safety gate: sender domain chase-secure-alert.com does not match official chase.com; account unverified; account only 24d old,0.91,message_0277;message_0093
+msg_088,mute,promotion,"The user has consistently dismissed similar jacket offers from this group, indicating low interest.",0.89,message_0224;message_0025
+msg_056,digest,unknown,Model output was not valid JSON; used a safe fallback decision.,0.85,message_0054;message_0225
+msg_027,digest,promotion,"The user has opened similar travel promotions before and allows promotions, so it's potentially relevant but not urgent.",0.88,message_0007;message_0033
+msg_050,notify,business_update,"The user has previously opened and replied to similar health updates from this sender, indicating the message is relevant and may require timely attention.",0.88,message_0279;message_0278
+msg_083,digest,personal,The message is a personal request from a coworker that the user has previously engaged with but does not require immediate attention.,0.87,message_0219
+msg_063,mute,scam,"The message demands urgent payment via QR and threatens account lock, typical of a scam.",0.88,message_0182;message_0181
+msg_033,digest,greeting,It's a friendly morning check‑in that can be read later without urgency.,0.88,message_0121;message_0122
+msg_061,mute,greeting,The message is a forwarded greeting chain that the user consistently dismisses or mutes in this group.,0.90,message_0080;message_0042
+msg_020,mute,scam,"The message contains a suspicious link urging urgent account verification, typical of phishing scams.",0.88,message_0096;message_0095
+msg_017,mute,scam,Safety gate: applies account-loss or deadline pressure; pushes a verification/claim action,0.90,message_0090;message_0089
+msg_058,mute,forward,The message is a mass-forwarded health chain that the user usually ignores.,0.89,message_0039;message_0040
+msg_026,mute,scam,Safety gate: sender domain amazonpay-delivery.in does not match official amazon.in; account unverified; account only 23d old,0.91,message_0032;message_0107
+msg_047,notify,urgent,A time-sensitive maintenance notice that affects lift access and should be seen now.,0.88,message_0068;message_0098
+msg_046,mute,scam,Safety gate: requests a credential/OTP/card detail; pushes a verification/claim action,0.91,message_0148;message_0147
+msg_042,notify,urgent,A time-sensitive maintenance alert requiring immediate action to avoid car being towed.,0.88,message_0058;message_0140
+msg_079,mute,scam,Safety gate: requests a credential/OTP/card detail,0.91,message_0173;message_0174
+msg_098,notify,urgent,"The sender is a personal contact asking for an immediate decision about a clinic appointment, indicating time-sensitive need.",0.88,message_0359;message_0226
+msg_037,notify,urgent,"The user needs to act within 10 minutes to receive water delivery, making it time-sensitive.",0.88,message_0001;message_0410
+msg_007,digest,event,It's a routine community event update that does not require immediate attention.,0.88,message_0070;message_0069
+msg_085,mute,scam,Safety gate: sender domain hdfcbank-kyc.in does not match official hdfc.bank.in; account unverified; account only 20d old,0.89,message_0221
+msg_001,notify,urgent,A time-sensitive water supply notice that requires immediate action to fill drinking water.,0.88,message_0057;message_0139
+msg_021,notify,urgent,A society admin sent a time-sensitive payment reminder that the user typically opens and replies to.,0.88,message_0029;message_0044
+msg_028,mute,promotion,User has opted out of promotions from this sender and has repeatedly dismissed similar travel promo messages.,0.89,message_0034;message_0112
+msg_012,mute,forward,The user has repeatedly dismissed similar forwarded health‑tip chains that ask for sharing.,0.89,message_0079;message_0178
+msg_064,mute,scam,Safety gate: requests a credential/OTP/card detail; applies account-loss or deadline pressure; pushes a verification/claim action,0.91,message_0087;message_0183
+msg_103,notify,personal,"A personal contact made a time-sensitive request for the jacket, requiring a prompt response.",0.88,message_0065;message_0382
+msg_031,notify,urgent,"The sender is a coworker admin requesting timely action for a work sync, and the user typically engages with similar messages.",0.88,message_0118;message_0249
+msg_057,notify,urgent,"Direct request for immediate help on a failing build from a coworker, time-sensitive and relevant to the user's work.",0.89,message_0003;message_0059
+msg_087,mute,promotion,The user has muted the group and consistently dismisses similar promotional real estate messages.,0.89,message_0164;message_0203
+msg_067,notify,urgent,Admin reminder about maintenance payment deadline within 16 minutes requires immediate attention.,0.88,message_0068;message_0098
+msg_039,notify,urgent,A direct request from a group member asking for immediate action on a time-sensitive school payment.,0.88,message_0364;message_0051
+msg_082,notify,urgent,A coworker sent an urgent incident alert requiring immediate attention.,0.88,message_0218;message_0397
+msg_066,mute,promotion,User has opted out of promotions from this sender and historically dismisses similar promotional messages.,0.89,message_0188;message_0187
+msg_049,notify,business_update,A verified Shopee business message about a time-sensitive return pickup today that the user usually opens and acts on.,0.88,message_0154;message_0291
+msg_015,mute,scam,Safety gate: requests a credential/OTP/card detail,0.91,message_0173;message_0174
+msg_051,mute,promotion,User has opted out of promotions from Flipkart and has consistently dismissed similar offers.,0.89,message_0257;message_0402
+msg_097,digest,personal,The sender indicates no immediate response needed and the content is a casual personal update.,0.88,message_0054;message_0225
+msg_089,notify,personal,A personal contact informed about a lost item that needs to be retrieved before 7 PM today.,0.87,none
+msg_053,digest,forward,The message is a forwarded market update with research links that is useful but not time‑sensitive.,0.89,message_0411;message_0161
+msg_059,mute,scam,"The message urges sharing account number under a false deadline, a typical phishing scam.",0.88,message_0174;message_0173
+msg_024,mute,promotion,User has opted out of promotions from this sender and consistently dismisses similar offers.,0.89,message_0257;message_0402
+msg_072,mute,scam,Safety gate: requests a credential/OTP/card detail,0.91,message_0173;message_0174
+msg_036,mute,scam,Safety gate: sender domain razorpayx-payouts.com does not match official razorpayx.com; account unverified; account only 34d old,0.91,message_0283;message_0127
+msg_076,mute,scam,Safety gate: sender domain talabat-refund.com does not match official talabat.com; account unverified; account only 26d old,0.91,message_0208;message_0207
+msg_055,notify,urgent,"The sender requests an urgent decision within ten minutes, matching past time-sensitive messages the user acted on.",0.88,message_0166;message_0165
+msg_102,notify,urgent,A personal contact sent a time-sensitive request to stay online for rollback monitoring.,0.88,message_0230;message_0371
+msg_080,notify,urgent,"The sender informs of an imminent gate closure requiring immediate action, matching past opened maintenance notices.",0.88,message_0130;message_0142
+msg_093,digest,business_update,It's a legitimate FedEx delivery notice useful for planning but not urgent enough to break quiet hours.,0.88,message_0349;message_0398
+msg_034,mute,greeting,The sender repeatedly sends forwarded greetings that the user usually ignores or dismisses.,0.89,message_0013;message_0014
+msg_035,digest,promotion,The message is a promotional update from a verified business that the user has previously engaged with and does not require immediate action.,0.88,message_0281;message_0125
+msg_101,digest,personal,It's a friendly check-in that doesn't require immediate response and can be read later.,0.88,message_0229;message_0370
+msg_041,digest,business_update,The message is a routine survey request from a verified business that does not require immediate attention.,0.88,message_0137;message_0138
+msg_011,mute,greeting,The user has repeatedly dismissed similar forwarded greetings in this group and usually ignores them.,0.90,message_0014;message_0077
+msg_110,mute,scam,Safety gate: requests a credential/OTP/card detail,0.91,message_0238;message_0381
+msg_095,mute,scam,Safety gate: requests a credential/OTP/card detail; addresses the router rather than the recipient,0.91,message_0087;message_0183
+msg_074,mute,promotion,"The user has muted this group and consistently dismisses similar land‑plot promotion forwards, indicating low value.",0.90,message_0203;message_0204
+msg_073,mute,scam,"The message urges immediate verification via a suspicious link, matching known phishing patterns the user has ignored/reported.",0.89,message_0088;message_0184
+msg_054,mute,scam,"The message urges payment of a processing fee via a link, a typical loan scam pattern.",0.88,message_0164;message_0163
+msg_068,digest,event,"The message is a casual plan discussion with no immediate action needed, similar to past opened messages.",0.88,message_0191;message_0192
+msg_100,notify,urgent,"The sender is a personal contact asking for immediate help with a time‑sensitive payment issue, and the user has previously opened and replied to similar requests.",0.88,message_0362;message_0228
+msg_062,digest,event,"The message is a scheduled fire alarm test notice and missing person alert that is useful but not time-critical, so it can wait.",0.88,message_0043;message_0410
+msg_096,notify,urgent,"A personal contact reports a found passport needing pickup before 6pm, which is time-sensitive.",0.87,none
+msg_043,notify,urgent,A time-sensitive water supply notice from the admin desk that requires immediate action.,0.89,message_0029;message_0044
+msg_077,notify,urgent,"Time-sensitive school circular requiring immediate action (consent, ID card, bus list deadline).",0.88,message_0051;message_0403
+msg_081,notify,urgent,A time-sensitive school transport update about pickup gate change that may affect child pickup.,0.88,message_0217;message_0058
+msg_025,notify,business_update,"The user has previously opened and replied to similar order updates from Amazon, indicating relevance.",0.88,message_0004;message_0239
+msg_084,mute,promotion,User has opted out of promotions from HDFC Bank and this promotional offer matches previously dismissed messages.,0.89,message_0220
+msg_022,notify,payment,Time-sensitive payment request from the society that requires action before the 5 PM deadline.,0.88,message_0150;message_0149

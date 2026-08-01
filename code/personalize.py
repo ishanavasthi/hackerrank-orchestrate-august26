@@ -20,9 +20,13 @@ from datetime import datetime
 from typing import Optional
 
 try:
+    from code.confidence import calibrate
     from code.contracts import Decision, MessageContext
+    from code.evidence import select_evidence
 except ImportError:
+    from confidence import calibrate
     from contracts import Decision, MessageContext
+    from evidence import select_evidence
 
 
 # ─── Content shape ──────────────────────────────────────────────────────────
@@ -323,44 +327,19 @@ def personalize(ctx: MessageContext) -> Decision:
         action = "digest"
         why.append("user is already above their normal notification volume")
 
-    confidence = 0.86 if action == "notify" else 0.83 if action == "mute" else 0.80
-    if mtype == "unknown":
-        confidence = 0.78
-    if s.direct_mention and s.really_urgent:
-        confidence = 0.89
-
+    # M4: evidence and confidence are computed by dedicated modules. The
+    # previous inline versions were a same-conversation filter and a three-value
+    # lookup on `action`, which gave a clear-cut scam and a coin-flip digest the
+    # same number.
+    evidence_ids = select_evidence(ctx, action)
     return Decision(
         message_id=m.message_id,
         action=action,
         message_type=mtype,
         reason=_reason(why),
-        confidence=confidence,
-        evidence_message_ids=_evidence(ctx, action),
+        confidence=calibrate(action, mtype, evidence_ids, signals=s),
+        evidence_message_ids=evidence_ids,
     )
-
-
-def _evidence(ctx: MessageContext, action: str, limit: int = 2) -> list[str]:
-    """Placeholder evidence selection. M4 replaces this with similarity plus
-    outcome-informativeness ranking; for now, prefer same-conversation history
-    whose recorded outcome is consistent with the action we chose."""
-    want_opened = action == "notify"
-    scored: list[tuple[int, str]] = []
-    for h in ctx.history:
-        hid = h.get("message_id", "")
-        ev = ctx.events.get(hid, {})
-        if not ev:
-            continue
-        same_conv = (
-            (h.get("group_id") and h.get("group_id") == ctx.message.group_id)
-            or (h.get("business_id") and h.get("business_id") == ctx.message.business_id)
-            or (h.get("sender_user_id") and h.get("sender_user_id") == ctx.message.sender_user_id)
-        )
-        opened = str(ev.get("message_opened", "")) == "1"
-        score = (2 if same_conv else 0) + (1 if opened == want_opened else 0)
-        if score:
-            scored.append((score, hid))
-    scored.sort(key=lambda x: (-x[0], x[1]))
-    return [hid for _, hid in scored[:limit]]
 
 
 def personalize_all(contexts: list[MessageContext]) -> list[Decision]:

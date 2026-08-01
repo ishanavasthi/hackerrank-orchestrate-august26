@@ -147,15 +147,25 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Personalizing {len(passthrough)} (signals + {args.provider}) ...")
             routed = {d.message_id: d for d in route_all(passthrough, provider=args.provider)}
 
+        # M4 applies to gate-forced mutes too. They used to emit `none`, but a
+        # history row the user reported or muted after is strong evidence for
+        # suppressing a similar message — 22 rows were throwing that away.
+        from confidence import calibrate          # noqa: PLC0415
+        from evidence import select_evidence      # noqa: PLC0415
+        from personalize import signals_for       # noqa: PLC0415
+
         decisions = []
         for c in contexts:
             mid = c.message.message_id
             if mid in gated:
                 v = gated[mid]
+                evidence_ids = select_evidence(c, "mute")
                 decisions.append(Decision(
                     message_id=mid, action="mute", message_type=v.message_type,
-                    reason=v.reason, confidence=v.confidence,
-                    evidence_message_ids=[],
+                    reason=v.reason,
+                    confidence=calibrate("mute", v.message_type, evidence_ids,
+                                         signals=signals_for(c), gate_forced=True),
+                    evidence_message_ids=evidence_ids,
                 ))
             else:
                 decisions.append(routed[mid])

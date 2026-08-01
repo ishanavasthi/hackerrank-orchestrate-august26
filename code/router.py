@@ -509,11 +509,47 @@ def _save_cache(provider: str, message_id: str, payload: dict) -> None:
     p.write_text(json.dumps(payload, indent=2, ensure_ascii=False))
 
 
+def _apply_m4(ctx: MessageContext, decision: Decision) -> Decision:
+    """M4: replace the model's evidence with deterministic retrieval, and
+    calibrate its confidence.
+
+    Evidence is a retrieval problem, not a reasoning one — it is rankable
+    against measurable criteria (topical overlap, same conversation, whether
+    the recorded outcome explains this action), so a scored search beats asking
+    the model to pick from a truncated history window. Doing it here rather
+    than in the prompt also keeps evidence identical on the rules and LLM
+    paths, and means changing the ranking never requires re-calling the API.
+
+    Confidence keeps the model's own number as one input rather than
+    discarding it, but does not trust it alone: it returned 0.50 for msg_056,
+    the spec's own carve-out example.
+
+    Applied AFTER the cache read, so the cache stores raw model output and
+    this logic can be revised without invalidating it.
+    """
+    try:
+        from personalize import signals_for      # noqa: PLC0415
+        from evidence import select_evidence     # noqa: PLC0415
+        from confidence import calibrate         # noqa: PLC0415
+    except ImportError:
+        from code.personalize import signals_for     # noqa: PLC0415
+        from code.evidence import select_evidence    # noqa: PLC0415
+        from code.confidence import calibrate        # noqa: PLC0415
+
+    evidence_ids = select_evidence(ctx, decision.action)
+    decision.evidence_message_ids = evidence_ids
+    decision.confidence = calibrate(
+        decision.action, decision.message_type, evidence_ids,
+        signals=signals_for(ctx), model_confidence=decision.confidence,
+    )
+    return decision
+
+
 def _route_llm(ctx: MessageContext, provider: str, call_fn) -> Decision:
     message_id = ctx.message.message_id
     cached = _load_cache(provider, message_id)
     if cached is not None:
-        return _validate_decision(cached, message_id)
+        return _apply_m4(ctx, _validate_decision(cached, message_id))
 
     text, meta = call_fn(ctx)  # RuntimeError on missing key propagates, by design
     raw = _extract_json(text)
@@ -528,7 +564,7 @@ def _route_llm(ctx: MessageContext, provider: str, call_fn) -> Decision:
         "model": meta.get("model"),
         "raw_text": text[:4000],
     })
-    return decision
+    return _apply_m4(ctx, decision)
 
 
 def route_anthropic(ctx: MessageContext) -> Decision:
