@@ -1,7 +1,11 @@
 # CHECKLIST.md
 
 Status of the Message Notification Router. Every claim below was verified by
-running the command shown, not asserted from memory. Last verified against
+running the command shown, not asserted from memory.
+
+**Maintenance rule:** every non-trivial trade-off, known weakness or accepted
+cost goes in §7 as it is made — not at the end. §7 is the polish backlog we
+work through once implementation is complete. Last verified against
 commit `d00dae6`.
 
 ---
@@ -199,3 +203,74 @@ md5 -q output.csv && python code/main.py --provider nvidia >/dev/null && md5 -q 
     imagery across unrelated senders, so mismatch is a construction artifact.
     Building the rule would have pushed msg_066 to `scam` against the only
     labelled example of that image. **Do not implement. Do not revisit in M5.**
+
+---
+
+## 7. Shortcomings & trade-offs — polish backlog
+
+Maintained from here on: every non-trivial trade-off, known weakness, and
+accepted cost, in one place, to be revisited once implementation is complete.
+Sourced from all 34 trade-off notes in `DECISIONS.md` plus findings that only
+surfaced in verification.
+
+Legend — **[GAP]** something we would fix given time; **[ACCEPTED]** a
+deliberate cost we would likely choose again; **[BLIND]** we cannot currently
+tell whether it is a problem.
+
+### A. Accuracy and correctness
+
+| # | Item | Why it exists | What fixing looks like |
+|---|---|---|---|
+| A1 | **[GAP]** `spam` is never emitted; opted-out promotional blasts come out `mute`/`promotion` | The gate fires on deception only; promo handling lives in personalization | Decide the taxonomy boundary and emit `spam` for unsolicited bulk with consent violation. Confirmed to cost rows (`sample_msg_043`) |
+| A2 | **[GAP]** Rules fallback is materially weaker than the shipping path (70%/47% vs 93%/83%) | It is a heuristic floor, not a peer | Either accept it as a floor explicitly, or port the LLM's better `message_type` discrimination into rules |
+| A3 | **[GAP]** Three voice transcripts begin mid-sentence; those rows route on truncated content, unflagged | Groq returned partial output; recorded in `cache/asr_comparison.md` | Flag truncation in `media_cache`, surface it in the prompt, and lower confidence on affected rows |
+| A4 | **[GAP]** Risk no longer has exactly one owner | LLM personalization labels `scam` on 7 gate-cleared rows (all groups with no business record) | Either accept it as a documented second net, or move those detections into the deterministic gate |
+| A5 | **[ACCEPTED]** Safety gate is biased toward false positives | Blindness is what enforces "muted regardless of usual engagement"; it cannot use a long trust relationship to clear a message | Only revisit if false mutes are observed on real trusted senders — currently 0 of 23 |
+| A6 | **[ACCEPTED]** Urgency requires an explicit anchor; unanchored urgent phrasing is missed | Bare `now`/`today` produced false positives on "Smile today" | Broaden anchors only with evidence; the loose version was measurably worse |
+| A7 | **[ACCEPTED]** DND rule ships on reasoning, not evidence | The data showed no suppression effect; the rule is near-inert on this set | Revisit only if the hidden set has notify-worthy messages inside quiet hours |
+
+### B. Values inferred from thin evidence
+
+Every item here is tuned against 30 labelled rows or fewer. None is fitted.
+
+| # | Item | Basis | Risk if wrong |
+|---|---|---|---|
+| B1 | **[BLIND]** Confidence band 0.78–0.91 | min/max of 30 sample rows | If truth is wider, our spread is systematically too narrow |
+| B2 | **[BLIND]** Evidence capped at 1–2 ids | 27 of 30 samples cite one, 3 cite two | A longer list might score better on recall |
+| B3 | **[BLIND]** `MIN_SCORE` evidence threshold, and the similarity/conversation/outcome weights | Judgement, not fitted | Too high suppresses good citations; too low cites noise |
+| B4 | **[BLIND]** Impersonation thresholds (180d account, 60d domain, 15 reports) | Separate cleanly on 12 mismatching rows | An attacker aging a domain past them clears the gate |
+| B5 | **[BLIND]** Negation detection is regex-level, covered by 9 unit cases | Built after the FedEx "no OTP required" false positive | Unanticipated phrasings mishandled in either direction |
+
+### C. Measurement blind spots
+
+| # | Item | Consequence |
+|---|---|---|
+| C1 | **[BLIND]** No ground truth for **evidence quality** — 1 of 5 scoring criteria | All M4 evidence numbers are proxies (same-conversation rate, resolution rate), not correctness |
+| C2 | **[BLIND]** No ground truth for **`reason` quality** — 1 of 5 scoring criteria | We know LLM prose reads better than rule templates; we cannot score it |
+| C3 | **[BLIND]** No ground truth for **confidence calibration** — 1 of 5 criteria | Nothing is fitted against outcomes; 0.85 does not mean "85% likely correct" |
+| C4 | **[BLIND]** `score_samples.py` measures only `action` and `message_type`, on 30 rows | Three of five scoring criteria are unmeasured locally |
+| C5 | **[BLIND]** Personalization cannot be scored independently of the safety gate | A gate regression and a personalization regression look identical in the score |
+
+### D. Operational and structural
+
+| # | Item | Why it exists | What fixing looks like |
+|---|---|---|---|
+| D1 | **[GAP]** Cache invalidation is manual, and there are now three caches (media, routing, safety) | Caching is what makes determinism real | Hash the prompt into the cache key so a prompt edit invalidates automatically |
+| D2 | **[GAP]** LLM calls are sequential; a full 110-row run takes several minutes | Simplicity | Bounded concurrency — safe because every call is independent and cached |
+| D3 | **[ACCEPTED]** Headline result depends on a provider and its quota | The hybrid is +23/+36 points over rules | Mitigated: cache makes reruns free, and the offline path still ships a valid file |
+| D4 | **[ACCEPTED]** Three providers means three SDKs, quotas and accounts to reproduce | Quota independence per modality | Would consolidate only if a single vendor covered ASR + OCR + routing well |
+| D5 | **[ACCEPTED]** Committed media cache makes the repo less obviously "run from scratch" | Reproducibility, and Gemini's 20/day free quota makes re-extraction expensive | Documented in `code/README.md`; regeneration scripts are included |
+| D6 | **[ACCEPTED]** No self-consistency sampling | It directly contradicts the determinism commitment | Would need a fixed-seed majority vote, cached — probably not worth it |
+| D7 | **[GAP]** `code/evaluation/main.py` is an empty committed organizer scaffold | Inherited | Delete it or put the eval harness there |
+| D8 | **[ACCEPTED]** Stdlib-only, so no embeddings, no pandas, no dotenv library | Zero-install reproducibility | Only revisit if a dependency buys measurable accuracy |
+
+### E. Process notes worth keeping
+
+| # | Item |
+|---|---|
+| E1 | A model's **cited facts can be true while its inference is wrong** — the brand-mismatch episode. Verify the conclusion, not just the evidence |
+| E2 | The same **negation trap** appeared three times (safety `no OTP required`, urgency `Nothing urgent`, greeting branch). Any new keyword family should be assumed to need a negation guard |
+| E3 | A **flag re-derived at several call sites will drift** — 9 branches read the raw urgency flag before consolidation |
+| E4 | **Verification scripts need verifying too** — one determinism check compared stub output against LLM output and reported a false failure |
+| E5 | `DECISIONS.md` was **silently overwritten** by a parallel session once; two entries were lost and recovered |
+
