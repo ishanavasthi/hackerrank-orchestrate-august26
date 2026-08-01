@@ -38,9 +38,12 @@ def load_media_cache(path: Union[str, Path]) -> dict[str, MediaExtract]:
             continue
 
         error = entry.get("error")
-        text = entry.get("text") or ""
+        # M0's two halves disagree on the field name: the Gemini image pass
+        # writes "text", the Groq voice pass writes "transcript". Reading only
+        # "text" silently loaded all 13 voice notes as empty, so accept either.
+        text = entry.get("text") or entry.get("transcript") or ""
         model = entry.get("model") or ""
-        available = bool(text) and error is None
+        available = bool(text.strip()) and error is None
 
         cache[media_id] = MediaExtract(
             media_id=media_id,

@@ -64,11 +64,13 @@ class Message:
 class MediaExtract:
     """One entry from code/cache/media.json, produced by M0.
 
-    M0's on-disk schema is:
-        {"<media_id>": {"text": str, "model": str, "error": str|None,
-                        "problems": list, ...provider metadata}}
-    Loaders MUST be tolerant: M0 is still running, so an entry may be
-    missing entirely (voice notes are not written yet) or may carry a
+    M0's on-disk schema is NOT uniform across modalities:
+        images -> {"text": str, "model": ..., "error": str|None, ...}
+        voice  -> {"transcript": str, "model": ..., "error": str|None, ...}
+    Loaders MUST read either field. Reading only "text" silently yields empty
+    content for all 13 voice notes with no error raised.
+
+    Loaders MUST also be tolerant: an entry may be missing entirely or carry a
     non-null `error`. Never raise on a missing media_id.
     """
     media_id: str
