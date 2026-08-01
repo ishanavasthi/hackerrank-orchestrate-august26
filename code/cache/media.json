@@ -1,0 +1,222 @@
+{
+  "img_001": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1268,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 388,
+    "problems": [],
+    "seconds": 7.28,
+    "text": "VERBATIM_TEXT:\nSportena\nApollo HOSPITALS\nJointly Presents\nKID'S & MOM\nWALKATHON\n1KM walk with your MOM\nFREE FOR ALL\nMEDAL\nCERTIFICATE\nBIBS\nPENCIL BOX\nREFRESHMENT\nDECATHLON\nMOGAPPAIR, CHENNAI\nSPORTS PARTNER\nDECATHLON\nREFRESHMENT PARTNER\nAkshayakalpa Organic\n\u2665 MOM\n0001\n\u2665 KID\n0002\n\u2665 KID\n0003\nWALK FOR HEALTH\n02 AUGUST 2026\nTIME: 8.00AM\nENTRY FEE:-\n\u20b9 199/-\nGoogle Pay\n87783 94729\nFor Details :\n87783 94729 / 86104 43961 / 93808 69045\n\nDOCUMENT_TYPE:\nposter\n\nDESCRIPTION:\nThis image is a promotional event poster for a 1KM \"Kid's & Mom Walkathon\" hosted in Chennai. It provides details about event inclusions, date, venue, entry fee, and contact/payment information.\n\nKEY_DETAILS:\nEntry Fee: \u20b9 199/-\nDate: 02 August 2026\nTime: 8.00AM\nPhone numbers: 87783 94729, 86104 43961, 93808 69045\nGoogle Pay number: 87783 94729\nLocation: Decathlon, Mogappair, Chennai\nOrganisations: Sportena, Apollo Hospitals, Decathlon, Akshayakalpa Organic",
+    "total_tokens": 2558
+  },
+  "img_002": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1241,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 271,
+    "problems": [],
+    "seconds": 5.56,
+    "text": "VERBATIM_TEXT:\nWATCH THE BIGGEST CINEMATIC EPIC IN\n4DX | MX4D\nAT AN UNBEATABLE PRICE\nTICKETS NOW STARTING AT\n\u20b9 199\nONLY ON 21ST JUL'26\nA FILM BY CHRISTOPHER NOLAN\nTHE ODYSSEY\n17.07.26\nSHOT ENTIRELY WITH IMAX\u00ae FILM CAMERAS\nPVR * INOX\nFOR BOOKINGS VISIT PVR OR INOX WEBSITE / APP\n*OFFER APPLICABLE IN SELECT CITIES, CINEMAS & SHOWS. OTHER T&C APPLY.\n\nDOCUMENT_TYPE:\nposter\n\nDESCRIPTION:\nThis is a promotional cinema poster advertising discounted 4DX and MX4D movie tickets starting at \u20b9199 for \"The Odyssey\". It informs customers to book tickets via the PVR or INOX website or app for a special one-day offer.\n\nKEY_DETAILS:\n- Ticket price: \u20b9199\n- Offer date: 21st Jul'26\n- Movie release date: 17.07.26\n- Brand names: PVR INOX, 4DX, MX4D\n- Booking options: PVR or INOX website / app",
+    "total_tokens": 2141
+  },
+  "img_003": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1241,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 223,
+    "problems": [],
+    "seconds": 4.06,
+    "text": "VERBATIM_TEXT:\nHappy\nHolidayers\nTRAVEL. EXPLORE. ENJOY\nLADAKH\n\u2014 TOUR PACKAGES \u2014\nEXPERIENCE THE MAGIC OF LADAKH\nUP TO 40% OFF\nSIGHTSEEING\nTRANSFERS\nMEALS\nSTAY\nBOOK NOW >\n+91 98056 07657\n20K+ Travellers\n10K+ Hotels\n5K+ Tours\n06+ Offices\nwww.happyholidayers.com\n\nDOCUMENT_TYPE:\nposter\n\nDESCRIPTION:\nThis image is a promotional travel advertisement for Ladakh tour packages offered by Happy Holidayers. It advertises up to 40% off including sightseeing, transfers, meals, and accommodation.\n\nKEY_DETAILS:\nBrand: Happy Holidayers\nDiscount: Up to 40% OFF\nPhone: +91 98056 07657\nURL: www.happyholidayers.com\nPackage Inclusions: Sightseeing, Transfers, Meals, Stay",
+    "total_tokens": 2044
+  },
+  "img_004": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1257,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 208,
+    "problems": [],
+    "seconds": 6.22,
+    "text": "VERBATIM_TEXT:\nIncident Review\nFriday, August 7 \u00b7 12:00 \u2013 12:50pm\n\nTake meeting notes\nStart a new document to capture notes\n\n3 guests\n1 yes virtually\n2 awaiting\n\nShloka Shah\nOrganizer\nHome - Edit\n\nAkarsh Jain\n\nPawan K\nHome\n\n10 minutes before\n\nShloka Shah\n\nGoing? Yes No Maybe\n\nDOCUMENT_TYPE:\nscreenshot\n\nDESCRIPTION:\nThis image is a screenshot of a Google Calendar event invitation pop-up titled \"Incident Review\". It displays the date, time, organizer, list of guests, meeting reminders, and options to respond to the invitation.\n\nKEY_DETAILS:\nEvent Name: Incident Review\nDate: Friday, August 7\nTime: 12:00 \u2013 12:50pm\nOrganizer: Shloka Shah\nGuests: Shloka Shah, Akarsh Jain, Pawan K\nOrganisation/Brand: Google Calendar",
+    "total_tokens": 2246
+  },
+  "img_005": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1241,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 160,
+    "problems": [],
+    "seconds": 5.61,
+    "text": "VERBATIM_TEXT:\nThings2do\nLe Cirque Signature\nAn ultra luxury French and Italian dining room inside a palace\nstyle setting, offering elite multi course degustation menus\ncustomizable by the chef\n\ud83d\udcb8 \u20b97,000 for two people\n\ud83d\udccd The Leela Palace, Old Airport Road\n\nDOCUMENT_TYPE:\nposter\n\nDESCRIPTION:\nThis is a promotional image highlighting Le Cirque Signature, a fine-dining restaurant located at The Leela Palace. It outlines the dining experience, cuisine type, estimated cost for two people, and location.\n\nKEY_DETAILS:\nBrand/Organisation: Le Cirque Signature\nBrand/Organisation: The Leela Palace\nBrand/Organisation: Things2do\nAmount: \u20b97,000 for two people",
+    "total_tokens": 2134
+  },
+  "img_006": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1248,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 304,
+    "problems": [],
+    "seconds": 8.2,
+    "text": "VERBATIM_TEXT:\nCHAVADI\nnative kitchen \u00b7 community cafe\nBrunch,\n\u2014 BUT MAKE IT \u2014\nNATIVE!\nJoin us for a soulful weekend brunch\nwith regional favourites on Chavadis terrace garden,\nlive music , live counters & your furry friends by your side.\nREGIONAL\nFAVOURITES\nLIVE\nMUSIC\nLIVE\nCOUNTERS\nPET\nFRIENDLY\n25%\nOFF\nON PRE-BOOKINGS\nOFFER VALID ON\nPRE-BOOKINGS ONLY!\nEVERY SUNDAY\nTIME: 11.00 am to 3.00 pm\nGood Food\nGood Music\nGood Company\nGreat Vibes!\nTO BOOK CALL\n+91 99867 87790\n\nDOCUMENT_TYPE:\nposter\n\nDESCRIPTION:\nThis image is a promotional flyer for a Sunday brunch event at Chavadi cafe featuring regional food, live music, and pet-friendly dining on a terrace garden. It includes event timing, a 25% discount offer on pre-bookings, and a contact phone number for reservations.\n\nKEY_DETAILS:\n- Brand: Chavadi\n- Discount: 25% OFF (Valid on pre-bookings only)\n- Days: Every Sunday\n- Time: 11.00 am to 3.00 pm\n- Phone number: +91 99867 87790",
+    "total_tokens": 2792
+  },
+  "img_007": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1232,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 50,
+    "problems": [],
+    "seconds": 5.51,
+    "text": "VERBATIM_TEXT:\nJio Mart\n\nDOCUMENT_TYPE:\nphoto\n\nDESCRIPTION:\nA photograph of a brown paper shopping bag featuring the JioMart logo sitting on a white table.\n\nKEY_DETAILS:\nBrand: JioMart",
+    "total_tokens": 1720
+  },
+  "img_008": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1268,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 46,
+    "problems": [],
+    "seconds": 4.81,
+    "text": "VERBATIM_TEXT:\nNONE\n\nDOCUMENT_TYPE:\nphoto\n\nDESCRIPTION:\nA photograph showing a rack of colorful vintage clothing arranged in a color gradient inside a boutique or shop.\n\nKEY_DETAILS:\nNONE",
+    "total_tokens": 1828
+  },
+  "img_010": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1272,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 141,
+    "problems": [],
+    "seconds": 4.79,
+    "text": "VERBATIM_TEXT:\namazon\nPrime Day\nUP TO 60% OFF\n2X CASHBACK\n24-30 JUNE\nUP TO\n11.2%\nCASHBACK\nEXCLUSIVE ON\nSHOPCASH\n\nDOCUMENT_TYPE:\nposter\n\nDESCRIPTION:\nA promotional graphic for Amazon Prime Day advertising discounts and double cashback deals. It highlights offers available exclusively through Shopcash from June 24 to 30.\n\nKEY_DETAILS:\n- Amazon\n- Shopcash\n- 24-30 June\n- Up to 60% off\n- Up to 11.2% cashback\n- 2X cashback",
+    "total_tokens": 2075
+  },
+  "img_011": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1270,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 462,
+    "problems": [],
+    "seconds": 7.8,
+    "text": "VERBATIM_TEXT:\nFIELD TRIP CONSENT FORM\n\n________________________________________ has permission to participate in a planned field trip activity.\n\nTRIP DESTINATION: __________________________________ DATE: ____________________ 20__\nDEPARTURE TIME: __________________________________ RETURN TIME: ____________________\nTransportation will be provided by ___ school bus, ___ student.\n\n_____________________________________ _____________________________________\n(Signature of Parent/Guardian) (Date of Signature)\n\n_____________________________________ _____________________________________\n(Address) (Telephone Number)\n\nIn granting this permission, I assume full responsibility for any damage to person or property caused by my child or ward. Further, I hereby expressly waive any claim for liability against the Board of Education, Swartz Creek Community Schools, including its employees and representatives. I further expressly agree that in a disciplinary action, at the discretion of the sponsor(s), my child or ward may be returned home at my expense.\n\nFIELD TRIP CONSENT FORM\n\n________________________________________ has permission to participate in a planned field trip activity.\n\nTRIP DESTINATION: __________________________________ DATE: ____________________ 20__\nDEPARTURE TIME: __________________________________ RETURN TIME: ____________________\nTransportation will be provided by ___ school bus, ___ student.\n\n_____________________________________ _____________________________________\n(Signature of Parent/Guardian) (Date of Signature)\n\n_____________________________________ _____________________________________\n(Address) (Telephone Number)\n\nIn granting this permission, I assume full responsibility for any damage to person or property caused by my child or ward. Further, I hereby expressly waive any claim for liability against the Board of Education, Swartz Creek Community Schools, including its employees and representatives. I further expressly agree that in a disciplinary action, at the discretion of the sponsor(s), my child or ward may be returned home at my expense.\n\nDOCUMENT_TYPE:\nscanned_document\n\nDESCRIPTION:\nThis image is a printable template containing two identical blank field trip consent forms for Swartz Creek Community Schools. It is used to collect parental permission, contact details, and liability waivers for students participating in field trip activities.\n\nKEY_DETAILS:\nBoard of Education, Swartz Creek Community Schools\nSwartz Creek Community Schools",
+    "total_tokens": 2895
+  },
+  "img_012": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1260,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 665,
+    "problems": [],
+    "seconds": 12.19,
+    "text": "VERBATIM_TEXT:\nINDIAN INSTITUTE OF TECHNOLOGY BOMBAY\nINDUSTRIAL RESEARCH AND CONSULTANCY CENTER (IRCC)\n\nIIT BOMBAY RESEARCH INTERNSHIP 2023-24\n\nIndian Institute of Technology Bombay (IIT Bombay) offers opportunity for Research Internship to eligible students for early exposure of Research and Development (R&D) in Science, Technology and related emerging areas. This full-time research internship is awarded to bright students every academic year on challenging research projects to be floated by the IIT Bombay faculty. Selection of the Interns are done in response to the applications made by the prospecting candidates on the basis of their respective academic record and performance in the interview to be conducted by the respective faculty member of the Institute. The duration of the IRCC-IR-internship 2023-24 will be for a period between four to six months (from December 2023 and June 2024)\n\nEligibility:\n\nThe prospecting applicant is required to -\n\ud83d\udc49 be in the Second year of his/her Master degree program, or third / fourth year of his/her Bachelor degree program.\n\ud83d\udc49 submit application in accordance with his/her branch / discipline of study and in accordance with the project requirement specified by the IIT Bombay Faculty (Internship Guide).\n\ud83d\udc49 be among the top 10% in all the previous years in his/her discipline in the College / University / Institute. A certificate from the principal (in the prescribed format) to this effect is required to be submitted along with the application.\n\ud83d\udc49 a full-time student while applying and till the completion of the Internship programme. S/He may submit a partial project report before (e.g., in April) the completion of the Internship (e.g., in June) if the academic calendar of his/her College / Institute / University requires him/her to do so, with the due prior consent of the Internship Guide of IIT Bombay.\n\ud83d\udc49 be able to work full-time for the Internship programme. Part-time internship is not allowed. A certificate from the principal to the effect that there is no course work requirement during the internship period has to be submitted at the time of application.\n\nDetailed information about the IRCC-IR-Internship programme is available on the Institute website - https://www.ircc.iitb.ac.in/IRCC-Webpage/IITBInternship/.\nFor any enquiry you may send e-mail to internship@ircc.iitb.ac.in\n\nWith best regards\n\nSr. Assistant Registrar, IRCC\n\nDOCUMENT_TYPE:\nscanned_document\n\nDESCRIPTION:\nAn official announcement flyer from IIT Bombay detailing the eligibility criteria and application info for the IRCC Research Internship 2023-24.\n\nKEY_DETAILS:\nIndian Institute of Technology Bombay (IIT Bombay)\nIndustrial Research and Consultancy Center (IRCC)\nInternship period: December 2023 to June 2024\nURL: https://www.ircc.iitb.ac.in/IRCC-Webpage/IITBInternship/\nEmail: internship@ircc.iitb.ac.in",
+    "total_tokens": 2779
+  },
+  "img_013": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1241,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 301,
+    "problems": [],
+    "seconds": 7.24,
+    "text": "VERBATIM_TEXT:\nSAVE\nTHE DATE!\n\nWe are gathering for\nIIT BOMBAY ALUMNI\nCONNECT\n\u2014 in \u2014\n\nBangalore\n15th November, 2025\n11:30 am onwards\nSterlings Mac Hotel, 134, HAL Old Airport Road, Kodihalli\nIITB-aa BENGALURU CHAPTER\n\nIITB-aa MUMBAI CHAPTER\n29th November, 2025\n06:00 pm onwards\nThe Orchid Hotel Mumbai, Vile Parle\nMumbai\n\nRegister from the given link in caption\n\nDOCUMENT_TYPE:\nposter\n\nDESCRIPTION:\nAn event announcement poster for the IIT Bombay Alumni Connect gatherings in Bangalore and Mumbai taking place in November 2025. It details the dates, times, and venues for both city events along with a registration call to action.\n\nKEY_DETAILS:\nIIT Bombay Alumni Connect\nIITB-aa Bengaluru Chapter\nIITB-aa Mumbai Chapter\nEvent Date (Bangalore): 15th November, 2025 at 11:30 am onwards\nVenue (Bangalore): Sterlings Mac Hotel, 134, HAL Old Airport Road, Kodihalli\nEvent Date (Mumbai): 29th November, 2025 at 06:00 pm onwards\nVenue (Mumbai): The Orchid Hotel Mumbai, Vile Parle",
+    "total_tokens": 2595
+  },
+  "img_014": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1272,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 153,
+    "problems": [],
+    "seconds": 3.34,
+    "text": "VERBATIM_TEXT:\nAllCloud aws\nWebinar\nGaining a Competitive\nEdge with GenAI on AWS\nWednesday | February 28 | 11:00\nREGISTER NOW\nJonathan Chemama\nAI Tech Lead, AllCloud\nSharon Horaz\nSr. Sales Specialist\nAnalytics/ML, AWS\n\nDOCUMENT_TYPE:\nposter\n\nDESCRIPTION:\nA promotional image advertising an upcoming webinar hosted by AllCloud and AWS on using GenAI. It provides the event schedule, title, call-to-action button, and information on the two speakers.\n\nKEY_DETAILS:\nDates: Wednesday, February 28\nDeadlines: 11:00\nBrand or organisation names: AllCloud, AWS",
+    "total_tokens": 1656
+  },
+  "img_016": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1232,
+    "model": "gemini-3.5-flash",
+    "output_tokens": 2568,
+    "problems": [],
+    "seconds": 10.23,
+    "text": "VERBATIM_TEXT:\nPage No.: 1\n\nHDFC BANK\nWe understand your world\n\nMR. ANUP DUBEY\nA/204 JUPITER A CHS LTD\nMIRA BHAYANDAR ROAD\nOPP TANWAR HOSPITAL MIRA ROAD EAST\nTHANE 401107\nMAHARASHTRA INDIA\n\nJOINT HOLDERS:\n\nNomination: Registered\n\nAccount Branch: BHAYENDER EAST - KASTURI UDYOG\nAddress: KASTURI UDYOG, SHOP NO 1,2,3\nNEAR PHATAK\nBHAYENDER EAST\nCity: THANE 401105\nState: MAHARASHTRA\nPhone no.: 022-61606161\nOD Limit: 0.00\nCurrency: INR\nEmail: ANUPDUBEY788@GMAIL.COM\nCust ID: 68898578\nAccount No: 50100158077633 OTHER\nA/C Open Date: 22/04/2016\nAccount Status: Regular\nRTGS/NEFT IFSC: HDFC0001116 MICR: 400240150\nBranch Code: 1116 Product Code: 114\n\nFrom: 01/06/2018 To: 10/10/2018\nStatement of account\n\n| Date | Narration | Chq/.Ref.No. | Value Dt | Withdrawal Amt. | Deposit Amt. | Closing Balance |\n|---|---|---|---|---|---|---|\n| 02/06/18 | GM1TSA/MY0326/19 | 0000806023180071 | 02/06/18 | | 14,955.00 | 29,064.95 |\n| 03/06/18 | IB BILLPAY DR-HDFCPE-545964XXXXXX3563 | IB03111916969774 | 03/06/18 | 1,285.98 | | 27,778.97 |\n| 04/06/18 | NEFT DR-UBIN0539686-RAJU DUBEY-NETBANK, MUM-N155180555427618-PERSONAL | N155180555427618 | 04/06/18 | 5,000.00 | | 22,778.97 |\n| 04/06/18 | UPI-303702011409044-9307676700@UPI-81551 8551633-OK | 0000815518132372 | 04/06/18 | | 7,000.00 | 29,778.97 |\n| 05/06/18 | EMI 4923306 CHQ S49233060051 0618492330 6 | 00000000000000 | 05/06/18 | 2,268.00 | | 27,510.97 |\n| 05/06/18 | UPI-303702011409044-9307676700@UPI-81561 9325080-OK | 0000815619221888 | 05/06/18 | | 1,500.00 | 29,010.97 |\n| 07/06/18 | EMI 50037630 CHQ S500376300091 061850037 630 | 00000000000000 | 07/06/18 | 5,333.00 | | 23,677.97 |\n| 09/06/18 | NHDF6376325463/SBI CARDS | 0000181609587153 | 09/06/18 | 2,820.00 | | 20,857.97 |\n| 12/06/18 | NHDF6385796167/BILLDKVODAFONEINDIAL | 0000181632079839 | 12/06/18 | 119.18 | | 20,738.79 |\n| 18/06/18 | ACH D- TP ACH HOME-105909750 | 0000003816355734 | 18/06/18 | 2,284.98 | | 18,453.81 |\n| 18/06/18 | NEFT DR-VIJB0005051-PANKAJ KUMAR SINGH-N ETBANK, MUM-N169180566006897-PERSONAL | N169180566006897 | 18/06/18 | 4,000.00 | | 14,453.81 |\n| 19/06/18 | UPI-303702011409044-9307676700@UPI-81701 1076987-OK | 0000817011546906 | 19/06/18 | | 2,300.00 | 16,753.81 |\n| 19/06/18 | NHDF6406143679/BILLDKKOTAKCARDS | 0000181707403225 | 19/06/18 | 11,445.00 | | 5,308.81 |\n| 22/06/18 | ACH D- HOMECRINDFINPVTLTD-38005587800106 | 0000003872684626 | 22/06/18 | 1,315.00 | | 3,993.81 |\n| 26/06/18 | POS 416021XXXXXX8060 DCSIRELIANCE POS DE BIT | 0000N16424763188 | 26/06/18 | 1,760.00 | | 2,233.81 |\n| 27/06/18 | NEFT DR-UBIN0539686-RAJU DUBEY-NETBANK, MUM-N178180571609335-PERSONAL | N178180571609335 | 28/06/18 | 1,000.00 | | 1,233.81 |\n| 01/07/18 | CREDIT INTEREST CAPITALISED | 00000000000000 | 30/06/18 | | 156.00 | 1,389.81 |\n| 02/07/18 | MICRO ATM CASH DEP - HDFC THANE MH IN - BNAKMU02 | 000000000008945 | 02/07/18 | | 10,000.00 | 11,389.81 |\n| 02/07/18 | IB BILLPAY DR-HDFCPE-545964XXXXXX3563 | IB02174244989256 | 02/07/18 | 3,756.00 | | 7,633.81 |\n| 03/07/18 | IMPS-818411585956-ARUNARAVINDRADUBEY-HDF | 0000818411585956 | 03/07/18 | | 3,000.00 | 10,633.81 |\n\nHDFC BANK LIMITED\n*Closing balance includes funds earmarked for hold and uncleared funds\nContents of this statement will be considered correct if no error is reported within 30 days of receipt of statement. The address on this statement is that on record with the Bank as at the day of requesting this statement.\nState account branch GSTN:27AAACH2702H1Z0\nHDFC Bank GSTIN number details are available at https://www.hdfcbank.com/personal/making-payments/online-tax-payment/goods-and-service-tax.\nRegistered Office Address: HDFC Bank House, Senapati Bapat Marg, Lower Parel, Mumbai 400013\n\nDOCUMENT_TYPE:\nscanned_document\n\nDESCRIPTION:\nThis is a scanned copy of a bank account statement from HDFC Bank for the customer Anup Dubey. It details transactions made between June 1, 2018, and July 3, 2018.\n\nKEY_DETAILS:\nHDFC Bank\nAnup Dubey\nAccount Number: 50100158077633\nCustomer ID: 68898578\nIFSC: HDFC0001116\nMICR: 400240150\nPhone: 022-61606161\nEmail: ANUPDUBEY788@GMAIL.COM\nStatement Period: 01/06/2018 to 10/10/2018\nGSTN: 27AAACH2702H1Z0\nURL: https://www.hdfcbank.com/personal/making-payments/online-tax-payment/goods-and-service-tax",
+    "total_tokens": 3800
+  },
+  "img_020": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1249,
+    "model": "gemini-3.6-flash",
+    "output_tokens": 153,
+    "problems": [],
+    "seconds": 5.92,
+    "text": "VERBATIM_TEXT:\nLIVE MATCHES\nWITH CRICKET\nDATA ADD-ON\nJio\nDisney+\nhotstar\n\u20b9555\n\u2022\u2014 55 GB | 55 DAYS \u2014\u2022\n1 YEAR GET.* Disney+ hotstar MOBILE SUBSCRIPTION\nRECHARGE NOW\nT&C Apply\n\nDOCUMENT_TYPE:\nposter\n\nDESCRIPTION:\nThis is a promotional poster for a Jio prepaid mobile data add-on plan designed for watching cricket matches. It advertises a \u20b9555 pack providing 55 GB data, 55 days validity, and a 1-year Disney+ Hotstar mobile subscription.\n\nKEY_DETAILS:\nJio\nDisney+ Hotstar\n\u20b9555",
+    "total_tokens": 2135
+  },
+  "img_022": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1232,
+    "model": "gemini-3.5-flash",
+    "output_tokens": 507,
+    "problems": [],
+    "seconds": 3.16,
+    "text": "VERBATIM_TEXT:\n\u0cb8\u0cbe\u0caf\u0cbf \u0cb0\u0cbe\u0cae\u0ccd \u0c95\u0ccd\u0cb2\u0cbf\u0ca8\u0cbf\u0c95\u0ccd\nSAI RAM CLINIC\n+\nTiming: Mon to sat\n05-30 p.m. to 09-00 p.m.\nDr. Sachin Patil\nCONSULTANT FAMILY PHYSICIAN\nMob.: 9008331474\nDate: 22/05/25\nName Mr. Aman Age 19 yrs Sex M\nRx c/o Cold, T. Irritatn, Fever\nB.A.\u0398 x 1 day\nB.P. 120/70\nH.R. 116/Min\nSPO2 98%\nTemp. 102.2 F\nWt.\nDehydratn (-)\n- T. Opox-CV 200mg 6 1-0-1\n- T. Alitose-SP 8 1-1-1 / 1-0-1\n- T. Breezy 0-0-1 5\n- T. Slipen-D 40mg 10 1-0-1 (B/F)\nFor Medicine:\nFREE HOME DELIVERY\n\u0cb6\u0ccd\u0cb0\u0cc0 \u0c95\u0cc3\u0cb7\u0ccd\u0ca3 \u0cae\u0cc6\u0ca1\u0cbf\u0c95\u0cb2\u0ccd\u0cb8\u0ccd\n\u0ca8\u0c82.36/37, \u0cb6\u0cbe\u0caa\u0ccd \u0ca8\u0c82.0.2, 1\u0ca8\u0cc7 \u0cae\u0cc1\u0c96\u0ccd\u0caf\u0cb0\u0cb8\u0ccd\u0ca4\u0cc6, 6\u0ca8\u0cc7 \u0c85\u0ca1\u0ccd\u0ca1\u0cb0\u0cb8\u0ccd\u0ca4\u0cc6, \u0ca6\u0cc1\u0cac\u0cbe\u0cb8\u0cbf\u0caa\u0cbe\u0cb3\u0ccd\u0caf,\n\u0c86\u0cb0\u0ccd.\u0cb5\u0cbf.\u0cb8\u0cbf.\u0c87. \u0c85\u0c82\u0c9a\u0cc6, \u0c8e.\u0c8e\u0ca8\u0ccd.\u0cb5\u0cbf. \u0ca8\u0cbe\u0caf\u0ccd\u0ca1\u0cc1 \u0cb8\u0cb0\u0ccd\u0c95\u0cb2\u0ccd, \u0c95\u0cc6\u0c82\u0c97\u0cc7\u0cb0\u0cbf, \u0cac\u0cc6\u0c82\u0c97\u0cb3\u0cc2\u0cb0\u0cc1-59\n\u0cae\u0cca.: 7892936588\n\nDOCUMENT_TYPE:\nscanned_document\n\nDESCRIPTION:\nThis image is a medical prescription slip from Sai Ram Clinic for a patient named Mr. Aman. It lists vital signs, symptoms, and prescribed medications with dosage instructions.\n\nKEY_DETAILS:\nOrganisation: Sai Ram Clinic\nDoctor: Dr. Sachin Patil\nPatient Name: Mr. Aman\nDate: 22/05/25\nPhone Number: 9008331474\nPhone Number: 7892936588\nPharmacy: \u0cb6\u0ccd\u0cb0\u0cc0 \u0c95\u0cc3\u0cb7\u0ccd\u0ca3 \u0cae\u0cc6\u0ca1\u0cbf\u0c95\u0cb2\u0ccd\u0cb8\u0ccd (Shree Krishna Medicals)",
+    "total_tokens": 1739
+  },
+  "img_023": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1270,
+    "model": "gemini-3.5-flash",
+    "output_tokens": 243,
+    "problems": [],
+    "seconds": 17.75,
+    "text": "VERBATIM_TEXT:\nMISSING PERSON\nMissing from:\n4-11-2025\nAGE: 16\nNAME:- MELWYN\nDoor number 9 first Amani first cross Kasturi Nagar East of NGEF\nLandmark Hyderabad Irani tea shop Plz help contacts:-\n7348978260 / 9686674558 / 9741011528\nMISSING PERSON\n\nDOCUMENT_TYPE:\nposter\n\nDESCRIPTION:\nThis is a missing person poster for a 16-year-old boy named Melwyn. It features his photograph, the date he went missing, his last known address details, and contact numbers for people to reach out to with information.\n\nKEY_DETAILS:\nDate: 4-11-2025\nPhone number: 7348978260\nPhone number: 9686674558\nPhone number: 9741011528\nOrganisation: NGEF\nBrand: Hyderabad Irani tea shop",
+    "total_tokens": 2913
+  },
+  "img_024": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1272,
+    "model": "gemini-3.5-flash",
+    "output_tokens": 359,
+    "problems": [],
+    "seconds": 5.41,
+    "text": "VERBATIM_TEXT:\nNifty 50 - D - 1% - CMP: 15863.20(-2.35%) - 07-03-2022\nNifty 50, Spot, Daily\n1% Brick Size, Renko Chart\nPrice breaks the prior swing low which\nis a sign of bearishness. The negative\ncrossover in the moving averages\nconfirms short-term weakness\n17879\n16804\n16021.26\n15730\n14656\n13581\n12507\n11432\n10358\n9284\n8209\nDisparity (40,1,EMA,Close)DI:-5.36Avg:-5.36\n10.00\n5.00\n.00\n-5.36\n-10.00\n\nDOCUMENT_TYPE:\nchart\n\nDESCRIPTION:\nThis image is a daily Renko chart of the Nifty 50 index used for financial technical analysis. It highlights a bearish trend signal where the price breaks below a prior swing low, accompanied by a negative crossover in the moving averages.\n\nKEY_DETAILS:\nOrganisation: Nifty 50\nDate: 07-03-2022\nCMP: 15863.20 (-2.35%)\nPrice Level: 16021.26\nDisparity Value: -5.36\nChart Type: 1% Brick Size, Renko Chart",
+    "total_tokens": 2722
+  },
+  "img_025": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1241,
+    "model": "gemini-3.5-flash",
+    "output_tokens": 143,
+    "problems": [],
+    "seconds": 3.14,
+    "text": "VERBATIM_TEXT:\nIngoude\nCompany\n\nLAND PLOT\nFOR SALE\nSecure your dream investment! Prime land plots\navailable\n\nstrategic location\nhigh value\nfuture growth\n\nContact Us\n+123-456-7890\nwww.reallygreatsite.com\n\nDOCUMENT_TYPE:\nposter\n\nDESCRIPTION:\nA promotional poster advertising land plots for sale by Ingoude Company, highlighting key benefits such as strategic location, high value, and future growth.\n\nKEY_DETAILS:\nOrganisation: Ingoude Company\nPhone number: +123-456-7890\nURL: www.reallygreatsite.com",
+    "total_tokens": 1801
+  },
+  "img_026": {
+    "error": null,
+    "finish_reason": "STOP",
+    "input_tokens": 1257,
+    "model": "gemini-3.5-flash",
+    "output_tokens": 114,
+    "problems": [],
+    "seconds": 3.38,
+    "text": "VERBATIM_TEXT:\nSECURE\nBANKING\nHDFC BANK\nThere are more than\n10 ways\nyou can get bowled by scammers\nThere is one way to save it\n#MoohBandRakho\n\nDOCUMENT_TYPE:\nposter\n\nDESCRIPTION:\nAn awareness poster by HDFC Bank warning customers about online scams using a cricket-themed metaphor. It promotes the campaign hashtag #MoohBandRakho to encourage secure banking practices.\n\nKEY_DETAILS:\nOrganisation: HDFC BANK\nCampaign: #MoohBandRakho",
+    "total_tokens": 1706
+  }
+}
