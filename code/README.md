@@ -17,29 +17,62 @@ There is deliberately no `requirements.txt` — there is nothing to require.
 
 ---
 
-## Quick start — no API keys needed
+## Quick start — reproduces the shipped `output.csv`, no API key required
+
+```bash
+python code/main.py --provider nvidia
+```
+
+This is the full-quality shipping path and it runs **offline with no
+credentials**. All 114 model responses are cached under
+`code/cache/routing/nvidia/` and that cache is committed, so the run replays
+from disk instead of calling a provider.
+
+Expected output:
+
+```text
+  110 messages
+  media extracted for 23/23 media-bearing messages
+  force-muted 22/110 on risk grounds
+PASS 110 rows
+```
+
+The result is **byte-identical to the `output.csv` shipped with this package**.
+That is the point: the 93%/83% number below does not have to be taken on
+trust, it can be regenerated. To check it, from a clean copy of the package
+with no `.env` present:
+
+```bash
+cp output.csv /tmp/shipped.csv
+env -u NVIDIA_API_KEY -u ANTHROPIC_API_KEY \
+    -u GEMINI_API_KEY -u GROQ_API_KEY \
+    python code/main.py --provider nvidia
+diff /tmp/shipped.csv output.csv && echo IDENTICAL
+```
+
+Verified by exporting the committed tree into an empty directory with no
+`.env` and those four variables unset: same row counts, same 22 force-mutes,
+and an identical MD5 before and after the run.
+
+An `NVIDIA_API_KEY` is only needed to route a message that is *not* in the
+cache — a new dataset, or a changed prompt. See "Determinism" below for the
+cache-invalidation caveat.
+
+## Offline rules fallback
 
 ```bash
 python code/main.py --provider stub
 ```
 
-Writes `output.csv` at the repo root and validates it. This path is fully
-offline and deterministic: it makes no network calls and needs no credentials.
-It is the guaranteed floor — it always produces a submittable `output.csv`.
-
-## Full-quality run
-
-```bash
-cp .env.example .env      # then fill in NVIDIA_API_KEY
-python code/main.py --provider nvidia
-```
+No model at all — pure heuristics. It is a floor that always produces a
+submittable file, not a peer of the shipping path.
 
 Accuracy against the 30 labelled sample rows:
 
 | path | action | message_type |
 |---|---|---|
-| `--provider stub` (offline) | 70% | 47% |
-| `--provider nvidia` (default) | **93%** | **83%** |
+| `--provider stub` (rules only) | 70% | 47% |
+| `--provider nvidia` (shipping) | **93%** | **83%** |
 
 Both paths use the same deterministic safety gate; only the personalization
 stage differs. See "Why the safety gate ignores `--provider`" below.
@@ -78,6 +111,40 @@ the LLM prompt, so choosing a provider cannot bypass this stage.
 **3. Writer + validator** (`writer.py`, `validate.py`) — emits the exact
 required columns and re-checks the file from disk the way a grader would.
 
+### Evidence
+
+`evidence.py` is a scored retrieval over the user's history, not a filter.
+Each candidate is scored on four weighted terms — topical Jaccard similarity
+over the message text and any OCR/ASR text (weight **4.0**, the largest),
+same-conversation (3.0), whether the recorded outcome in `message_events.csv`
+explains the action we chose (2.0), and same conversation type (0.5). Rows
+below `MIN_SCORE` are dropped and the column becomes `none`: a wrong citation
+is worse than an absent one. Ties break on id, so selection is deterministic.
+
+The outcome term is what makes a citation explanatory. A message from the same
+sender that the user ignored does not justify a `notify`; one they replied to
+within five minutes does.
+
+### Confidence
+
+`confidence.py` derives an internal certainty per row from the action, the
+message type, how many evidence ids corroborate it, whether independent
+signals agree or conflict, whether the blind gate forced the decision on a
+structural fact, and whether the row is decided from truncated media. That
+score is mapped monotonically onto a **per-action** band read off the labelled
+samples — notify 0.85–0.91, mute 0.81–0.87, digest 0.78–0.84 — and averaged
+with the model's self-reported confidence where one is available.
+
+The bands are per-action because the labelled data orders them that way:
+interrupting someone is the call the labeller was surest about, deferring is the
+hedge and scores lowest. A single global band loses that ordering and lands
+every row in the top sixth of the scale. The map also normalises against the
+slice of the certainty scale the score actually occupies, rather than all of
+[0, 1], which is what recovers the resolution already present in the signal.
+
+It is deliberately **not** a probability — nothing here is fitted against
+outcomes, so 0.85 does not mean "85% likely correct".
+
 ### Media
 
 Image OCR and voice transcription run **once**, offline, into
@@ -92,9 +159,26 @@ A rerun replays the cache and produces a byte-identical `output.csv`.
 Temperature is 0 everywhere, but that alone is not sufficient across
 providers — the cache is what makes the guarantee real.
 
+Caveat: the key is the `message_id` only, so editing `prompts.py` does **not**
+invalidate the cache. Delete `code/cache/routing/` after a prompt change or the
+old decisions replay silently. Hashing the prompt into the key is the fix;
+`../CHECKLIST.md` D1 records it as an open gap.
+
+Evidence selection (`evidence.py`) and confidence (`confidence.py`) are pure
+deterministic functions with no model call, so they are identical on the rules
+and LLM paths.
+
 ---
 
 ## Verify
+
+```bash
+python code/eval_harness.py --provider nvidia    # runs all four checks below
+```
+
+Prints `ALL CHECKS PASS` and `action 28/30 = 93%, message_type 25/30`. It
+validates the `output.csv` already on disk; it does not regenerate it, so run
+`main.py` first if you changed anything. The individual checks:
 
 ```bash
 python code/validate.py output.csv        # grader-style contract check
@@ -148,9 +232,12 @@ trusted sender is never falsely muted, so it stays deterministic.
 | `safety.py` | stage 1 — blind safety gate |
 | `personalize.py` | stage 2 — personalization signals and rules |
 | `router.py`, `prompts.py` | LLM personalization + prompt construction |
+| `evidence.py` | scored retrieval for `evidence_message_ids` |
+| `confidence.py` | confidence calibration |
+| `edge_cases.py` | edge-case assertions on how decisions were produced |
 | `writer.py`, `validate.py` | stage 3 — output and contract validation |
 | `net.py` | HTTP with retry/backoff for transient provider failures |
-| `gate_m2.py`, `score_samples.py` | verification and self-evaluation |
+| `gate_m2.py`, `score_samples.py`, `eval_harness.py` | verification and self-evaluation |
 | `extract_media.py`, `extract_audio.py` | one-off media extraction (M0) |
 | `cache/` | committed media extraction + model response cache |
 
@@ -161,13 +248,49 @@ and trade-offs. `../CHECKLIST.md` records verified status and known gaps.
 
 ## Known limitations
 
-Recorded honestly rather than omitted; the full list is in `../CHECKLIST.md`.
+Recorded honestly rather than omitted; the full list is in `../CHECKLIST.md`
+section 7.
 
-- **`spam` is never emitted.** Everything the gate catches is deception
-  (`scam`); unwanted promotions come out as `mute`/`promotion`. At least one
-  labelled sample uses `spam` for a promotional blast, so this costs us rows.
-- **Confidence is not calibrated.** The LLM path returns two rows at 0.50
-  against a 0.78 floor observed in the samples.
-- **Evidence selection is basic** — same-conversation history filtered by
-  whether the recorded outcome matches the chosen action, not similarity-ranked.
-- Three voice transcripts begin mid-sentence; those rows route on partial text.
+- **Three of the five scored criteria are unmeasured locally.** There is no
+  ground truth for `reason` quality, evidence relevance, or confidence
+  calibration. `score_samples.py` scores only `action` and `message_type`, and
+  only on 30 rows. Everything we report about the other three is a proxy.
+- **Several constants are inferred from 30 labelled rows, not fitted.** The
+  per-action confidence bands (notify 0.85–0.91, mute 0.81–0.87, digest
+  0.78–0.84, all inside the 0.78–0.91 observed overall), the 1–2 id evidence cap
+  (25 of 30 samples cite one id, 3 cite two, 2 cite none), and
+  `evidence.MIN_SCORE` with its retrieval weights. Splitting one band into three
+  makes the evidence behind each thinner still. If the hidden truth orders the
+  actions differently or uses a wider spread, we are wrong in a structured way
+  rather than a random one.
+- **`digest` confidence is compressed.** 20 of 24 digest rows land on 0.80 and
+  the column spans only 0.79–0.81, against a labelled digest range of 0.78–0.84.
+  Those rows' internal certainty genuinely clusters in a narrow slice, so
+  spreading them further would mean fitting each action to this run's own
+  extremes. Overall spread is 0.027 against the labelled 0.032.
+- **The offline rules fallback is materially weaker than the shipping path**
+  — 70%/47% against 93%/83%. It is a floor that guarantees a valid file, not
+  an equivalent alternative.
+- **`event` is under-emitted.** 4 of 110 shipped rows (3.6%) against 4 of 30
+  labelled samples (13.3%). The sample misses are `event -> urgent` and
+  `event -> business_update`, so the boundary is genuinely soft, but the
+  direction of the error is consistent.
+- **`spam` is never emitted — a resolved-negative, not an oversight.** The
+  discriminator was derived from the labelled samples: `sample_msg_043` is
+  `spam` from an unverified sender with 23 reports; `sample_msg_015` is
+  `promotion` from a verified sender with 6. So `spam` requires sender
+  disrepute, not merely unwanted marketing. Neither discriminator fires on the
+  test set — of the 23 gate-cleared business rows exactly one is unverified and
+  it has 0 reports — and every heavily-reported unverified sender is already
+  gate-muted as `scam`. A `spam` rule would have no trigger here, so we did not
+  fit one to a single labelled example. `../DECISIONS.md` records the analysis.
+- **Two voice transcripts begin mid-sentence** (`vn_007`, `vn_014`) — the ASR
+  dropped the opening audio. `media_cache.py` flags them and `confidence.py`
+  penalises the two affected rows, but they still route on partial content.
+  The detector is a heuristic (lowercase first character), so a transcript
+  legitimately starting lowercase would be falsely flagged.
+- **Risk no longer has exactly one owner.** The deterministic gate force-mutes
+  22 rows, and LLM personalization independently labels `scam` on 7 more —
+  all group messages with no business record, precisely where the structural
+  gate is blind. These look like genuine catches, but the second net is
+  undocumented in the architecture above.

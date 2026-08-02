@@ -8,8 +8,8 @@ cost goes in §7 as it is made — not at the end. §7 is the polish backlog we
 work through once implementation is complete.
 
 **Active work plan:** see [`NEXT.md`](./NEXT.md) for the ordered subset of §7
-that warrants action now, plus the submission-integrity items that are not
-trade-offs at all. Last verified against
+that warrants action now, ordered by risk to the quality of the answer.
+Packaging is the last item there, not the first. Last verified against
 commit `d00dae6`.
 
 ---

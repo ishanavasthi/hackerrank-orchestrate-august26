@@ -305,6 +305,225 @@ def content_risk(s: SafetyContext) -> tuple[bool, list[str]]:
     return risky, signals
 
 
+# ─── Reason phrasing ────────────────────────────────────────────────────────
+# The gate reasons internally over structured signals, but `reason` is a
+# user-facing column and is scored on usefulness and consistency, so it ships
+# as a sentence rather than a signal dump.
+#
+# Everything below is a *rendering* of facts the gate already used. It reads
+# nothing new: message text, media text, forwarded_count and the structural
+# sender facts on SafetyContext, and nothing else. The blindness boundary in
+# build_safety_context() is therefore untouched — there is no path from here to
+# engagement history, group mute state or dismissal rates.
+#
+# The mapping is total and deterministic: same signals in, same sentence out.
+# Phrasing varies only with which signals fired; specificity comes from the
+# concrete facts (which credential was asked for, the impersonating domain, the
+# account age, the report count, the forward count), never from variety for its
+# own sake. Messages that produce identical evidence get identical reasons, as
+# they should.
+
+#: Matched credential pattern -> what was actually being asked for. Ordered:
+#: the earliest match wins, so this doubles as the priority list. Every pattern
+#: in _CREDENTIAL must appear here or the label falls back to a generic phrase.
+_CRED_LABELS: tuple[tuple[str, str], ...] = (
+    (r"card details", "card details"),
+    (r"\bcvv\b", "CVV details"),
+    (r"wallet.{0,15}details", "wallet details"),
+    (r"bank details", "bank account details"),
+    (r"account details", "account details"),
+    (r"net ?banking password", "a net-banking password"),
+    (r"\bupi (?:pin|id)\b", "UPI details"),
+    (r"\bpin\b", "a PIN"),
+    (r"\botp\b", "an OTP"),
+    (r"\b6[- ]digit\b", "a six-digit login code"),
+    (r"six digit", "a six-digit login code"),
+    (r"login code", "a login code"),
+    (r"verification code", "a verification code"),
+    (r"one[- ]time (?:password|code)", "a one-time code"),
+    (r"share the code", "a one-time code"),
+    (r"send.{0,15}code", "a one-time code"),
+    (r"reply with.{0,25}code", "a one-time code"),
+)
+
+#: Coercion pattern -> (finite clause, gerund clause). Same ordering rule.
+_COER_CLAUSES: tuple[tuple[str, str, str], ...] = (
+    (r"account (?:will be )?(?:blocked|suspended|frozen|deactivated)",
+     "warns that the account will be blocked",
+     "warning that the account will be blocked"),
+    (r"legal action", "warns of legal action", "warning of legal action"),
+    (r"before midnight", "warns of a same-day deadline", "warning of a same-day deadline"),
+    (r"expires? today", "warns of a same-day deadline", "warning of a same-day deadline"),
+    (r"stops? today", "warns of a same-day deadline", "warning of a same-day deadline"),
+    (r"service (?:will )?stops?", "warns of a same-day deadline", "warning of a same-day deadline"),
+    (r"within \d+ (?:minutes|hours)", "imposes a countdown of minutes", "imposing a countdown of minutes"),
+    (r"last (?:chance|warning)", "calls itself a last warning", "calling itself a last warning"),
+    (r"failure to (?:comply|verify)", "threatens consequences for not complying",
+     "threatening consequences for not complying"),
+    (r"not received", "warns of a same-day deadline", "warning of a same-day deadline"),
+    (r"immediately|urgently|right now", "demands immediate action", "demanding immediate action"),
+)
+
+#: Lure pattern -> (finite clause, gerund clause).
+_LURE_CLAUSES: tuple[tuple[str, str, str], ...] = (
+    (r"refund (?:approved|processing)", "dangles an approved refund", "dangling an approved refund"),
+    (r"claim (?:your )?(?:refund|prize|reward)", "dangles a refund or prize to claim",
+     "dangling a refund or prize to claim"),
+    (r"you have won", "dangles a prize win", "dangling a prize win"),
+    (r"lottery", "dangles a lottery win", "dangling a lottery win"),
+    (r"scan (?:and|to) pay", "pushes a scan-and-pay demand", "pushing a scan-and-pay demand"),
+    (r"clearance amount", "pushes a scan-and-pay demand", "pushing a scan-and-pay demand"),
+    (r"pending (?:charge|amount|dues)", "pushes a pending-charge demand",
+     "pushing a pending-charge demand"),
+    (r"verify (?:your )?(?:account|wallet|card|kyc)", "pushes an account verification flow",
+     "pushing an account verification flow"),
+    (r"complete (?:your )?verification", "pushes an account verification flow",
+     "pushing an account verification flow"),
+    (r"update (?:your )?kyc", "pushes a KYC update flow", "pushing a KYC update flow"),
+    (r"send (?:a |the )?screenshot", "asks for a screenshot of a completed form",
+     "asking for a screenshot of a completed form"),
+    (r"click (?:the )?link", "pushes an unofficial link", "pushing an unofficial link"),
+)
+
+#: Longest reason we will ship. Sample-labelled reasons run 58-114 characters;
+#: the impersonation rows carry two domains and legitimately need more room.
+_REASON_LIMIT = 165
+
+
+def _first_clause(table, hits: list[str], index: int) -> str:
+    """First clause in `table` whose pattern is among `hits` ('' if none)."""
+    seen = set(hits)
+    for row in table:
+        if row[0] in seen:
+            return row[index]
+    return ""
+
+
+def _cred_label(hits: list[str]) -> str:
+    labels: list[str] = []
+    for pat, label in _CRED_LABELS:
+        if pat in hits and label not in labels:
+            labels.append(label)
+    if not labels:
+        return "a one-time code or card detail"
+    # "Verify wallet and card details" asked for both; say so rather than
+    # dropping one on the floor.
+    if len(labels) >= 2 and all(l.endswith(" details") for l in labels[:2]):
+        return f"{labels[0][:-len(' details')]} and {labels[1]}"
+    return labels[0]
+
+
+def _forward_clause(forwarded_count: int) -> str:
+    if forwarded_count >= 2:
+        count = "twice" if forwarded_count == 2 else f"{forwarded_count} times"
+        return f", and it has been forwarded {count}"
+    if forwarded_count == 1:
+        return ", and it arrives as a forwarded message"
+    return ""
+
+
+def _signal_hints(content_signals: list[str]) -> tuple[bool, bool, bool, bool]:
+    """Recover coarse flags from signal text.
+
+    Only needed when --safety-provider is an LLM: in that path the model's
+    signal strings replace the local ones, and the sentence still has to say
+    something true about what it flagged. Takes CONTENT signals only, never the
+    structural notes, so a sender domain containing the word "refund" cannot
+    invent a lure.
+    """
+    t = " ".join(content_signals).lower()
+    return (
+        any(k in t for k in ("credential", "otp", "password", "card detail", "pin", "cvv")),
+        any(k in t for k in ("pressure", "threat", "urgen", "deadline", "blocked", "coerc")),
+        any(k in t for k in ("verification", "claim", "phish", "lure", "link", "refund")),
+        any(k in t for k in ("router", "prompt", "instruct", "injection")),
+    )
+
+
+def _fit(head: str, corroboration: str, tail: str, forward: str) -> str:
+    """Assemble within budget, shedding the least specific part first."""
+    for parts in ((head, corroboration, tail, forward),
+                  (head, corroboration, tail, ""),
+                  (head, "", tail, "")):
+        sentence = "".join(parts) + "."
+        if len(sentence) <= _REASON_LIMIT:
+            return sentence
+    return "".join((head, "", tail, "")) + "."
+
+
+def compose_reason(s: SafetyContext, struct: RiskFeatures,
+                   content_signals: list[str]) -> str:
+    """Render the fired signals as one plain-English sentence."""
+    blob = f"{s.message_text}\n{s.media_text}"
+    cred_hits = _credential_requests(blob)
+    coer_hits = _matches(_COERCION, blob)
+    lure_hits = _matches(_LURE, blob)
+    inj_hits = _matches(_INJECTION, blob)
+
+    hint_cred, hint_coer, hint_lure, hint_inj = _signal_hints(content_signals)
+    cred = bool(cred_hits) or hint_cred
+    coer = bool(coer_hits) or hint_coer
+    lure = bool(lure_hits) or hint_lure
+    inj = bool(inj_hits) or hint_inj
+
+    label = _cred_label(cred_hits)
+    coer_gerund = _first_clause(_COER_CLAUSES, coer_hits, 2) or "applying deadline pressure"
+    lure_finite = _first_clause(_LURE_CLAUSES, lure_hits, 1) or "pushes a verification step"
+    lure_gerund = _first_clause(_LURE_CLAUSES, lure_hits, 2) or "pushing a verification step"
+    forward = _forward_clause(s.forwarded_count)
+
+    # ── Impersonation: the two domains are the evidence, so they lead. ──
+    if struct.impersonation:
+        head = (f"The sender uses {s.domain_used_by_sender}, "
+                f"not the official {s.official_domain}")
+        if s.verified is False and struct.young_account:
+            corroboration = f", on an unverified account only {s.account_age_days} days old"
+        elif s.verified is False:
+            corroboration = ", on an unverified account"
+        elif struct.young_account:
+            corroboration = f", on an account only {s.account_age_days} days old"
+        elif struct.young_domain:
+            corroboration = (f", on a domain registered only "
+                             f"{s.domain_used_by_sender_age_days} days ago")
+        else:
+            corroboration = ""
+
+        if cred:
+            tail = f", and it asks the user to send {label}"
+        elif lure:
+            tail = f", and it {lure_finite}"
+        elif coer:
+            tail = f", and it {_first_clause(_COER_CLAUSES, coer_hits, 1) or 'applies deadline pressure'}"
+        elif struct.heavily_reported:
+            # No content hook, so the report count carries the specificity.
+            tail = f" that has drawn {s.user_reports_30d} user reports this month"
+        else:
+            tail = ""
+        return _fit(head, corroboration, tail, forward)
+
+    # ── Content-only risk. ──
+    if cred and inj:
+        core = (f"asks the user to hand over {label} and also tries to instruct "
+                f"the router to treat it as urgent")
+    elif cred and coer:
+        core = f"asks the user to send {label} while {coer_gerund}"
+    elif cred and lure:
+        core = f"asks the user to send {label} while {lure_gerund}"
+    elif cred:
+        core = f"asks the user to hand over {label}, which no legitimate sender ever needs"
+    elif inj:
+        core = ("addresses the notification router rather than the recipient, "
+                "trying to talk its way into an alert")
+    elif coer and lure:
+        core = f"{lure_finite} while {coer_gerund}"
+        if not forward:
+            core += ", the standard phishing shape"
+    else:
+        core = "shows a deception pattern that is unsafe to surface"
+
+    return _fit(f"The message {core}", "", "", forward)
+
+
 # ─── Verdict ────────────────────────────────────────────────────────────────
 
 @dataclass
@@ -344,8 +563,7 @@ def safety_verdict(ctx: MessageContext, provider: str = "stub") -> SafetyVerdict
     if not force:
         return SafetyVerdict(s.message_id, False, signals=signals)
 
-    reason = "Safety gate: " + "; ".join(signals[:3]) if signals else "Safety gate: risk detected"
-    reason = re.sub(r"\s+", " ", reason).strip()
+    reason = re.sub(r"\s+", " ", compose_reason(s, struct, content_signals)).strip()
     confidence = 0.88 if (struct.impersonation and content_risky) else 0.83
     return SafetyVerdict(s.message_id, True, mtype, reason, confidence, signals)
 

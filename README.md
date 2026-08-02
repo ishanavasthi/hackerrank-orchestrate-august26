@@ -20,8 +20,15 @@ This fork contains a working solution. Setup and run instructions:
 **[`code/README.md`](./code/README.md)**.
 
 ```bash
-python code/main.py --provider stub   # offline, no API keys required
+python code/main.py --provider nvidia   # no API key needed; replays the committed cache
 ```
+
+Python 3.9+, standard library only, no install step. All 114 model responses
+are cached and committed, so this reproduces the shipped `output.csv`
+byte-for-byte offline with no credentials set. Accuracy on the 30 labelled
+sample rows: **93% action, 83% message_type** (`python code/eval_harness.py
+--provider nvidia`). `--provider stub` is a model-free rules fallback at
+70%/47%.
 
 Design rationale is in [`DECISIONS.md`](./DECISIONS.md); verified status and
 known gaps are in [`CHECKLIST.md`](./CHECKLIST.md).
