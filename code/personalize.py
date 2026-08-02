@@ -20,10 +20,12 @@ from datetime import datetime
 from typing import Optional
 
 try:
+    from code.affinity import apply_affinity
     from code.confidence import calibrate
     from code.contracts import Decision, MessageContext
     from code.evidence import select_evidence
 except ImportError:
+    from affinity import apply_affinity
     from confidence import calibrate
     from contracts import Decision, MessageContext
     from evidence import select_evidence
@@ -229,11 +231,22 @@ def classify_type(ctx: MessageContext, s: Signals) -> str:
         return "greeting"
     if _hit(_PAYMENT, text):
         return "payment"
-    if s.promo:
+    # A message that names THIS recipient and is genuinely time-sensitive is not
+    # a promotion, whatever vocabulary it uses. Without this, the spec's own
+    # carve-out (a muted group plus an urgent direct mention must notify —
+    # msg_056) and the "a promotion never notifies" invariant are jointly
+    # unsatisfiable, because a marketing word decided the type before urgency was
+    # consulted: "@u_001 urgent: book now for tomorrow's trip, the deadline is
+    # 6pm today" typed `promotion`, took branch 2 to `notify`, and was then
+    # demoted straight back out of the carve-out. msg_056 is one word away from
+    # that wording. Vacuous on today's data — msg_056 and msg_057 are the only
+    # two rows that name the recipient urgently and neither is promotional.
+    addressed_and_urgent = s.direct_mention and s.really_urgent
+    if s.promo and not addressed_and_urgent:
         return "promotion"
     if _hit(_EVENT, text):
         return "event"
-    if s.really_urgent and m.conversation_type != "business":
+    if s.really_urgent and (m.conversation_type != "business" or addressed_and_urgent):
         return "urgent"
     if m.conversation_type == "business":
         return "business_update" if _hit(_TRANSACTIONAL, text) else "promotion"
@@ -249,7 +262,90 @@ def _reason(parts: list[str]) -> str:
     return re.sub(r"\s+", " ", txt).strip()[:300]
 
 
-def personalize(ctx: MessageContext) -> Decision:
+# ─── Output invariant: a promotion never interrupts ─────────────────────────
+#
+# A PRODUCT RULE, not an inference from the data: no row this system emits may
+# ever pair action="notify" with message_type="promotion". Promotions go to the
+# digest, or to mute when the user does not want them from this sender. The
+# labelled set happens to agree (3 digest / 3 mute / 0 notify), but the rule
+# does not rest on that — it would hold if the data said otherwise.
+#
+# It lives here because this module already owns the two consent signals the
+# demotion target reads (`promo_unwanted`, `relationship_stale`), and it is
+# invoked from the ONE moment each decision path fixes its final action:
+# personalize() below, and router._apply_m4 for the LLM path (which also covers
+# _rules_fallback and the cached replay). Both invoke it immediately after
+# apply_affinity() and BEFORE select_evidence()/calibrate(), because both of
+# those are keyed on `decision.action` — a demotion applied after them would
+# emit `digest` carrying notify-ranked evidence and a notify confidence.
+#
+# The row that forced it: msg_094, a 40%-off beauty blast whose "before the
+# launch discount ends tonight" trips the _URGENT deadline pattern above, with
+# no user_business_history row to let branch 3 catch it, so it fell through to
+# branch 7 and interrupted the user. It is the only row on either provider that
+# this rule moves, and it is a real promotion (`s.promo` True).
+#
+# msg_049 and msg_075 used to reach here too, via the affinity upgrade, and they
+# are why the mute step is gated on `s.promo` and why affinity now declines to
+# upgrade a promotion-typed row at all (affinity._NOT_UPGRADABLE). Neither is
+# promotional; both simply lack a transactional word.
+#
+# The reason is REPLACED, not appended to: the incoming reason was written to
+# justify an interrupt ("time-sensitive and expects a response now" for
+# msg_094), so appending a clause would ship a reason that contradicts its own
+# action. Same intent as router.RULES_FALLBACK_PREFIX — when post-processing
+# moves a decision, the emitted reason says what the emitted action is.
+
+#: Demoted-to-mute reason: the content really is promotional AND the user's
+#: record with this sender says they do not want it.
+PROMO_MUTE_REASON = (
+    "Promotional content does not interrupt, and this user's record with the "
+    "sender does not welcome promotions from them, so it is suppressed."
+)
+
+#: Demoted-to-digest reason. Deliberately phrased on the LABEL rather than on
+#: the content, because that is all this branch knows — see the `s.promo`
+#: conjunct below.
+PROMO_DIGEST_REASON = (
+    "Classified as promotional, and a promotion never interrupts; held for the "
+    "digest instead."
+)
+
+
+def enforce_promotion_policy(decision: Decision, s: Signals) -> Decision:
+    """Enforce "a promotion never notifies", in place, and return the decision.
+
+    Deterministic and idempotent: a decision that already satisfies the
+    invariant is returned untouched, so applying it twice on one path (e.g. a
+    rules-fallback decision that is later replayed through M4) is a no-op.
+
+    Only ever moves a decision DOWN, so it composes with the modifier block in
+    personalize() rather than fighting it.
+
+    THE FLOOR IS `digest`, AND THE EXTRA STEP TO `mute` IS TAKEN ON CONTENT, NOT
+    ON THE LABEL. `message_type == "promotion"` is not by itself evidence that
+    the user opted out of THIS message: classify_type's business branch falls
+    through to `promotion` for any business message without a transactional word,
+    and 10 of the 21 rows it types that way have `s.promo` False — msg_075 is a
+    driver-arrival update and msg_049 a return-pickup window. Muting those on
+    `promo_unwanted` alone emitted a reason ("the user does not accept promotions
+    from this sender") that was simply untrue of the row carrying it, and `reason`
+    is a scored column. So the consent test is `s.promo and (...)`: a real
+    promotion the user rejects is suppressed, a mistyped transactional row is
+    merely deferred, and the invariant holds either way.
+    """
+    if decision.action != "notify" or decision.message_type != "promotion":
+        return decision
+    if s.promo and (s.promo_unwanted or s.relationship_stale):
+        decision.action = "mute"
+        decision.reason = PROMO_MUTE_REASON
+    else:
+        decision.action = "digest"
+        decision.reason = PROMO_DIGEST_REASON
+    return decision
+
+
+def personalize(ctx: MessageContext, *, apply_m4a: bool = True) -> Decision:
     m = ctx.message
     s = signals_for(ctx)
     mtype = classify_type(ctx, s)
@@ -332,19 +428,64 @@ def personalize(ctx: MessageContext) -> Decision:
         action = "digest"
         why.append("user is already above their normal notification volume")
 
-    # M4: evidence and confidence are computed by dedicated modules. The
-    # previous inline versions were a same-conversation filter and a three-value
-    # lookup on `action`, which gave a clear-cut scam and a coin-flip digest the
-    # same number.
-    evidence_ids = select_evidence(ctx, action)
-    return Decision(
+    # M4a: user-business affinity, the same call router._apply_m4 makes. The
+    # Decision is built first and mutated in place because the override can
+    # change `action`, and both of the M4 steps below are keyed on it.
+    #
+    # `mtype` is passed as the content type, which is what it is — so the type
+    # leg is structurally a no-op on this path (the decision's type IS
+    # classify_type's verdict here). It matters on the LLM path, where the model
+    # supplies the type and classify_type is only consulted for the correction.
+    #
+    # IT STANDS DOWN WHEN ATTENTION IS ALREADY RATIONED. The modifier block
+    # above only ever moves a decision DOWN; an upgrade running after it would
+    # undo the demotion it just made, so a `delivery_expected_today` update
+    # arriving inside the user's quiet hours would interrupt and bypass the
+    # carve-out that block documents. Declining is equivalent to running the
+    # upgrade *before* the modifiers for every row that can reach here — the
+    # only rows the modifiers demote are `notify`s, and `_UPGRADE` only acts on
+    # a `digest` — and it costs one condition instead of moving the Decision
+    # construction above the block and unpicking the reason assembly.
+    #
+    # `apply_m4a=False` is used by router._rules_fallback alone: that path
+    # writes its decision into the LLM cache, which must hold the PRE-M4
+    # decision so M4 can be revised without invalidating it. Its caller applies
+    # M4a itself, after the cache write.
+    decision = Decision(
         message_id=m.message_id,
         action=action,
         message_type=mtype,
         reason=_reason(why),
-        confidence=calibrate(action, mtype, evidence_ids, signals=s),
-        evidence_message_ids=evidence_ids,
+        confidence=0.0,
+        evidence_message_ids=[],
     )
+    if apply_m4a:
+        if not (s.in_dnd or s.load_high):
+            apply_affinity(ctx, decision, mtype)
+
+        # The promotion invariant, applied last of the decision-changing steps so
+        # nothing above it — including the affinity upgrade — can leave a
+        # notify/promotion standing, and before the two steps below, which read
+        # `decision.action`.
+        #
+        # Inside `apply_m4a` with the affinity call, not beside it: the flag
+        # exists so router._rules_fallback can cache a decision that no
+        # post-processing has touched, and a policy demotion baked into the cache
+        # is the same leak as an affinity upgrade baked into it. That caller runs
+        # _apply_m4 after its cache write, which applies both, so the decision it
+        # returns is identical either way.
+        enforce_promotion_policy(decision, s)
+
+    # M4: evidence and confidence are computed by dedicated modules. The
+    # previous inline versions were a same-conversation filter and a three-value
+    # lookup on `action`, which gave a clear-cut scam and a coin-flip digest the
+    # same number.
+    evidence_ids = select_evidence(ctx, decision.action)
+    decision.evidence_message_ids = evidence_ids
+    decision.confidence = calibrate(
+        decision.action, decision.message_type, evidence_ids, signals=s,
+    )
+    return decision
 
 
 def personalize_all(contexts: list[MessageContext]) -> list[Decision]:

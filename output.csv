@@ -10,12 +10,12 @@ msg_104,mute,personal,"The user has repeatedly ignored similar requests to pick 
 msg_069,mute,greeting,The user usually ignores similar forwarded greetings in this group.,0.85,message_0080
 msg_107,mute,scam,"The message asks the user to hand over an OTP, which no legitimate sender ever needs, and it arrives as a forwarded message.",0.82,message_0173
 msg_070,mute,scam,"The message asks the user to hand over an OTP, which no legitimate sender ever needs.",0.81,message_0173
-msg_003,digest,business_update,"The user has opened and replied to similar Amazon delivery updates, indicating they find them relevant but not urgent.",0.80,message_0031
+msg_003,notify,business_update,"The user has an open commitment with this business (a booking, delivery or order already in motion), so this update should reach them now.",0.87,message_0031;message_0061
 msg_099,digest,personal,It's a personal work note that can be read later before the standup.,0.80,message_0227
 msg_008,digest,business_update,"The user has opened similar review requests before, so this feedback request is useful but not urgent.",0.80,message_0296;message_0072
 msg_092,digest,business_update,This is a routine card statement notification that can be reviewed later and does not require immediate attention.,0.80,message_0346
 msg_060,notify,urgent,A time-sensitive internship deadline reminder from Faculty Advising that the user has previously acted on.,0.87,message_0284
-msg_004,digest,business_update,"The user engages with similar health updates from this verified sender, but the message does not require immediate interruption.",0.80,message_0005
+msg_004,notify,event,"The user has an open commitment with this business (a booking, delivery or order already in motion), so this update should reach them now.",0.87,message_0005
 msg_030,mute,promotion,"The user consistently dismisses similar marketplace promotions, indicating low interest.",0.84,message_0115
 msg_045,notify,urgent,"A delivery person needs immediate confirmation to drop off a package, requiring prompt action.",0.87,message_0146
 msg_052,mute,scam,"The sender uses talabat-refund.com, not the official talabat.com, on an unverified account only 26 days old, and it asks the user to send wallet details.",0.83,message_0208;message_0207
@@ -44,7 +44,7 @@ msg_019,mute,scam,"The sender uses chase-secure-alert.com, not the official chas
 msg_088,mute,promotion,"The user has consistently dismissed similar jacket offers from this group, indicating low interest.",0.84,message_0224
 msg_056,notify,personal,Direct mention with a time-sensitive request that needs immediate confirmation despite the group being muted.,0.88,message_0167
 msg_027,digest,promotion,"The user has opened similar travel promotions before and allows promotions, so it's potentially relevant but not urgent.",0.80,message_0007
-msg_050,notify,business_update,"The user has previously opened and replied to similar health updates from this sender, indicating the message is relevant and may require timely attention.",0.87,message_0279
+msg_050,notify,event,"The user has previously opened and replied to similar health updates from this sender, indicating the message is relevant and may require timely attention.",0.87,message_0279
 msg_083,digest,personal,The message is a personal request from a coworker that the user has previously engaged with but does not require immediate attention.,0.79,message_0219
 msg_063,mute,scam,"The message demands urgent payment via QR and threatens account lock, typical of a scam.",0.83,message_0182
 msg_033,digest,greeting,It's a friendly morning check‑in that can be read later without urgency.,0.79,message_0121
