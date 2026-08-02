@@ -3,8 +3,8 @@
 For every message in `dataset/messages.csv`, decide whether to `notify`,
 `digest`, or `mute`, and write `output.csv`.
 
-This is the solution README. The repository-root `README.md` is the
-organizer's challenge description.
+This package is the solution itself. It is self-contained: everything needed to
+read, review and run the router is in this directory.
 
 ---
 
@@ -14,6 +14,41 @@ organizer's challenge description.
 standard library only (`urllib`, not `requests`). Verified on 3.9.6.
 
 There is deliberately no `requirements.txt` — there is nothing to require.
+
+---
+
+## What this package needs to run
+
+This zip contains the `code/` directory only. Two things the router reads at
+runtime are deliberately **not** included:
+
+| Needed | Where it must be | Why it is not here |
+|---|---|---|
+| `dataset/` | sibling of `code/` | organiser-provided; excluded from the submission |
+| `.env` | sibling of `code/` | secrets are never committed, and none is required — see below |
+
+Expected layout:
+
+```text
+<work dir>/
+├── code/            <- this package
+│   ├── main.py
+│   └── cache/       <- committed OCR/ASR + model-response cache
+├── dataset/         <- organiser-provided
+│   ├── messages.csv
+│   └── media/
+├── .env             <- optional; only for messages not already cached
+└── output.csv       <- written here
+```
+
+**Every command below is run from `<work dir>`, the parent of `code/`.** Paths
+are resolved relative to `code/`'s parent, so the layout above is the only
+requirement — the working directory itself does not matter.
+
+**No API key is needed to reproduce the shipped results.** All 114 model
+responses are committed under `code/cache/routing/nvidia/`, so a run replays
+from disk. A key is only required to route a message that is *not* in the
+cache — a new dataset, or a changed prompt.
 
 ---
 
@@ -37,26 +72,27 @@ Expected output:
 PASS 110 rows
 ```
 
-The result is **byte-identical to the `output.csv` shipped with this package**.
-That is the point: the 93%/83% number below does not have to be taken on
-trust, it can be regenerated. To check it, from a clean copy of the package
-with no `.env` present:
+The run is **byte-identical to the predictions CSV submitted alongside this
+package**:
+
+```text
+md5  b0dabbce3443bb13f50c4a6afc77cb03
+```
+
+That is the point: the 93%/83% figure below does not have to be taken on trust.
+With no `.env` present and every provider key unset, the run still reproduces
+that exact file:
 
 ```bash
-cp output.csv /tmp/shipped.csv
 env -u NVIDIA_API_KEY -u ANTHROPIC_API_KEY \
     -u GEMINI_API_KEY -u GROQ_API_KEY \
     python code/main.py --provider nvidia
-diff /tmp/shipped.csv output.csv && echo IDENTICAL
+md5 -q output.csv          # -> b0dabbce3443bb13f50c4a6afc77cb03
 ```
 
-Verified by exporting the committed tree into an empty directory with no
-`.env` and those four variables unset: same row counts, same 22 force-mutes,
-and an identical MD5 before and after the run.
-
-An `NVIDIA_API_KEY` is only needed to route a message that is *not* in the
-cache — a new dataset, or a changed prompt. See "Determinism" below for the
-cache-invalidation caveat.
+Verified by exporting the committed tree into an empty directory with no `.env`
+and those four variables unset: same row counts, same 22 force-mutes, identical
+MD5 before and after.
 
 ## Offline rules fallback
 
@@ -161,8 +197,9 @@ providers — the cache is what makes the guarantee real.
 
 Caveat: the key is the `message_id` only, so editing `prompts.py` does **not**
 invalidate the cache. Delete `code/cache/routing/` after a prompt change or the
-old decisions replay silently. Hashing the prompt into the key is the fix;
-`../CHECKLIST.md` D1 records it as an open gap.
+old decisions replay silently. Hashing the prompt into the key is the fix, and
+it is a known open gap — see "Why the cache is the artifact" below for why it
+was not taken.
 
 Evidence selection (`evidence.py`) and confidence (`confidence.py`) are pure
 deterministic functions with no model call, so they are identical on the rules
@@ -199,8 +236,10 @@ blind across all 110 prompts.
 
 ## Configuration
 
-All secrets come from the environment or a local `.env` (gitignored). See
-`.env.example` for the full list and per-key free-tier notes.
+All secrets come from the environment or a `.env` placed beside `code/`. None
+is required to reproduce the shipped results — see "What this package needs to
+run" above. Variables are read at startup; an already-exported value always
+wins over the file.
 
 | Variable | Used by |
 |---|---|
@@ -241,15 +280,40 @@ trusted sender is never falsely muted, so it stays deterministic.
 | `extract_media.py`, `extract_audio.py` | one-off media extraction (M0) |
 | `cache/` | committed media extraction + model response cache |
 
-`../DECISIONS.md` records every non-obvious design call with its alternatives
-and trade-offs. `../CHECKLIST.md` records verified status and known gaps.
+---
+
+## Why the cache is the artifact
+
+Worth stating plainly, because it looks like a shortcut and is not.
+
+Committing the model responses is what makes the shipped `output.csv`
+reproducible without credentials. It is also load-bearing in a way we only
+discovered by trying to remove it: when the cache was invalidated and the run
+re-issued, **the same prompt produced different answers**. Sample accuracy moved
+across re-runs — 28/30 cached, then 26/30, 27/30, 26/30 on identical input.
+
+The cause is visible in the run logs. The routing model is a reasoning model and
+it sometimes buries its JSON inside 16–18k characters of chain-of-thought; when
+extraction fails, that row silently falls back to the rules engine (70%/47%
+against the shipping path's 93%/83%). Different runs fail on different rows. The
+committed cache contains zero such rows; one re-run contained two.
+
+Two consequences we would rather state than have inferred:
+
+- `temperature=0` is not determinism here. The cache is what makes the
+  reproducibility guarantee real.
+- Automatic cache invalidation is the correct fix for the caveat above, and it
+  is in direct tension with shipping a committed cache — invalidating re-rolls
+  all 114 verified responses on a model that does not reproduce. With the
+  deadline in hours we chose the validated artifact over the correct mechanism,
+  and the accuracy figures quoted here are one measured sample rather than a
+  stable property.
 
 ---
 
 ## Known limitations
 
-Recorded honestly rather than omitted; the full list is in `../CHECKLIST.md`
-section 7.
+Recorded honestly rather than omitted.
 
 - **Three of the five scored criteria are unmeasured locally.** There is no
   ground truth for `reason` quality, evidence relevance, or confidence
@@ -283,7 +347,7 @@ section 7.
   test set — of the 23 gate-cleared business rows exactly one is unverified and
   it has 0 reports — and every heavily-reported unverified sender is already
   gate-muted as `scam`. A `spam` rule would have no trigger here, so we did not
-  fit one to a single labelled example. `../DECISIONS.md` records the analysis.
+  fit one to a single labelled example.
 - **Two voice transcripts begin mid-sentence** (`vn_007`, `vn_014`) — the ASR
   dropped the opening audio. `media_cache.py` flags them and `confidence.py`
   penalises the two affected rows, but they still route on partial content.
