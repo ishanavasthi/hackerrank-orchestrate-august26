@@ -22,7 +22,7 @@ read, review and run the router is in this directory.
 | **Install step?** | **None.** Python 3.9+, standard library only. |
 | **Verify it** | `python code/eval_harness.py --provider nvidia` → `ALL CHECKS PASS` |
 | **Accuracy** (30 labelled samples) | **action 93%** (28/30), **message_type 83%** (25/30) |
-| **Reproducibility** | Byte-identical `output.csv`, md5 `f4fc125c88ae7357b20a32dc5a0f0acb` |
+| **Reproducibility** | Byte-identical `output.csv`, md5 `b0dabbce3443bb13f50c4a6afc77cb03` |
 | **Rows produced** | 110, exactly one per `message_id` |
 
 ---
@@ -91,7 +91,7 @@ credentials**. Expected output:
 ```text
   110 messages
   media extracted for 23/23 media-bearing messages
-  force-muted 23/110 on risk grounds
+  force-muted 22/110 on risk grounds
 PASS 110 rows
 ```
 
@@ -99,7 +99,7 @@ The run is **byte-identical to the predictions CSV submitted alongside this
 package**:
 
 ```text
-md5  f4fc125c88ae7357b20a32dc5a0f0acb
+md5  b0dabbce3443bb13f50c4a6afc77cb03
 ```
 
 That is the point: the 93%/83% figure does not have to be taken on trust. With
@@ -110,11 +110,11 @@ exact file:
 env -u NVIDIA_API_KEY -u ANTHROPIC_API_KEY \
     -u GEMINI_API_KEY -u GROQ_API_KEY \
     python code/main.py --provider nvidia
-md5 -q output.csv          # -> f4fc125c88ae7357b20a32dc5a0f0acb
+md5 -q output.csv          # -> b0dabbce3443bb13f50c4a6afc77cb03
 ```
 
 Verified by exporting the committed tree into an empty directory with no `.env`
-and those four variables unset: same row counts, same 23 force-mutes, identical
+and those four variables unset: same row counts, same 22 force-mutes, identical
 MD5 before and after.
 
 ### Useful flags

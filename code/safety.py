@@ -260,22 +260,13 @@ _COERCION = (
     r"failure to (?:comply|verify)", r"legal action",
     # msg_017: "Service stops today if clearance amount is not received."
     r"service (?:will )?stops?", r"stops? today", r"not received",
-    # A clock deadline on a stated obligation. "before midnight" above is
-    # already this shape; this generalises it to a named hour.
-    #
-    # WHY A CLOCK AND NOT A DAY. The obvious pattern here is `due today`, and it
-    # is wrong. Measured against ten ordinary collector messages, `due today`
-    # force-muted EIGHT of them — "Electricity bill is due today. Pending amount
-    # is Rs 1,240." is the single most common legitimate payment reminder there
-    # is, and `pending amount` is already a lure, so the pair fires. The clock
-    # form false-positives on one of the same ten. Same catch, an eighth of the
-    # blast radius; this is also the DECISIONS.md rule that bare immediacy words
-    # ("today", "now") are not deadlines, applied to a family that looked exempt.
-    #
-    # `by 6 PM` is deliberately NOT matched: msg_005/103/104 are neighbours
-    # arranging a jacket handover "by 6 PM", and coercion is about a threatened
-    # cutoff, not any arrangement that happens to name a time.
-    r"\bbefore \d{1,2}(?::\d{2})? ?(?:am|pm)\b",
+    # DELIBERATELY NOT MATCHED: a bare clock deadline such as "before 5 PM".
+    # It was added and then reverted — see DECISIONS.md, "Reverted: a clock
+    # deadline is not by itself coercion". A payment reminder that names an
+    # hour is ordinary collector language in a society or school group, and
+    # pairing it with an existing lure force-muted msg_022, a society-group
+    # payment reminder, as scam. Coercion here means a threatened consequence,
+    # not any stated cutoff.
 )
 _LURE = (
     r"click (?:the )?link", r"verify (?:your )?(?:account|wallet|card|kyc)",
@@ -414,10 +405,6 @@ _COER_CLAUSES: tuple[tuple[str, str, str], ...] = (
      "warning that the account will be blocked"),
     (r"legal action", "warns of legal action", "warning of legal action"),
     (r"before midnight", "warns of a same-day deadline", "warning of a same-day deadline"),
-    # NOTE: _first_clause matches these by exact pattern-string identity against
-    # the tuples above, so this must stay byte-identical to the _COERCION entry.
-    (r"\bbefore \d{1,2}(?::\d{2})? ?(?:am|pm)\b",
-     "presses a same-day payment cutoff", "pressing a same-day payment cutoff"),
     (r"expires? today", "warns of a same-day deadline", "warning of a same-day deadline"),
     (r"stops? today", "warns of a same-day deadline", "warning of a same-day deadline"),
     (r"service (?:will )?stops?", "warns of a same-day deadline", "warning of a same-day deadline"),
@@ -445,11 +432,8 @@ _LURE_CLAUSES: tuple[tuple[str, str, str], ...] = (
     (r"complete (?:your )?verification", "pushes an account verification flow",
      "pushing an account verification flow"),
     (r"update (?:your )?kyc", "pushes a KYC update flow", "pushing a KYC update flow"),
-    # The discriminating fact is not the screenshot, it is where it goes: a
-    # legitimate collector reconciles against its own records, so it has no
-    # reason to want the receipt sent back to it privately in the chat.
-    (r"send (?:a |the )?screenshot", "asks for the payment screenshot to be sent back in the chat",
-     "asking for the payment screenshot to be sent back in the chat"),
+    (r"send (?:a |the )?screenshot", "asks for a screenshot of a completed form",
+     "asking for a screenshot of a completed form"),
     (r"click (?:the )?link", "pushes an unofficial link", "pushing an unofficial link"),
 )
 

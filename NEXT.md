@@ -9,7 +9,7 @@ self-contained: what, why it matters, how to know it is done. Work top-down —
 the ordering is by risk to the *submission*, not by effort.
 
 State at time of writing: `output.csv` = 110 rows,
-`md5 f4fc125c88ae7357b20a32dc5a0f0acb`, shipping path = rules safety gate +
+`md5 b0dabbce3443bb13f50c4a6afc77cb03`, shipping path = rules safety gate +
 NVIDIA NIM personalization.
 
 **Read `CHECKLIST.md` §8 before touching any prompt.** It records that the model
