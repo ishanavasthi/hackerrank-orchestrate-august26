@@ -260,13 +260,34 @@ _COERCION = (
     r"failure to (?:comply|verify)", r"legal action",
     # msg_017: "Service stops today if clearance amount is not received."
     r"service (?:will )?stops?", r"stops? today", r"not received",
-    # DELIBERATELY NOT MATCHED: a bare clock deadline such as "before 5 PM".
-    # It was added and then reverted — see DECISIONS.md, "Reverted: a clock
-    # deadline is not by itself coercion". A payment reminder that names an
-    # hour is ordinary collector language in a society or school group, and
-    # pairing it with an existing lure force-muted msg_022, a society-group
-    # payment reminder, as scam. Coercion here means a threatened consequence,
-    # not any stated cutoff.
+    # A clock deadline on a stated obligation. "before midnight" above is
+    # already this shape; this generalises it to a named hour.
+    #
+    # On its own this is NOT coercion — a society admin naming an hour is
+    # ordinary collector language. It only bites in conjunction with a lure,
+    # and the dataset supplies the minimal pair that shows why that conjunction
+    # is the right test. msg_021 and msg_022 share their first two sentences
+    # verbatim ("Payment due today. Complete before 5 PM..."); both therefore
+    # carry this coercion signal. They differ only in the closing sentence:
+    #   msg_021, from a group ADMIN:  "Please don't use any payment link
+    #                                  shared by residents."   -> no lure, clears
+    #   msg_022, from a MEMBER:       "Use this link and send screenshot here
+    #                                  so I can update it faster."  -> lure, mutes
+    # The admin warns against the instrument; the member supplies one and asks
+    # for the receipt privately. Deadline plus instrument is the attack; deadline
+    # alone is a Tuesday.
+    #
+    # WHY A CLOCK AND NOT A DAY. The obvious pattern is `due today`, and it is
+    # wrong. Measured against ten ordinary collector messages, `due today`
+    # force-muted EIGHT — "Electricity bill is due today. Pending amount is
+    # Rs 1,240." pairs a routine reminder with the existing `pending amount`
+    # lure. The clock form catches msg_022 just as well and false-positives on
+    # one of the same ten. Same catch, an eighth of the blast radius.
+    #
+    # `by 6 PM` is deliberately NOT matched: msg_005/103/104 are neighbours
+    # arranging a jacket handover "by 6 PM", and coercion is about a threatened
+    # cutoff, not any arrangement that happens to name a time.
+    r"\bbefore \d{1,2}(?::\d{2})? ?(?:am|pm)\b",
 )
 _LURE = (
     r"click (?:the )?link", r"verify (?:your )?(?:account|wallet|card|kyc)",
@@ -405,6 +426,10 @@ _COER_CLAUSES: tuple[tuple[str, str, str], ...] = (
      "warning that the account will be blocked"),
     (r"legal action", "warns of legal action", "warning of legal action"),
     (r"before midnight", "warns of a same-day deadline", "warning of a same-day deadline"),
+    # NOTE: _first_clause matches these by exact pattern-string identity against
+    # the tuples above, so this must stay byte-identical to the _COERCION entry.
+    (r"\bbefore \d{1,2}(?::\d{2})? ?(?:am|pm)\b",
+     "presses a same-day payment cutoff", "pressing a same-day payment cutoff"),
     (r"expires? today", "warns of a same-day deadline", "warning of a same-day deadline"),
     (r"stops? today", "warns of a same-day deadline", "warning of a same-day deadline"),
     (r"service (?:will )?stops?", "warns of a same-day deadline", "warning of a same-day deadline"),
@@ -432,8 +457,11 @@ _LURE_CLAUSES: tuple[tuple[str, str, str], ...] = (
     (r"complete (?:your )?verification", "pushes an account verification flow",
      "pushing an account verification flow"),
     (r"update (?:your )?kyc", "pushes a KYC update flow", "pushing a KYC update flow"),
-    (r"send (?:a |the )?screenshot", "asks for a screenshot of a completed form",
-     "asking for a screenshot of a completed form"),
+    # The discriminating fact is not the screenshot, it is where it goes: a
+    # legitimate collector reconciles against its own records, so it has no
+    # reason to want the receipt sent back to it privately in the chat.
+    (r"send (?:a |the )?screenshot", "asks for the payment screenshot to be sent back in the chat",
+     "asking for the payment screenshot to be sent back in the chat"),
     (r"click (?:the )?link", "pushes an unofficial link", "pushing an unofficial link"),
 )
 

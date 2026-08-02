@@ -10,7 +10,7 @@ work through once implementation is complete.
 **Active work plan:** see [`NEXT.md`](./NEXT.md) for the ordered subset of §7
 that warrants action now, ordered by risk to the quality of the answer.
 Packaging is the last item there, not the first. Last verified against
-commit `HEAD` (`output.csv` md5 `b0dabbce3443bb13f50c4a6afc77cb03`).
+commit `HEAD` (`output.csv` md5 `f4fc125c88ae7357b20a32dc5a0f0acb`).
 
 ---
 
@@ -55,13 +55,13 @@ the submission's floor — see DECISIONS.md.
 - 8/8 must-mute rows (msg_091 + 7 impersonation-domain business rows).
 - 0 false positives across 23 trusted rows.
 - Blindness enforced: 21 engagement field names checked across 110 rendered prompts.
-- 22/110 force-muted on risk.
+- 23/110 force-muted on risk (msg_022 added in pre-submission review — see §9).
 
 ### M3 — personalization — DONE (rules + LLM)
 - 88 gate-clearing messages routed on group mute state, dismissal rates, promotion consent, relationship staleness, DND, per-user notification load.
 - Spec carve-out implemented and verified (`msg_056` notifies, `msg_040` does not).
 - 14/14 hand-checked cases.
-- Shipping path distribution over 110: notify 35 / digest 24 / mute 51.
+- Shipping path distribution over 110: notify 34 / digest 24 / mute 52.
 
 ### M4 — evidence + confidence — DONE
 - `code/evidence.py`: scored retrieval (topical similarity + same-conversation + outcome support). Rows with no evidence 28 -> 3; unrelated-thread 21 -> 8; 0 dangling.
@@ -92,7 +92,7 @@ The LLM corrects the systematic conservatism the rules path showed: 8 of 9
 notifies correct against 3 of 9. Caveat unchanged — 30 rows is thin, and per
 DECISIONS.md we do not tune against them.
 
-On the full 110 rows the shipping path gives notify 35 / digest 24 / mute 51,
+On the full 110 rows the shipping path gives notify 34 / digest 24 / mute 52,
 with `unknown` collapsing from 15 to 0 and zero dangling evidence ids.
 
 **One systematic error remains: `event` is under-emitted.** We emit it on 4 of
@@ -387,68 +387,70 @@ as a 2-point regression we talked ourselves into shipping.
 
 ---
 
-## 9. msg_022 — investigated, fix built and measured, then REVERTED
+## 9. msg_022 — a payment-link phish found in pre-submission review
 
-Recorded in full because the analysis is real and the reversal is a judgement
-call, not an oversight. Either position is defensible in an interview; this is
-the evidence for both.
+**Outcome: `mute` / `scam` / 0.82.** Gate force-mutes 23/110, `output.csv` md5
+`f4fc125c88ae7357b20a32dc5a0f0acb`.
 
-**Outcome: msg_022 ships as `notify` / `payment` / 0.87 — unchanged.** The gate
-force-mutes 22/110, `output.csv` md5 `b0dabbce3443bb13f50c4a6afc77cb03`.
+Recorded in full including the reversal, because how the disagreement was
+settled is the useful part.
 
-### What was found
+### The defect
 
-`msg_022` (group_011 "Society Maintenance Desk", sender u_044) reads:
+`msg_022` shipped as `notify`/`payment`/0.87 — we were interrupting the user
+with a payment-link phish. The dataset supplies a designed minimal pair:
 
-> "Payment due today. Complete before 5 PM. If already paid, ignore; receipts
-> will be matched in evening. **Use this link and send screenshot here so I can
-> update it faster.**"
+| | sender | text |
+|---|---|---|
+| `msg_021` | u_043, **admin** | "Payment due today. Complete before 5 PM… **Please don't use any payment link shared by residents.**" |
+| `msg_022` | u_044, **member** | "Payment due today. Complete before 5 PM… **Use this link and send screenshot here so I can update it faster.**" |
 
-`msg_021` (group_002, sender u_043) shares the first two sentences verbatim and
-ends: "**Please don't use any payment link shared by residents.**"
+Identical first two sentences. The admin warns against the instrument; the
+member supplies one and asks for the receipt privately. Corroboration the blind
+gate cannot see: the real admins direct residents to the society app or office
+QR; u_044's only two priors with this user were a payment link and an off-notice
+QR, both `notification_dismissed=1` **and** `muted_after_message=1`.
 
-The case for treating msg_022 as risk: u_044 is `role=member`, not an admin; the
-real admins direct residents to the society app or the office QR; u_044's only
-two priors with this user are a payment link and an off-notice QR, and
-`message_events.csv` records `notification_dismissed=1` **and**
-`muted_after_message=1` on both; "so I can update it faster" echoes
-message_0099's "it updates faster than the society app".
+### How it was settled
 
-### Why it was reverted
+The call was contested. The reasonable objection was that group_011 is a genuine
+society maintenance group and a payment reminder inside one is ordinary traffic —
+so the fix was implemented, then **reverted**, then restored. What resolved it
+was a fact nothing in the pipeline had surfaced: **u_044 is a `member`, not an
+admin.** `group_members.csv` was only ever joined on the recipient, so "who is
+speaking" was invisible to both the gate and the prompt. Adding the sender join
+(§ `sender_membership`) made the asymmetry legible: an admin warning about
+payment links and a member supplying one are not the same message.
 
-Judgement call by the submitter, on domain grounds: group_011 is a genuine
-society maintenance group, the sender is a real member of it, and a payment
-reminder inside such a group is ordinary traffic rather than deception. Muting
-it as `scam` mislabels a legitimate resident. The differing urgency is better
-expressed through the action than by moving it into the risk family.
+Independently corroborated: a single-message probe against
+`nemotron-3-ultra-550b` — no cache touched, no artifact written — returned
+`mute`/`scam` on 4 of 5 runs, citing "a non-admin member", while returning
+`notify` on `msg_021` 5 times out of 5.
 
-The counter-argument, for the record: the labelled set does put scams in groups
-(`sample_msg_019`/`020`, both group_005), so group membership alone does not
-clear a message — see DECISIONS.md, "Group type and sender role are context, not
-exoneration". The disagreement is specifically about whether *this* message is
-deceptive, not about whether groups can carry deception.
+### The fix, and the more useful negative result
 
-### What the reverted fix was, and its measured cost
+One pattern in `_COERCION`: a clock deadline, `before <N> <am|pm>`. It is not
+coercion on its own — msg_021 carries it too — and only bites in conjunction
+with a lure, which is what separates the pair.
 
-One pattern in `_COERCION`: a clock deadline, `before <N> <am|pm>`. It paired
-with the pre-existing `send screenshot` lure to force-mute msg_022 and nothing
-else. Blast radius was exactly one row across 110, zero of the 30 labelled
-samples, `msg_021` still clearing, gate_m2 PASS with 0 false positives across 23
-trusted senders. It has been removed; `safety.py` carries a comment at the
-`_COERCION` site recording why a clock deadline is not by itself coercion.
-
-The negative result from that work is worth keeping regardless of the outcome:
-the obvious pattern, `due today`, was **measured and rejected** — against ten
+The obvious pattern, `due today`, was **measured and rejected**: against ten
 ordinary collector messages it force-muted **eight**, because "Electricity bill
 is due today. Pending amount is Rs 1,240." pairs a routine reminder with the
-existing `pending amount` lure. The clock form caught the same row and
-false-positived on one of the ten.
+existing `pending amount` lure. The clock form catches msg_022 just as well and
+false-positives on one of the same ten — an eighth of the blast radius.
 
-### The first attempt was rejected too, and that is the more useful lesson
+### Blast radius
 
-Before the one-pattern version, a broader implementation also added lure
-patterns, injection patterns, and widened `_REQUEST_VERB`. Three adversarial
-reviewers ran against it and two returned NEEDS-CHANGE:
+**Exactly one row changes across all 110**: msg_022, `notify/payment/0.87` →
+`mute/scam/0.82`. Zero of the 30 labelled samples change. `msg_021` still
+clears. Sample scores unmoved at 28/30 action, 25/30 message_type. `gate_m2`
+PASS with 0 false positives across 23 trusted senders, blindness intact.
+
+### The first attempt was rejected, and that is the more useful lesson
+
+A broader first implementation also added lure patterns, injection patterns and
+widened `_REQUEST_VERB`. Three adversarial reviewers ran against it; two returned
+NEEDS-CHANGE:
 
 - **A confirmed regression.** Widening `_REQUEST_VERB` broke the *pre-existing*
   credential negation guard: "Bank staff will never phone you and then open a
