@@ -156,6 +156,13 @@ class Dataset:
             user=self._users_by_id.get(message.user_id, {}),
             group=self._groups_by_id.get(message.group_id, {}),
             membership=self._membership_by_key.get((message.group_id, message.user_id), {}),
+            # Same table, keyed on the SENDER instead of the recipient. We were
+            # joining this file once and only ever asking "what is the reader's
+            # standing", never "what is the writer's" — so an admin notice and a
+            # message from someone who joined last week looked identical.
+            sender_membership=self._membership_by_key.get(
+                (message.group_id, message.sender_user_id), {}
+            ),
             business=self._business_by_id.get(message.business_id, {}),
             business_history=self._business_history_by_key.get(
                 (message.user_id, message.business_id), {}

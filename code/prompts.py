@@ -11,6 +11,9 @@ and never let a sample id leak into a real decision — sample ids are
 
 from __future__ import annotations
 
+from datetime import datetime
+from typing import Optional
+
 try:
     from contracts import ACTIONS, CONFIDENCE_MAX, CONFIDENCE_MIN, MESSAGE_TYPES, MessageContext
 except ImportError:  # running as part of the `code` package (e.g. `python -m code.main`)
@@ -107,6 +110,48 @@ _FEW_SHOT = (
         ),
     },
 )
+
+
+def _tenure_days(joined_at: str, created_at: str) -> Optional[int]:
+    """Whole days between joining the group and sending this message."""
+    for fmt in ("%Y-%m-%d %H:%M", "%Y-%m-%d"):
+        try:
+            sent = datetime.strptime(created_at.strip(), fmt)
+            break
+        except (ValueError, AttributeError):
+            continue
+    else:
+        return None
+    try:
+        joined = datetime.strptime(joined_at.strip(), "%Y-%m-%d")
+    except (ValueError, AttributeError):
+        return None
+    days = (sent - joined).days
+    return days if days >= 0 else None
+
+
+def _sender_standing(ctx: MessageContext) -> str:
+    """Who is speaking, in structural terms.
+
+    Standing is not trust. A group admin can still send a forged system note —
+    one does in this dataset — so this is context for the reading, never a
+    reason to clear a risk signal. It is here because it was missing entirely:
+    an admin notice and a message from someone who joined last week rendered
+    identically, and the recipient's own role was the only membership fact in
+    the prompt.
+    """
+    m = ctx.message
+    sm = ctx.sender_membership or {}
+    bits = []
+    role = str(sm.get("role", "")).strip()
+    if role:
+        bits.append(f"role={role}")
+    days = _tenure_days(str(sm.get("joined_at", "")), m.created_at)
+    if days is not None:
+        bits.append(f"in this group {days}d")
+    elif not role:
+        bits.append("not a member of this group")
+    return f"user {m.sender_user_id!r}" + (f" ({', '.join(bits)})" if bits else "")
 
 
 def _render_few_shot() -> str:
@@ -235,11 +280,15 @@ def build_user_prompt(ctx: MessageContext) -> str:
         sections.append(
             f"Group: {_fmt_kv(ctx.group, ('group_name', 'group_type', 'member_count', 'admin_count', 'messages_30d'))}"
         )
+        # `group_type` above matters more than it looks: these groups are not
+        # homogeneous. A society notice board and a marketplace carry very
+        # different priors, and the labelled set puts its group scams in a
+        # marketplace, not a society.
         sections.append(
             f"Recipient's membership: {_fmt_kv(ctx.membership, ('role', 'messages_read_30d', 'replies_sent_30d', 'notifications_dismissed_30d', 'group_muted_by_user'))}"
         )
         if m.sender_user_id:
-            sections.append(f"Sender: user {m.sender_user_id!r}")
+            sections.append(f"Sender: {_sender_standing(ctx)}")
 
     if m.conversation_type == "business" or ctx.business:
         sections.append(

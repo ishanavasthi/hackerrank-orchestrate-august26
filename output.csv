@@ -108,4 +108,4 @@ msg_077,notify,urgent,"Time-sensitive school circular requiring immediate action
 msg_081,notify,urgent,A time-sensitive school transport update about pickup gate change that may affect child pickup.,0.86,message_0217
 msg_025,notify,business_update,"The user has previously opened and replied to similar order updates from Amazon, indicating relevance.",0.87,message_0004;message_0105
 msg_084,mute,promotion,User has opted out of promotions from HDFC Bank and this promotional offer matches previously dismissed messages.,0.83,message_0220
-msg_022,notify,payment,Time-sensitive payment request from the society that requires action before the 5 PM deadline.,0.87,message_0150
+msg_022,mute,scam,"The message asks for the payment screenshot to be sent back in the chat while pressing a same-day payment cutoff, the standard phishing shape.",0.82,message_0151

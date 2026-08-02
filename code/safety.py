@@ -26,6 +26,8 @@ something a user wanted.
 
 from __future__ import annotations
 
+from datetime import datetime
+
 import json
 import os
 import pathlib
@@ -85,12 +87,49 @@ class SafetyContext:
     group_type: str = ""
     group_member_count: Optional[int] = None
 
+    # Who is speaking, structurally. Standing is a property of the sender's
+    # position in the group, not of how the recipient feels about them, so it
+    # is on the permitted side of the blindness boundary.
+    #
+    # ONLY these two fields may be lifted from ctx.sender_membership. The rest
+    # of that row (messages_read_30d, replies_sent_30d,
+    # notifications_dismissed_30d, group_muted_by_user) is engagement and must
+    # never cross — gate_m2.py checks 21 such field names across all 110
+    # rendered prompts and will fail loudly if one does.
+    #
+    # Deliberately unused by any rule today. Standing is not trust: msg_109 is
+    # a forged "sender is trusted admin" note from an account whose role really
+    # is admin, so a rule that let admin standing clear a risk signal would use
+    # a forged trust claim to wave through a message built to forge one. It is
+    # carried here so the gate can reason about who is speaking without that
+    # ever becoming an exemption.
+    sender_role: str = ""
+    sender_tenure_days: Optional[int] = None
+
 
 def _int(value, default=None) -> Optional[int]:
     try:
         return int(str(value).strip())
     except (TypeError, ValueError):
         return default
+
+
+def _tenure_days(joined_at: str, created_at: str) -> Optional[int]:
+    """Whole days between joining the group and sending this message."""
+    for fmt in ("%Y-%m-%d %H:%M", "%Y-%m-%d"):
+        try:
+            sent = datetime.strptime(created_at.strip(), fmt)
+            break
+        except (ValueError, AttributeError):
+            continue
+    else:
+        return None
+    try:
+        joined = datetime.strptime(joined_at.strip(), "%Y-%m-%d")
+    except (ValueError, AttributeError):
+        return None
+    days = (sent - joined).days
+    return days if days >= 0 else None
 
 
 def build_safety_context(ctx: MessageContext) -> SafetyContext:
@@ -131,6 +170,12 @@ def build_safety_context(ctx: MessageContext) -> SafetyContext:
         messages_sent_30d=_int(biz.get("messages_sent_30d")),
         group_type=grp.get("group_type", "") or "",
         group_member_count=_int(grp.get("member_count")),
+        # Two named fields only — never `**ctx.sender_membership`, which would
+        # drag four engagement columns across the blindness boundary.
+        sender_role=str((ctx.sender_membership or {}).get("role", "") or "").strip(),
+        sender_tenure_days=_tenure_days(
+            str((ctx.sender_membership or {}).get("joined_at", "") or ""), m.created_at
+        ),
     )
 
 

@@ -94,6 +94,16 @@ class MessageContext:
     user: dict[str, Any] = field(default_factory=dict)
     group: dict[str, Any] = field(default_factory=dict)
     membership: dict[str, Any] = field(default_factory=dict)   # group_members row
+    #: The SENDER's group_members row, not the recipient's. Standing in the
+    #: group ("is this an admin or a member who joined last week?") is a
+    #: structural fact about who is speaking, and it was previously unavailable
+    #: anywhere — `membership` above is the recipient's row.
+    #:
+    #: NOTE for the safety gate: this row also carries engagement columns
+    #: (messages_read_30d, replies_sent_30d, notifications_dismissed_30d,
+    #: group_muted_by_user). Only `role` and `joined_at` may cross into
+    #: SafetyContext; the rest would break blindness.
+    sender_membership: dict[str, Any] = field(default_factory=dict)
     business: dict[str, Any] = field(default_factory=dict)
     business_history: dict[str, Any] = field(default_factory=dict)
     history: list[dict[str, Any]] = field(default_factory=list)  # this user's past messages
