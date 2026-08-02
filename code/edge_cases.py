@@ -29,18 +29,50 @@ sys.path.insert(0, str(REPO / "code"))
 
 from data import Dataset                                    # noqa: E402
 from personalize import signals_for                         # noqa: E402
+from router import (                                        # noqa: E402
+    DEGRADED_REASON_MARKERS, DEGRADED_REASON_SAMPLES,
+)
 from safety import (                                        # noqa: E402
     build_safety_context, content_risk, structural_risk,
 )
 
 #: Substrings that mean a decision came from an error path rather than a
 #: judgement. Any of these in a shipped `reason` is a silent failure.
-FALLBACK_MARKERS = (
-    "not valid json",
-    "safe fallback",
+#:
+#: IMPORTED from router.py rather than restated here. This list used to be a
+#: local copy, and it drifted: it matched one of the four reasons router.py can
+#: actually emit and was blind to the other three — including
+#: `[rules fallback: model output unreadable]`, added by the very commit that
+#: fixed the original silent-fallback incident. A guard that has drifted from
+#: the thing it guards is worse than no guard, because it reports PASS.
+FALLBACK_MARKERS = DEGRADED_REASON_MARKERS + (
+    # Defensive extras: nothing emits these today, but they are specific enough
+    # that a legitimate reason is very unlikely to contain them.
     "could not parse",
-    "unavailable",
+    "error handler",
 )
+
+
+def _degraded(reason: str) -> bool:
+    return any(marker in reason.lower() for marker in FALLBACK_MARKERS)
+
+
+def self_test_guard() -> list[str]:
+    """Prove the guard catches every degraded reason router.py can produce.
+
+    Without this, the marker list is an assumption. With it, adding a
+    degradation path whose marker was forgotten fails the gate immediately
+    instead of silently widening the blind spot.
+    """
+    missed = [s for s in DEGRADED_REASON_SAMPLES if not _degraded(s)]
+    # A guard that fires on ordinary prose would be worse than useless.
+    false_positives = [s for s in (
+        "A trusted group admin sent a time-sensitive update.",
+        "The item the sender mentions is currently unavailable in store.",
+        "The user opened similar banking updates before.",
+    ) if _degraded(s)]
+    return ([f"guard does not catch: {s!r}" for s in missed]
+            + [f"guard false-positives on: {s!r}" for s in false_positives])
 
 
 def load(out_path: Path):
@@ -60,9 +92,22 @@ def main() -> int:
     print(f"=== M5 edge-case gate ({args.out.name}) ===\n")
 
     # ── 0. No decision may come from an error path ──────────────────────────
-    silent = [(mid, r["reason"][:70]) for mid, r in rows.items()
-              if any(marker in r["reason"].lower() for marker in FALLBACK_MARKERS)]
     print("--- 0: no silently-degraded decisions ---")
+
+    # 0a. First verify the guard itself. Checking the artifact with a guard we
+    # have not checked is how this assertion came to report PASS while blind to
+    # three of the four degradation paths.
+    guard_problems = self_test_guard()
+    if guard_problems:
+        for p in guard_problems:
+            print(f"  FAIL  {p}")
+            failures.append(f"fallback guard is unsound: {p}")
+    else:
+        print(f"  PASS  guard self-test: catches all {len(DEGRADED_REASON_SAMPLES)} "
+              f"degraded reasons router.py can emit, no false positives")
+
+    # 0b. Then the artifact.
+    silent = [(mid, r["reason"][:70]) for mid, r in rows.items() if _degraded(r["reason"])]
     if silent:
         for mid, reason in silent:
             print(f"  FAIL  {mid}: {reason}")

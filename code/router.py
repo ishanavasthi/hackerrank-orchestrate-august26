@@ -506,11 +506,54 @@ def _coerce_confidence(value) -> Optional[float]:
     return _clamp01(c)
 
 
+# ─── degraded-decision reasons ───────────────────────────────────────────────
+#
+# Every reason below marks a decision produced by an error path rather than a
+# judgement. They are named constants, and DEGRADED_REASON_MARKERS is the single
+# source of truth that `edge_cases.py` imports to assert none of them ever
+# reaches output.csv.
+#
+# They live together because they previously did not: the marker list was
+# hand-maintained in edge_cases.py, drifted from the strings actually emitted
+# here, and ended up blind to three of the four — including the one added by the
+# very commit that fixed the original silent-fallback incident.
+#
+# IF YOU ADD A DEGRADATION PATH, ADD ITS MARKER TO THE TUPLE. The guard is only
+# ever as good as this tuple, and `edge_cases.py` self-tests that every constant
+# here is matched by some marker.
+
+UNPARSEABLE_REASON = "Model output was not valid JSON; used a safe fallback decision."
+MISSING_REASON = "Model did not provide a reason."
+VALIDATION_FALLBACK_PREFIX = " (validation fallback: "
+RULES_FALLBACK_PREFIX = "[rules fallback: model output unreadable] "
+
+#: Lowercase substrings identifying the reasons above. Kept deliberately narrow:
+#: a marker that could plausibly occur in a *legitimate* reason would make the
+#: guard cry wolf. (The previous list included the bare word "unavailable",
+#: which nothing emits and which any reason about stock or service availability
+#: would trip.)
+DEGRADED_REASON_MARKERS = (
+    "not valid json",
+    "safe fallback",
+    "model did not provide a reason",
+    "validation fallback",
+    "rules fallback",
+)
+
+#: The full reason strings, for the coverage self-test in edge_cases.py.
+DEGRADED_REASON_SAMPLES = (
+    UNPARSEABLE_REASON,
+    MISSING_REASON,
+    "Some model reason." + VALIDATION_FALLBACK_PREFIX + "action 'x' was invalid)",
+    RULES_FALLBACK_PREFIX + "Some rules reason.",
+)
+
+
 def _validate_decision(raw: dict, message_id: str) -> Decision:
     if not isinstance(raw, dict) or not raw:
         return Decision(
             message_id=message_id, action="digest", message_type="unknown",
-            reason="Model output was not valid JSON; used a safe fallback decision.",
+            reason=UNPARSEABLE_REASON,
             confidence=0.5, evidence_message_ids=[],
         )
 
@@ -532,7 +575,7 @@ def _validate_decision(raw: dict, message_id: str) -> Decision:
 
     reason = str(raw.get("reason") or "").strip().replace("\n", " ").replace("\r", " ")
     if not reason:
-        reason = "Model did not provide a reason."
+        reason = MISSING_REASON
 
     evidence_raw = raw.get("evidence_message_ids")
     evidence = []
@@ -544,7 +587,7 @@ def _validate_decision(raw: dict, message_id: str) -> Decision:
     evidence = evidence[:2]
 
     if notes:
-        reason = (reason + " (validation fallback: " + "; ".join(notes) + ")").strip()
+        reason = (reason + VALIDATION_FALLBACK_PREFIX + "; ".join(notes) + ")").strip()
 
     return Decision(
         message_id=message_id, action=action, message_type=message_type,
@@ -615,7 +658,7 @@ def _rules_fallback(ctx: MessageContext) -> Decision:
     except ImportError:
         from code.personalize import personalize  # noqa: PLC0415
     decision = personalize(ctx)
-    decision.reason = f"[rules fallback: model output unreadable] {decision.reason}"
+    decision.reason = RULES_FALLBACK_PREFIX + decision.reason
     return decision
 
 
