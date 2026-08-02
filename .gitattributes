@@ -1,0 +1,17 @@
+# output.csv is a BUILD ARTIFACT, not source. Every row is produced by one run of
+# code/main.py, and the md5 quoted in code/README.md, CHECKLIST.md and NEXT.md is
+# of the file as a whole.
+#
+# Git's default line-level merge is actively dangerous here. Two branches that
+# change different rows merge cleanly with no conflict, producing a file that
+# splices rows from two different runs: 110 valid rows that pass validate.py,
+# reproduce neither run, and match no recorded md5. The failure is invisible.
+#
+# `-merge` declares a conflict instead. ALWAYS resolve it by regenerating
+# (`python code/main.py --provider nvidia`), never by hand-merging or by picking
+# a side, then re-stamp the md5 in the three docs.
+output.csv -merge
+
+# Same reasoning for the committed model-response cache: each file is one whole
+# provider reply, and a field-level splice of two replies is not a reply.
+code/cache/**/*.json -merge
