@@ -10,7 +10,7 @@ work through once implementation is complete.
 **Active work plan:** see [`NEXT.md`](./NEXT.md) for the ordered subset of §7
 that warrants action now, ordered by risk to the quality of the answer.
 Packaging is the last item there, not the first. Last verified against
-commit `8daebd7` (`output.csv` md5 `b0dabbce3443bb13f50c4a6afc77cb03`).
+commit `HEAD` (`output.csv` md5 `f4fc125c88ae7357b20a32dc5a0f0acb`).
 
 ---
 
@@ -55,13 +55,13 @@ the submission's floor — see DECISIONS.md.
 - 8/8 must-mute rows (msg_091 + 7 impersonation-domain business rows).
 - 0 false positives across 23 trusted rows.
 - Blindness enforced: 21 engagement field names checked across 110 rendered prompts.
-- 22/110 force-muted on risk.
+- 23/110 force-muted on risk (msg_022 added in the pre-submission review — see §9).
 
 ### M3 — personalization — DONE (rules + LLM)
 - 88 gate-clearing messages routed on group mute state, dismissal rates, promotion consent, relationship staleness, DND, per-user notification load.
 - Spec carve-out implemented and verified (`msg_056` notifies, `msg_040` does not).
 - 14/14 hand-checked cases.
-- Shipping path distribution over 110: notify 35 / digest 24 / mute 51.
+- Shipping path distribution over 110: notify 34 / digest 24 / mute 52.
 
 ### M4 — evidence + confidence — DONE
 - `code/evidence.py`: scored retrieval (topical similarity + same-conversation + outcome support). Rows with no evidence 28 -> 3; unrelated-thread 21 -> 8; 0 dangling.
@@ -92,7 +92,7 @@ The LLM corrects the systematic conservatism the rules path showed: 8 of 9
 notifies correct against 3 of 9. Caveat unchanged — 30 rows is thin, and per
 DECISIONS.md we do not tune against them.
 
-On the full 110 rows the shipping path gives notify 35 / digest 24 / mute 51,
+On the full 110 rows the shipping path gives notify 34 / digest 24 / mute 52,
 with `unknown` collapsing from 15 to 0 and zero dangling evidence ids.
 
 **One systematic error remains: `event` is under-emitted.** We emit it on 4 of
@@ -384,3 +384,80 @@ prompt change is judged against it.
 The gate was pre-registered *before* the experiment ran, with an explicit
 rollback command. That is the only reason this reads as a finding rather than
 as a 2-point regression we talked ourselves into shipping.
+
+---
+
+## 9. The msg_022 phish — found in pre-submission review
+
+A real defect, found by adversarial review after every check in this file was
+already green. Worth recording because the green checks are exactly why it
+survived so long.
+
+### The defect
+
+`msg_022` shipped as **notify / payment / 0.87** — we were interrupting the user
+with a payment-link phish. The dataset contains a designed minimal pair:
+
+| | text | correct |
+|---|---|---|
+| `msg_021` (u_043, admin) | "Payment due today. Complete before 5 PM… **Please don't use any payment link shared by residents.**" | notify |
+| `msg_022` (u_044, member) | "Payment due today. Complete before 5 PM… **Use this link and send screenshot here so I can update it faster.**" | mute |
+
+Identical first two sentences. One warns against payment links; the other
+supplies one. Corroboration the blind gate cannot see, but which confirms the
+label: `u_044` is a `member`, not an admin; the standing official channel is
+stated repeatedly by the real admin ("pay only in the society app or at the
+office QR"); `u_044`'s only two priors with this user are a payment link and an
+off-notice QR, and `message_events.csv` records `notification_dismissed=1` **and**
+`muted_after_message=1` on both.
+
+### Why the gate missed it
+
+`content_risk` returned only a lure (`send screenshot`) and no coercion, and the
+force-mute condition is `cred or inj or (coer and lure)`.
+
+### The fix, and the more useful negative result
+
+One pattern added to `_COERCION`: `\bbefore \d{1,2}(?::\d{2})? ?(?:am|pm)\b`.
+
+The obvious pattern was `due today`, and **it was measured and rejected**.
+Against ten ordinary collector messages, `due today` force-muted **eight** —
+"Electricity bill is due today. Pending amount is Rs 1,240." is the commonest
+legitimate payment reminder there is, and `pending amount` is already a lure, so
+the pair fires. The clock form catches `msg_022` just as well and false-positives
+on **one** of the same ten. Same catch, an eighth of the blast radius.
+
+This is the DECISIONS.md rule that bare immediacy words are not deadlines,
+applied to a family that looked exempt from it.
+
+### Blast radius
+
+**Exactly one row changed** across all 110: `msg_022`, `notify/payment/0.87` →
+`mute/scam/0.82`. Zero of the 30 labelled samples change. `msg_021` still clears
+(it carries the coercion signal and no lure — the intended asymmetry). Sample
+scores unmoved at 28/30 action, 25/30 message_type. `gate_m2` still PASS with
+0 false positives across 23 trusted senders, blindness intact.
+
+### The first attempt was rejected, and that is the point
+
+The initial implementation also added lure patterns, injection patterns, and
+widened `_REQUEST_VERB`. Three adversarial reviewers ran against it and two
+returned NEEDS-CHANGE:
+
+- **A confirmed regression.** Widening `_REQUEST_VERB` broke the *pre-existing*
+  credential negation guard: "Bank staff will never phone you and then open a
+  form to collect your CVV" force-muted as scam. That is the `msg_093` FedEx
+  class — the fourth appearance of this repo's signature negation bug, caused by
+  fixing a different negation bug one family over.
+- **Both additions were unnecessary.** Ablation showed `msg_022` mutes without
+  the new lures, and `msg_109` mutes without the new injections.
+
+The shipped fix is the intersection: one pattern, one row. **A pre-registered
+rollback gate and reviewers told to refute rather than confirm are the only
+reasons this reads as a finding instead of a regression we shipped.**
+
+### Known consequence
+
+`payment` is now emitted zero times across the 110 rows. `msg_022` was the last
+one and it was wrong there. The labelled sample set contains no `payment` row, so
+there is no evidence about how the labeller uses that type; we did not chase it.

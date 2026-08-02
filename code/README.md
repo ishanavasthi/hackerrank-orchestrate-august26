@@ -1,23 +1,52 @@
 # Message Notification Router — solution
 
-For every message in `dataset/messages.csv`, decide whether to `notify`,
-`digest`, or `mute`, and write `output.csv`.
+For every message in `dataset/messages.csv`, decide whether to **`notify`**
+(interrupt now), **`digest`** (wait for later), or **`mute`** (suppress), and
+write `output.csv` with the required columns:
+
+```text
+message_id,action,message_type,reason,confidence,evidence_message_ids
+```
 
 This package is the solution itself. It is self-contained: everything needed to
 read, review and run the router is in this directory.
 
 ---
 
-## Requirements
+## At a glance
+
+| | |
+|---|---|
+| **Run it** | `python code/main.py --provider nvidia` (from the parent of `code/`) |
+| **API key needed?** | **No.** All 114 model responses are committed; the run replays from disk. |
+| **Install step?** | **None.** Python 3.9+, standard library only. |
+| **Verify it** | `python code/eval_harness.py --provider nvidia` → `ALL CHECKS PASS` |
+| **Accuracy** (30 labelled samples) | **action 93%** (28/30), **message_type 83%** (25/30) |
+| **Reproducibility** | Byte-identical `output.csv`, md5 `f4fc125c88ae7357b20a32dc5a0f0acb` |
+| **Rows produced** | 110, exactly one per `message_id` |
+
+---
+
+## Contents
+
+- [1. Setup](#1-setup) — requirements, layout, run, verify
+- [2. Approach](#2-approach) — the three stages, evidence, confidence, determinism
+- [3. Why the cache is the artifact](#3-why-the-cache-is-the-artifact)
+- [4. Known limitations](#4-known-limitations)
+- [5. File map](#5-file-map)
+
+---
+
+# 1. Setup
+
+## 1.1 Requirements
 
 **Python 3.9+. No third-party packages, no install step.** The pipeline is
 standard library only (`urllib`, not `requests`). Verified on 3.9.6.
 
 There is deliberately no `requirements.txt` — there is nothing to require.
 
----
-
-## What this package needs to run
+## 1.2 Expected layout
 
 This zip contains the `code/` directory only. Two things the router reads at
 runtime are deliberately **not** included:
@@ -27,7 +56,7 @@ runtime are deliberately **not** included:
 | `dataset/` | sibling of `code/` | organiser-provided; excluded from the submission |
 | `.env` | sibling of `code/` | secrets are never committed, and none is required — see below |
 
-Expected layout:
+Arrange them like this:
 
 ```text
 <work dir>/
@@ -45,30 +74,24 @@ Expected layout:
 are resolved relative to `code/`'s parent, so the layout above is the only
 requirement — the working directory itself does not matter.
 
+## 1.3 Run it
+
 **No API key is needed to reproduce the shipped results.** All 114 model
 responses are committed under `code/cache/routing/nvidia/`, so a run replays
 from disk. A key is only required to route a message that is *not* in the
 cache — a new dataset, or a changed prompt.
-
----
-
-## Quick start — reproduces the shipped `output.csv`, no API key required
 
 ```bash
 python code/main.py --provider nvidia
 ```
 
 This is the full-quality shipping path and it runs **offline with no
-credentials**. All 114 model responses are cached under
-`code/cache/routing/nvidia/` and that cache is committed, so the run replays
-from disk instead of calling a provider.
-
-Expected output:
+credentials**. Expected output:
 
 ```text
   110 messages
   media extracted for 23/23 media-bearing messages
-  force-muted 22/110 on risk grounds
+  force-muted 23/110 on risk grounds
 PASS 110 rows
 ```
 
@@ -76,138 +99,36 @@ The run is **byte-identical to the predictions CSV submitted alongside this
 package**:
 
 ```text
-md5  b0dabbce3443bb13f50c4a6afc77cb03
+md5  f4fc125c88ae7357b20a32dc5a0f0acb
 ```
 
-That is the point: the 93%/83% figure below does not have to be taken on trust.
-With no `.env` present and every provider key unset, the run still reproduces
-that exact file:
+That is the point: the 93%/83% figure does not have to be taken on trust. With
+no `.env` present and every provider key unset, the run still reproduces that
+exact file:
 
 ```bash
 env -u NVIDIA_API_KEY -u ANTHROPIC_API_KEY \
     -u GEMINI_API_KEY -u GROQ_API_KEY \
     python code/main.py --provider nvidia
-md5 -q output.csv          # -> b0dabbce3443bb13f50c4a6afc77cb03
+md5 -q output.csv          # -> f4fc125c88ae7357b20a32dc5a0f0acb
 ```
 
 Verified by exporting the committed tree into an empty directory with no `.env`
-and those four variables unset: same row counts, same 22 force-mutes, identical
+and those four variables unset: same row counts, same 23 force-mutes, identical
 MD5 before and after.
 
-## Offline rules fallback
+### Useful flags
 
-```bash
-python code/main.py --provider stub
-```
-
-No model at all — pure heuristics. It is a floor that always produces a
-submittable file, not a peer of the shipping path.
-
-Accuracy against the 30 labelled sample rows:
-
-| path | action | message_type |
+| Flag | Default | Purpose |
 |---|---|---|
-| `--provider stub` (rules only) | 70% | 47% |
-| `--provider nvidia` (shipping) | **93%** | **83%** |
+| `--provider` | `nvidia` | `stub` \| `anthropic` \| `nvidia` — personalization engine |
+| `--safety-provider` | `stub` | Reasoning engine for the safety gate; see [§2.2](#22-stage-1--safety-gate-blind) |
+| `--dataset` | `../dataset` | Dataset directory |
+| `--out` | `../output.csv` | Where to write predictions |
+| `--limit N` | all | Route only the first N messages (smoke tests) |
+| `--validate-only` | off | Skip routing; just validate the existing `--out` file |
 
-Both paths use the same deterministic safety gate; only the personalization
-stage differs. See "Why the safety gate ignores `--provider`" below.
-
----
-
-## Architecture
-
-Three stages. Each message passes through them in order.
-
-```
-messages.csv ─┐
-              ├─> [context assembly] ─> [1 SAFETY GATE] ─> [2 PERSONALIZATION] ─> [3 WRITER] ─> output.csv
-media.json  ──┘                          (blind, rules)      (full context)         + validator
-```
-
-**1. Safety gate** (`safety.py`) — decides risk, and can force `mute` with
-`scam`/`spam` on its own. It is *blind*: it sees message content plus
-structural sender facts (verification status, official vs. used domain,
-account age, report counts) but is structurally prevented from seeing the
-user's engagement history. `SafetyContext` whitelists every permitted field
-and `assert_blind()` fails loudly if an engagement field ever reaches a prompt.
-
-The reason is that the spec requires risk to be muted *"regardless of the
-user's usual engagement"*. Ordering alone does not achieve that — a stage that
-can see "this user replies to this sender constantly" can rationalise its way
-out of a correct flag. Withholding the context is what enforces the rule.
-
-**2. Personalization** (`personalize.py`) — for messages that clear the gate,
-chooses notify/digest/mute-for-low-value using group mute state and dismissal
-rates, promotion consent (`allows_promotions`, `promotions_opted_out_at`),
-relationship staleness, quiet hours, and notification load measured against
-each user's own baseline. Signals are always computed and are rendered into
-the LLM prompt, so choosing a provider cannot bypass this stage.
-
-**3. Writer + validator** (`writer.py`, `validate.py`) — emits the exact
-required columns and re-checks the file from disk the way a grader would.
-
-### Evidence
-
-`evidence.py` is a scored retrieval over the user's history, not a filter.
-Each candidate is scored on four weighted terms — topical Jaccard similarity
-over the message text and any OCR/ASR text (weight **4.0**, the largest),
-same-conversation (3.0), whether the recorded outcome in `message_events.csv`
-explains the action we chose (2.0), and same conversation type (0.5). Rows
-below `MIN_SCORE` are dropped and the column becomes `none`: a wrong citation
-is worse than an absent one. Ties break on id, so selection is deterministic.
-
-The outcome term is what makes a citation explanatory. A message from the same
-sender that the user ignored does not justify a `notify`; one they replied to
-within five minutes does.
-
-### Confidence
-
-`confidence.py` derives an internal certainty per row from the action, the
-message type, how many evidence ids corroborate it, whether independent
-signals agree or conflict, whether the blind gate forced the decision on a
-structural fact, and whether the row is decided from truncated media. That
-score is mapped monotonically onto a **per-action** band read off the labelled
-samples — notify 0.85–0.91, mute 0.81–0.87, digest 0.78–0.84 — and averaged
-with the model's self-reported confidence where one is available.
-
-The bands are per-action because the labelled data orders them that way:
-interrupting someone is the call the labeller was surest about, deferring is the
-hedge and scores lowest. A single global band loses that ordering and lands
-every row in the top sixth of the scale. The map also normalises against the
-slice of the certainty scale the score actually occupies, rather than all of
-[0, 1], which is what recovers the resolution already present in the signal.
-
-It is deliberately **not** a probability — nothing here is fitted against
-outcomes, so 0.85 does not mean "85% likely correct".
-
-### Media
-
-Image OCR and voice transcription run **once**, offline, into
-`code/cache/media.json`, which is committed. The router never calls a media
-provider, so runs are reproducible and the submission needs no Gemini or Groq
-key. Regenerate with `code/extract_media.py` / `code/extract_audio.py`.
-
-### Determinism
-
-Every model response is cached under `code/cache/` keyed by `message_id`.
-A rerun replays the cache and produces a byte-identical `output.csv`.
-Temperature is 0 everywhere, but that alone is not sufficient across
-providers — the cache is what makes the guarantee real.
-
-Caveat: the key is the `message_id` only, so editing `prompts.py` does **not**
-invalidate the cache. Delete `code/cache/routing/` after a prompt change or the
-old decisions replay silently. Hashing the prompt into the key is the fix, and
-it is a known open gap — see "Why the cache is the artifact" below for why it
-was not taken.
-
-Evidence selection (`evidence.py`) and confidence (`confidence.py`) are pure
-deterministic functions with no model call, so they are identical on the rules
-and LLM paths.
-
----
-
-## Verify
+## 1.4 Verify
 
 ```bash
 python code/eval_harness.py --provider nvidia    # runs all four checks below
@@ -232,14 +153,31 @@ value resolves in `message_history.csv`.
 impersonation-domain sender, never mutes a trusted sender, and is provably
 blind across all 110 prompts.
 
----
+## 1.5 Offline rules fallback
 
-## Configuration
+```bash
+python code/main.py --provider stub
+```
+
+No model at all — pure heuristics. It is a floor that always produces a
+submittable file, not a peer of the shipping path.
+
+Accuracy against the 30 labelled sample rows:
+
+| path | action | message_type |
+|---|---|---|
+| `--provider stub` (rules only) | 70% | 47% |
+| `--provider nvidia` (shipping) | **93%** | **83%** |
+
+Both paths use the same deterministic safety gate; only the personalization
+stage differs. See [§2.2](#22-stage-1--safety-gate-blind).
+
+## 1.6 Configuration
 
 All secrets come from the environment or a `.env` placed beside `code/`. None
-is required to reproduce the shipped results — see "What this package needs to
-run" above. Variables are read at startup; an already-exported value always
-wins over the file.
+is required to reproduce the shipped results — see [§1.3](#13-run-it).
+Variables are read at startup; an already-exported value always wins over the
+file.
 
 | Variable | Used by |
 |---|---|
@@ -247,42 +185,126 @@ wins over the file.
 | `NVIDIA_API_KEY`, `NVIDIA_BASE_URL`, `NVIDIA_MODEL` | NIM personalization |
 | `ANTHROPIC_API_KEY` | alternative personalization provider |
 | `GEMINI_API_KEY`, `GROQ_API_KEY` | media extraction only; not needed to run the router |
-| `SAFETY_PROVIDER` | defaults to `stub`; see below |
-
-### Why the safety gate ignores `--provider`
-
-The gate always runs the deterministic rules even when personalization uses an
-LLM. Measured over all 110 rows, the LLM safety classifier force-muted 44
-messages against 22 for the rules, and produced 6 false positives on verified,
-clean-domain senders — muting HDFC Bank for "vague urgency framing" and a
-pharmacy for being an "unverified sender". The gate's contract is that a
-trusted sender is never falsely muted, so it stays deterministic.
-`--safety-provider` exists only to re-measure that.
+| `SAFETY_PROVIDER` | defaults to `stub`; see [§2.2](#22-stage-1--safety-gate-blind) |
 
 ---
 
-## Files
+# 2. Approach
 
-| Path | Role |
-|---|---|
-| `main.py` | entry point; wires the three stages |
-| `contracts.py` | shared types, allowed enums, output column order |
-| `data.py`, `media_cache.py` | load the 12 CSVs and the media cache |
-| `safety.py` | stage 1 — blind safety gate |
-| `personalize.py` | stage 2 — personalization signals and rules |
-| `router.py`, `prompts.py` | LLM personalization + prompt construction |
-| `evidence.py` | scored retrieval for `evidence_message_ids` |
-| `confidence.py` | confidence calibration |
-| `edge_cases.py` | edge-case assertions on how decisions were produced |
-| `writer.py`, `validate.py` | stage 3 — output and contract validation |
-| `net.py` | HTTP with retry/backoff for transient provider failures |
-| `gate_m2.py`, `score_samples.py`, `eval_harness.py` | verification and self-evaluation |
-| `extract_media.py`, `extract_audio.py` | one-off media extraction (M0) |
-| `cache/` | committed media extraction + model response cache |
+## 2.1 Overview
+
+Three stages. Each message passes through them in order.
+
+```text
+messages.csv ─┐
+              ├─> [context assembly] ─> [1 SAFETY GATE] ─> [2 PERSONALIZATION] ─> [3 WRITER] ─> output.csv
+media.json  ──┘                          (blind, rules)      (full context)         + validator
+```
+
+The organising idea is that **risk and preference are different questions and
+must not be answered by the same reader.** Stage 1 decides whether a message is
+dangerous, and is structurally prevented from seeing how much the user likes the
+sender. Only what survives that gate reaches stage 2, which is where taste,
+history and timing apply. Stage 3 turns the decision into the required row and
+re-checks it from disk the way a grader would.
+
+## 2.2 Stage 1 — safety gate (blind)
+
+`safety.py` decides risk, and can force `mute` with `scam`/`spam` on its own. It
+is *blind*: it sees message content plus structural sender facts (verification
+status, official vs. used domain, account age, report counts) but is
+structurally prevented from seeing the user's engagement history.
+`SafetyContext` whitelists every permitted field and `assert_blind()` fails
+loudly if an engagement field ever reaches a prompt.
+
+The reason is that the spec requires risk to be muted *"regardless of the user's
+usual engagement"*. Ordering alone does not achieve that — a stage that can see
+"this user replies to this sender constantly" can rationalise its way out of a
+correct flag. Withholding the context is what enforces the rule.
+
+**Why the gate ignores `--provider`.** The gate always runs the deterministic
+rules even when personalization uses an LLM. Measured over all 110 rows, the LLM
+safety classifier force-muted 44 messages against 22 for the rules, and produced
+6 false positives on verified, clean-domain senders — muting HDFC Bank for
+"vague urgency framing" and a pharmacy for being an "unverified sender". The
+gate's contract is that a trusted sender is never falsely muted, so it stays
+deterministic. `--safety-provider` exists only to re-measure that.
+
+## 2.3 Stage 2 — personalization
+
+`personalize.py` — for messages that clear the gate, chooses
+notify/digest/mute-for-low-value using group mute state and dismissal rates,
+promotion consent (`allows_promotions`, `promotions_opted_out_at`), relationship
+staleness, quiet hours, and notification load measured against each user's own
+baseline. Signals are always computed and are rendered into the LLM prompt, so
+choosing a provider cannot bypass this stage.
+
+## 2.4 Stage 3 — writer + validator
+
+`writer.py`, `validate.py` — emits the exact required columns and re-checks the
+file from disk the way a grader would.
+
+## 2.5 Evidence
+
+`evidence.py` is a scored retrieval over the user's history, not a filter.
+Each candidate is scored on four weighted terms — topical Jaccard similarity
+over the message text and any OCR/ASR text (weight **4.0**, the largest),
+same-conversation (3.0), whether the recorded outcome in `message_events.csv`
+explains the action we chose (2.0), and same conversation type (0.5). Rows
+below `MIN_SCORE` are dropped and the column becomes `none`: a wrong citation
+is worse than an absent one. Ties break on id, so selection is deterministic.
+
+The outcome term is what makes a citation explanatory. A message from the same
+sender that the user ignored does not justify a `notify`; one they replied to
+within five minutes does.
+
+## 2.6 Confidence
+
+`confidence.py` derives an internal certainty per row from the action, the
+message type, how many evidence ids corroborate it, whether independent
+signals agree or conflict, whether the blind gate forced the decision on a
+structural fact, and whether the row is decided from truncated media. That
+score is mapped monotonically onto a **per-action** band read off the labelled
+samples — notify 0.85–0.91, mute 0.81–0.87, digest 0.78–0.84 — and averaged
+with the model's self-reported confidence where one is available.
+
+The bands are per-action because the labelled data orders them that way:
+interrupting someone is the call the labeller was surest about, deferring is the
+hedge and scores lowest. A single global band loses that ordering and lands
+every row in the top sixth of the scale. The map also normalises against the
+slice of the certainty scale the score actually occupies, rather than all of
+[0, 1], which is what recovers the resolution already present in the signal.
+
+It is deliberately **not** a probability — nothing here is fitted against
+outcomes, so 0.85 does not mean "85% likely correct".
+
+## 2.7 Media
+
+Image OCR and voice transcription run **once**, offline, into
+`code/cache/media.json`, which is committed. The router never calls a media
+provider, so runs are reproducible and the submission needs no Gemini or Groq
+key. Regenerate with `code/extract_media.py` / `code/extract_audio.py`.
+
+## 2.8 Determinism
+
+Every model response is cached under `code/cache/` keyed by `message_id`.
+A rerun replays the cache and produces a byte-identical `output.csv`.
+Temperature is 0 everywhere, but that alone is not sufficient across
+providers — the cache is what makes the guarantee real.
+
+Caveat: the key is the `message_id` only, so editing `prompts.py` does **not**
+invalidate the cache. Delete `code/cache/routing/` after a prompt change or the
+old decisions replay silently. Hashing the prompt into the key is the fix, and
+it is a known open gap — see [§3](#3-why-the-cache-is-the-artifact) for why it
+was not taken.
+
+Evidence selection (`evidence.py`) and confidence (`confidence.py`) are pure
+deterministic functions with no model call, so they are identical on the rules
+and LLM paths.
 
 ---
 
-## Why the cache is the artifact
+# 3. Why the cache is the artifact
 
 Worth stating plainly, because it looks like a shortcut and is not.
 
@@ -311,7 +333,7 @@ Two consequences we would rather state than have inferred:
 
 ---
 
-## Known limitations
+# 4. Known limitations
 
 Recorded honestly rather than omitted.
 
@@ -362,3 +384,24 @@ Recorded honestly rather than omitted.
   all group messages with no business record, precisely where the structural
   gate is blind. These look like genuine catches, but the second net is
   undocumented in the architecture above.
+
+---
+
+# 5. File map
+
+| Path | Role |
+|---|---|
+| `main.py` | entry point; wires the three stages |
+| `contracts.py` | shared types, allowed enums, output column order |
+| `data.py`, `media_cache.py` | load the 12 CSVs and the media cache |
+| `safety.py` | stage 1 — blind safety gate |
+| `personalize.py` | stage 2 — personalization signals and rules |
+| `router.py`, `prompts.py` | LLM personalization + prompt construction |
+| `evidence.py` | scored retrieval for `evidence_message_ids` |
+| `confidence.py` | confidence calibration |
+| `edge_cases.py` | edge-case assertions on how decisions were produced |
+| `writer.py`, `validate.py` | stage 3 — output and contract validation |
+| `net.py` | HTTP with retry/backoff for transient provider failures |
+| `gate_m2.py`, `score_samples.py`, `eval_harness.py` | verification and self-evaluation |
+| `extract_media.py`, `extract_audio.py` | one-off media extraction (M0) |
+| `cache/` | committed media extraction + model response cache |
