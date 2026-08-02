@@ -321,17 +321,21 @@ Recorded honestly rather than omitted.
   only on 30 rows. Everything we report about the other three is a proxy.
 - **Several constants are inferred from 30 labelled rows, not fitted.** The
   per-action confidence bands (notify 0.85–0.91, mute 0.81–0.87, digest
-  0.78–0.84, all inside the 0.78–0.91 observed overall), the 1–2 id evidence cap
-  (25 of 30 samples cite one id, 3 cite two, 2 cite none), and
-  `evidence.MIN_SCORE` with its retrieval weights. Splitting one band into three
-  makes the evidence behind each thinner still. If the hidden truth orders the
-  actions differently or uses a wider spread, we are wrong in a structured way
+  0.78–0.84, all inside the 0.78–0.91 observed overall), `evidence.MIN_SCORE`
+  with its retrieval weights, and `SECOND_MIN_SIMILARITY` — the threshold a
+  second citation must clear. That last one is the most load-bearing and sits on
+  a slope rather than a plateau: 0.10 would emit two ids on 41 rows, 0.20 on 14,
+  0.30 on 8. It is anchored on a measured property of our own retrieval (the
+  median top-pick Jaccard, 0.214) because there is no ground truth for evidence
+  quality to fit against. Splitting one confidence band into three makes the
+  evidence behind each thinner still. If the hidden truth orders the actions
+  differently or wants longer evidence lists, we are wrong in a structured way
   rather than a random one.
-- **`digest` confidence is compressed.** 20 of 24 digest rows land on 0.80 and
-  the column spans only 0.79–0.81, against a labelled digest range of 0.78–0.84.
-  Those rows' internal certainty genuinely clusters in a narrow slice, so
-  spreading them further would mean fitting each action to this run's own
-  extremes. Overall spread is 0.027 against the labelled 0.032.
+- **`digest` confidence is compressed.** All 24 digest rows land on just two
+  values (0.80 ×15, 0.79 ×9), spanning 0.79–0.80 against a labelled digest range
+  of 0.78–0.84. Those rows' internal certainty genuinely clusters in a narrow
+  slice, so spreading them further would mean fitting each action to this run's
+  own extremes. Overall spread is 0.028 against the labelled 0.032.
 - **The offline rules fallback is materially weaker than the shipping path**
   — 70%/47% against 93%/83%. It is a floor that guarantees a valid file, not
   an equivalent alternative.
