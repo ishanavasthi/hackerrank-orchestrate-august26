@@ -1,0 +1,13 @@
+{
+  "action": "mute",
+  "message_type": "scam",
+  "reason": "The message is a phishing attempt impersonating Amazon delivery with a suspicious domain and urgent verification request.",
+  "confidence": 0.9,
+  "evidence_message_ids": [
+    "message_0107",
+    "message_0108"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\":\"mute\",\"message_type\":\"scam\",\"reason\":\"The message is a phishing attempt impersonating Amazon delivery with a suspicious domain and urgent verification request.\",\"confidence\":0.9,\"evidence_message_ids\":[\"message_0107\",\"message_0108\"]}"
+}

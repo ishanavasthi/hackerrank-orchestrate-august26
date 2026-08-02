@@ -2,7 +2,7 @@ message_id,action,message_type,reason,confidence,evidence_message_ids
 msg_023,digest,business_update,The user opened similar banking updates before and this is a non-urgent account update that can be reviewed later.,0.80,message_0243
 msg_091,mute,scam,The message asks the user to send a six-digit login code while warning of a same-day deadline.,0.82,message_0238
 msg_090,notify,personal,A personal contact asked a straightforward question about a package mix-up that likely requires a response.,0.86,none
-msg_048,mute,scam,"The message pushes a scan-and-pay demand while demanding immediate action, and it has been forwarded twice.",0.82,message_0151
+msg_048,notify,urgent,"An admin sent a time-sensitive payment request that could affect access, requiring immediate attention.",0.87,message_0150
 msg_040,mute,greeting,The user has muted the group and typically dismisses similar forward blessing chains.,0.84,message_0136
 msg_075,notify,urgent,A verified business sender (Grab) sent a time-sensitive ride status update that may affect the user's current booking.,0.87,message_0206;message_0205
 msg_005,notify,personal,"A member is holding a denim jacket for you with a deadline, requiring timely action.",0.87,message_0065

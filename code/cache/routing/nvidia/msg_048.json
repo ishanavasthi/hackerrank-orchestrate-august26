@@ -1,0 +1,13 @@
+{
+  "action": "notify",
+  "message_type": "urgent",
+  "reason": "An admin sent a time-sensitive payment request that could affect access, requiring immediate attention.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0029",
+    "message_0044"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"notify\", \"message_type\": \"urgent\", \"reason\": \"An admin sent a time-sensitive payment request that could affect access, requiring immediate attention.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0029\", \"message_0044\"]}"
+}

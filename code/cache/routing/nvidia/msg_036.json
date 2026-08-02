@@ -1,0 +1,13 @@
+{
+  "action": "mute",
+  "message_type": "scam",
+  "reason": "The message is a phishing attempt requesting verification via a suspicious link, matching previously reported scams from this sender.",
+  "confidence": 0.88,
+  "evidence_message_ids": [
+    "message_0127",
+    "message_0283"
+  ],
+  "provider": "nvidia",
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "raw_text": "{\"action\": \"mute\", \"message_type\": \"scam\", \"reason\": \"The message is a phishing attempt requesting verification via a suspicious link, matching previously reported scams from this sender.\", \"confidence\": 0.88, \"evidence_message_ids\": [\"message_0127\", \"message_0283\"]}"
+}
