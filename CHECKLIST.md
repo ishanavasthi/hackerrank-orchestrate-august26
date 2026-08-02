@@ -10,7 +10,7 @@ work through once implementation is complete.
 **Active work plan:** see [`NEXT.md`](./NEXT.md) for the ordered subset of §7
 that warrants action now, ordered by risk to the quality of the answer.
 Packaging is the last item there, not the first. Last verified against
-commit `d00dae6`.
+commit `8daebd7` (`output.csv` md5 `b0dabbce3443bb13f50c4a6afc77cb03`).
 
 ---
 
@@ -22,7 +22,7 @@ commit `d00dae6`.
 | Exactly one row per `message_id` in `messages.csv` (110) | PASS | validator: set equality, no dupes, no extras |
 | Every `action` in {notify, digest, mute} | PASS | validator |
 | Every `message_type` in the 11 allowed values | PASS | validator |
-| `confidence` numeric and within [0,1] | PASS | validator (shipping path range 0.84–0.91, calibrated) |
+| `confidence` numeric and within [0,1] | PASS | validator (shipping path emits 0.79–0.89, 11 distinct values, per-action bands) |
 | `evidence_message_ids` resolve in `message_history.csv` | PASS | validator: 0 dangling ids |
 | Runnable from the terminal | PASS | `python code/main.py` |
 | Reads only from `dataset/` | PASS | no organizer-only files exist in this repo |
@@ -61,11 +61,12 @@ the submission's floor — see DECISIONS.md.
 - 88 gate-clearing messages routed on group mute state, dismissal rates, promotion consent, relationship staleness, DND, per-user notification load.
 - Spec carve-out implemented and verified (`msg_056` notifies, `msg_040` does not).
 - 14/14 hand-checked cases.
-- Shipping path distribution over 110: notify 34 / digest 25 / mute 51.
+- Shipping path distribution over 110: notify 35 / digest 24 / mute 51.
 
 ### M4 — evidence + confidence — DONE
-- `code/evidence.py`: scored retrieval (topical similarity + same-conversation + outcome support). Rows with no evidence 28 -> 3; same-conversation citations 98 -> 199; unrelated-thread 21 -> 8; 0 dangling.
-- `code/confidence.py`: certainty from evidence count, signal agreement/conflict and structural grounding, mapped monotonically onto the observed 0.78-0.91 band. Range 0.50-0.91 -> 0.84-0.91 across 7 distinct values, none below the sample floor.
+- `code/evidence.py`: scored retrieval (topical similarity + same-conversation + outcome support). Rows with no evidence 28 -> 3; unrelated-thread 21 -> 8; 0 dangling.
+- `code/confidence.py`: certainty from corroboration, signal agreement/conflict and structural grounding, mapped monotonically onto a band.
+- **Both were revised after M5 — see §8.** Evidence now emits 0/1/2 ids on 3/93/14 rows (was 3/6/101) because the second citation must earn its place; confidence uses per-action bands and emits 0.79-0.89 across 11 distinct values (was 0.87-0.91 across 5).
 - Applied on both paths and to gate-forced mutes (which previously emitted `none` for all 22 rows).
 - Runs after the response cache read, so the ranking can be revised without re-calling the API.
 
@@ -91,12 +92,23 @@ The LLM corrects the systematic conservatism the rules path showed: 8 of 9
 notifies correct against 3 of 9. Caveat unchanged — 30 rows is thin, and per
 DECISIONS.md we do not tune against them.
 
-On the full 110 rows the shipping path gives notify 34 / digest 25 / mute 51,
-with `unknown` collapsing from 15 to 2 and zero dangling evidence ids.
+On the full 110 rows the shipping path gives notify 35 / digest 24 / mute 51,
+with `unknown` collapsing from 15 to 0 and zero dangling evidence ids.
 
-**No systematic error remains.** The 2 action misses and 5 message_type misses
-on the shipping path are all distinct one-offs (`event`->`urgent`,
-`event`->`business_update`, `personal`->`event`, `spam`->`promotion`,
+**One systematic error remains: `event` is under-emitted.** We emit it on 4 of
+110 rows (3.6%); the labelled set uses it on 4 of 30 (13.3%). Both of our two
+`message_type` misses are in that direction (`event`->`urgent`,
+`event`->`business_update`), so they are one pattern, not two one-offs, and the
+pattern reproduces on the test set: `personalize.classify_type` calls 12 rows
+`event` and the LLM overrides 8 of them. The sharpest case is msg_077 ("School
+circular attached for tomorrow's field trip...") which we type `urgent`, against
+a near-identical labelled row typed `event`.
+
+We attempted a prompt fix and **rolled it back** — see §8. It is left open
+deliberately, not overlooked.
+
+**The remaining misses are one-offs.** The 2 action misses and the other 3
+message_type misses are distinct (`personal`->`event`, `spam`->`promotion`,
 `unknown`->`personal`). The planned "P3" accuracy pass was defined against the
 rules path, where the error WAS systematic (6 of 9 action misses in one
 direction, 47% type accuracy). Switching the personalization engine resolved
@@ -242,8 +254,8 @@ Every item here is tuned against 30 labelled rows or fewer. None is fitted.
 
 | # | Item | Basis | Risk if wrong |
 |---|---|---|---|
-| B1 | **[BLIND]** Confidence band 0.78–0.91 | min/max of 30 sample rows | If truth is wider, our spread is systematically too narrow |
-| B2 | **[BLIND]** Evidence capped at 1–2 ids | 27 of 30 samples cite one, 3 cite two | A longer list might score better on recall |
+| B1 | **[BLIND]** Per-action confidence bands (notify 0.85–0.91, mute 0.81–0.87, digest 0.78–0.84) | Per-action min/max of 30 sample rows — thinner evidence than the single band it replaced | If the hidden truth orders the actions differently, we are wrong in a structured rather than random way |
+| B2 | **[BLIND]** `SECOND_MIN_SIMILARITY = 0.20`, the threshold a second citation must clear | Anchored on our own measured median top-pick Jaccard (0.214), not fitted — there is no ground truth for evidence quality (C1) | It is on a slope, not a plateau: 0.10 -> 41 two-id rows, 0.20 -> 14, 0.30 -> 8. If the hidden labels want longer evidence lists, this is the single number to move |
 | B3 | **[BLIND]** `MIN_SCORE` evidence threshold, and the similarity/conversation/outcome weights | Judgement, not fitted | Too high suppresses good citations; too low cites noise |
 | B4 | **[BLIND]** Impersonation thresholds (180d account, 60d domain, 15 reports) | Separate cleanly on 12 mismatching rows | An attacker aging a domain past them clears the gate |
 | B5 | **[BLIND]** Negation detection is regex-level, covered by 9 unit cases | Built after the FedEx "no OTP required" false positive | Unanticipated phrasings mishandled in either direction |
@@ -262,7 +274,7 @@ Every item here is tuned against 30 labelled rows or fewer. None is fitted.
 
 | # | Item | Why it exists | What fixing looks like |
 |---|---|---|---|
-| D1 | **[GAP]** Cache invalidation is manual, and there are now three caches (media, routing, safety) | Caching is what makes determinism real | Hash the prompt into the cache key so a prompt edit invalidates automatically |
+| D1 | **[GAP, DELIBERATELY NOT FIXED]** Cache invalidation is manual across three caches (media, routing, safety) | Caching is what makes determinism real | Implemented (prompt hash stored in the payload, checked on read) and then **reverted** — see §8. It is correct engineering that is wrong for this deadline: invalidating forces a re-call of all 114 responses, and the model is not reproducible. Patch preserved at `scratchpad/p1/router_cache_keying.patch` |
 | D2 | **[GAP]** LLM calls are sequential; a full 110-row run takes several minutes | Simplicity | Bounded concurrency — safe because every call is independent and cached |
 | D3 | **[ACCEPTED]** Headline result depends on a provider and its quota | The hybrid is +23/+36 points over rules | Mitigated: cache makes reruns free, and the offline path still ships a valid file |
 | D4 | **[ACCEPTED]** Three providers means three SDKs, quotas and accounts to reproduce | Quota independence per modality | Would consolidate only if a single vendor covered ASR + OCR + routing well |
@@ -275,7 +287,7 @@ Every item here is tuned against 30 labelled rows or fewer. None is fitted.
 
 | # | Item | Why it exists | What fixing looks like |
 |---|---|---|---|
-| F1 | **[GAP]** The 0.78–0.91 band compresses our signal | Band is 0.13 wide, so a 0.15 internal-certainty penalty moves output by ~0.01 | If the hidden truth is wider, widen the band; the internal certainty already has more resolution than we emit |
+| F1 | ~~The 0.78–0.91 band compresses our signal~~ **RESOLVED (§8)** | The map also normalised against all of [0,1] when certainty only occupies ~0.60–0.89 | Done: per-action bands + renormalisation. stdev 0.012 -> 0.028, distinct 5 -> 11, ordering now matches the labelled set. Residual: `digest` still spans only 0.79–0.80 |
 | F2 | **[BLIND]** Field salvage may accept a partial model reply the model would have revised | Recovering a truncated answer beats discarding it | Only detectable if a salvaged row is later found wrong |
 | F3 | **[BLIND]** Truncation detector is a heuristic (lowercase first character) | No truncation flag from the ASR provider | A transcript legitimately starting lowercase is falsely flagged; costs 0.01 confidence |
 | F4 | **[GAP]** `eval_harness.py` validates the artifact on disk, it does not regenerate it | Keeps it fast and provider-agnostic | Add an optional `--run` that regenerates before checking |
@@ -292,3 +304,83 @@ Every item here is tuned against 30 labelled rows or fewer. None is fitted.
 | E6 | **Every individual check can pass while the system is wrong.** Two rows were decided by an error handler with the contract validator, the safety gate and the row count all green. Assert on *how* a decision was produced, not only on its shape |
 | E5 | `DECISIONS.md` was **silently overwritten** by a parallel session once; two entries were lost and recovered |
 
+
+---
+
+## 8. The re-run experiment — what it cost and what it taught
+
+Run against commit `f5b36e2`, reverted at `8daebd7`. This is the most important
+finding in this file and it was not visible until we tried to change a prompt.
+
+### What we set out to do
+
+Fix the `event` under-emission (§3) by adding taxonomy guidance to
+`SYSTEM_PROMPT`. Because the routing cache keys on `message_id` only, a prompt
+edit would have replayed stale decisions and looked like a no-op — so the
+enabling step was D1: hash the prompt into the cached payload and re-call on
+mismatch. That part worked, and is preserved as a patch.
+
+### What actually happened
+
+Invalidating the cache forced genuine re-calls, and the scores moved:
+
+| run | action | message_type |
+|---|---|---|
+| committed baseline (cached) | **28/30** | 25/30 |
+| variant C | 24/30 | 24/30 |
+| **prompt reverted to baseline** | **26/30** | 24/30 |
+| variant D | 27/30 | 25/30 |
+| variant E | 26/30 | 26/30 |
+
+Read the third row. That is the *original prompt*, restored — scoring 26/30
+instead of 28/30. **The prompt was never the variable.**
+
+### The finding
+
+**The model is not reproducible across re-calls, and the committed cache was
+concealing it.** Action scores bounce 24 / 26 / 27 / 26 on re-runs of
+substantially the same input: that is ±2 of noise on a 30-row sample, which is
+larger than any effect we were trying to measure.
+
+The mechanism is in the run logs. `nvidia/nemotron-3-super-120b-a12b` is a
+reasoning model, and it sometimes buries its JSON inside 16–18k characters of
+chain-of-thought:
+
+```
+retrying msg_009: reply had no readable JSON (18744 chars) [attempt 2/2]
+```
+
+When extraction fails, `router._route_llm` falls back to the rules engine
+(70%/47%) and marks the row. Different runs fail on different rows. The
+committed cache has **0** such rows; one re-run had 2.
+
+### Consequences, stated plainly
+
+1. **Our headline 93%/83% is one sample, not a stable property.** It is a real
+   measurement of the artifact we are shipping, and every check in this file
+   was run against exactly that artifact. But a re-run would not reproduce it,
+   and the same variance applies to the 110 hidden-set predictions.
+2. **`temperature 0` is not determinism.** DECISIONS.md already said the cache
+   is what makes the guarantee real. That is more literally true than intended:
+   the cache is not an optimisation, it is the artifact.
+3. **D1 and the committed-cache reproducibility story are in direct tension.**
+   Automatic invalidation is correct, and it would re-roll 114 hand-verified
+   responses on a non-deterministic model every time a prompt is touched. We
+   chose the validated artifact over the correct mechanism, with hours left.
+4. **`event` (§3) stays open.** The best variant reached 26/30 message_type but
+   only 26/30 action, failing the pre-registered gate (action ≥ 28 *and* type
+   ≥ 26). We could not distinguish a real improvement from run-to-run noise on
+   30 rows, so we shipped the validated artifact.
+
+### If there were more time
+
+Make JSON extraction robust to chain-of-thought (the single highest-value fix —
+it is the root cause, and it also removes silent rules-fallback rows), then
+re-measure with several runs per variant so the noise floor is known before any
+prompt change is judged against it.
+
+### Process note
+
+The gate was pre-registered *before* the experiment ran, with an explicit
+rollback command. That is the only reason this reads as a finding rather than
+as a 2-point regression we talked ourselves into shipping.
