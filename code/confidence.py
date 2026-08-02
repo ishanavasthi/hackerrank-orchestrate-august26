@@ -120,9 +120,47 @@ def certainty(
     if gate_forced:
         score += 0.05
 
-    # Corroborating history. Two supporting citations is meaningfully better
-    # than one; more than two we do not emit.
-    score += 0.10 * min(len(evidence_ids), 2)
+    # Corroborating history, in two parts: having any, and having a second
+    # independent one.
+    #
+    # This was `0.10 * min(len(evidence_ids), 2)`, which was fine arithmetic on
+    # a broken input. `evidence.select_evidence` used to emit two ids on 101 of
+    # 110 rows, so the term was a near-constant +0.20 offset carrying almost no
+    # information — and when evidence.py started making the second citation
+    # *earned* (independent topical support, an outcome that explains the
+    # action on its own, no redundancy with the first pick), ~87 rows dropped to
+    # one id and this term would have marked every one of them 0.10 less
+    # certain. That is perverse: we did not learn less about those rows, we
+    # chose to cite them more precisely. A citation-precision decision must not
+    # masquerade as a certainty signal.
+    #
+    # The fix re-centres rather than removes. One solid citation is now the
+    # ordinary case, so it gets the bulk of the credit (0.15); a genuinely
+    # independent second one still adds, but only 0.05, and the ceiling stays at
+    # the 0.20 it has always been so no row is pushed above the old top of the
+    # scale. Measured, the median row moves -0.05 internal, which after the
+    # 50/50 model blend and the band map is ~0.004 of emitted confidence —
+    # below the 2dp resolution of the output column for all but rounding-edge
+    # rows. Measured end to end: 76 of 110 rows keep their exact confidence and
+    # 34 move by -0.01; the per-action medians (0.87 / 0.83 / 0.80), the
+    # emitted range and the distinct-value count are all unchanged, and the
+    # population stdev rises slightly (0.0273 -> 0.0284).
+    #
+    # Note for whoever touches this next: `validate.py` only checks that
+    # confidence parses as a float in [0, 1]. The distribution properties above
+    # are NOT asserted anywhere in the committed harness, so a regression here
+    # is silent. Re-measure by hand if you change this term.
+    #
+    # The considered alternative was flat +0.20 for any evidence at all, which
+    # would decouple the two modules completely and shift nothing. Rejected:
+    # after the admission bar, a second id is a real and rare claim (14 of 110
+    # rows) about having two independent pieces of history rather than one, and
+    # that genuinely covaries with being right. The old count was noise; this
+    # one is signal, and worth keeping a little of.
+    if evidence_ids:
+        score += 0.15
+        if len(evidence_ids) >= 2:
+            score += 0.05
 
     # `unknown` means the classifier declined to commit — say so.
     if message_type == "unknown":

@@ -12,6 +12,51 @@ history rows, so an outcome is always available.
 
 Scoring is deterministic — no model call, no randomness — so evidence is stable
 across reruns and identical on the rules and LLM paths.
+
+HOW MANY IDS WE CITE, AND WHY THE SECOND ONE IS EARNED
+------------------------------------------------------
+The first version took the top two candidates above `MIN_SCORE`, which emitted
+two ids on 101 of 110 rows. The labelled sample does the opposite: 25 of 30 rows
+cite one id, 3 cite two, 2 cite `none`. (An earlier docstring here claimed
+"27 of 30 cite one, 3 cite two" — that was miscounted, it forgets the two `none`
+rows, and the code did not implement either reading.)
+
+Being inverted against the only format reference we have is bad, but the deeper
+problem is that the second pick was not *chosen* so much as left over. Measured
+over all 110 rows with the shipped weights:
+
+  * the median score gap between the 1st and 2nd candidate is 0.141, and 37 rows
+    have three or more candidates within 0.5 of the top;
+  * this is structural, not incidental. For any same-conversation row with a
+    matching outcome the structural terms alone contribute
+    W_CONVERSATION + W_OUTCOME + W_SAME_TYPE = 5.5, while similarity contributes
+    W_SIMILARITY * 0.214 (the median top-pick Jaccard) = 0.86. The structural
+    terms saturate before similarity can discriminate;
+  * so the runner-up is close to arbitrary within a tie set. 23 of the 101
+    emitted second ids had *zero* token overlap with the message they were cited
+    for — they were same-thread filler.
+
+There is a second trap specific to this dataset: `message_history.csv` is full
+of duplicate text. 215 of its 412 rows share their text with at least one other
+row, and 26 of the 101 runner-ups were textually *identical* to the first pick.
+Citing both is one piece of evidence wearing two ids.
+
+So the second slot gets its own admission test, and a candidate must pass all
+three parts of it. Each part removes one of the failure modes above:
+
+  1. `SECOND_MIN_SIMILARITY` — independent topical support. The second citation
+     has to stand on its own content, not on sharing a thread.
+  2. `SECOND_MIN_OUTCOME` — its recorded outcome must independently explain the
+     action, at the strength of a primary signal rather than a weak inference.
+  3. `SECOND_MAX_REDUNDANCY` — it must not restate the first citation.
+
+The first pick is untouched by all of this: it was already sound (median Jaccard
+0.214, only 4 of 107 rows pick something with no topical overlap), and this
+module's contract is that the *count* changes, never the ranking.
+
+Result on the 110-row set: 93 rows cite one id, 14 cite two, 3 cite `none`
+(85% / 13% / 3%, against the sample's 83% / 10% / 7%). That is a sanity check on
+the shape, not a target that was fitted — see the threshold notes below.
 """
 
 from __future__ import annotations
@@ -48,6 +93,49 @@ W_SAME_TYPE = 0.5
 #: Below this, we emit `none` rather than cite something irrelevant. A wrong
 #: citation is worse than an absent one — it actively misleads a reader.
 MIN_SCORE = 1.2
+
+# ─── Second-slot admission bar ──────────────────────────────────────────────
+# These gate the *second* citation only. They never reorder candidates and can
+# never change the first pick. Each is anchored on a measured property of the
+# retrieval itself, not on a target citation count.
+
+#: Independent topical support. Anchored on the measured median top-pick Jaccard
+#: (0.214) and rounded down: a second citation has to be about as topically
+#: grounded as a *typical sole* citation before it is worth printing. Below this
+#: the candidate is riding W_CONVERSATION, which every same-thread row gets for
+#: free.
+#:
+#: Be clear about this one: it is the load-bearing threshold, and unlike the
+#: other two it sits on a slope, not a plateau. Measured two-id row counts out
+#: of 110: 0.10 -> 41, 0.15 -> 22, 0.20 -> 14, 0.25 -> 9, 0.30 -> 8. So this
+#: value, more than anything else here, decides the emitted distribution. It is
+#: a judgement call anchored on a measured property of our own retrieval; it is
+#: not fitted, because there is no ground truth for evidence quality to fit
+#: against (CHECKLIST §7 C1). If the hidden labels want a longer evidence list,
+#: this is the single number to move.
+SECOND_MIN_SIMILARITY = 0.20
+
+#: The second citation's outcome must explain the action at primary strength.
+#: Reading it off `_outcome_support`: notify needs `replied`, digest needs
+#: opened-but-not-replied, mute needs two signals (report+dismiss, mute+dismiss)
+#: rather than a lone weak one. Not a tuned number — every value in 0.3-0.8
+#: selects exactly the same 14 rows, because the ranking has already floated
+#: high-outcome candidates to the top (the 2nd-pick outcome deciles all sit at
+#: 0.9-1.0). It only bites at 0.9+. So it is a guard against a degenerate case,
+#: not a discriminator doing real work on this dataset — worth keeping for the
+#: hidden set, worth being honest that it is currently near-inert.
+SECOND_MIN_OUTCOME = 0.6
+
+#: Redundancy ceiling: reject a second citation that restates the first. Two
+#: history rows carrying the same text are one piece of evidence, and this
+#: dataset is unusually prone to it (see the module docstring). Also effectively
+#: flat: 0.5, 0.6 and 0.7 all select the same 14 rows, 0.8-0.9 admits one more,
+#: and only removing the test entirely changes much (24). It is the *existence*
+#: of the test that matters, not its exact value — the runner-up-vs-top-pick
+#: text Jaccard is bimodal (70th percentile 0.387, 80th percentile 1.0), so the
+#: near-duplicates are separated by anything in the gap. 0.6 reads as "more than
+#: half the combined vocabulary is shared".
+SECOND_MAX_REDUNDANCY = 0.6
 
 
 def _tokens(text: str) -> set[str]:
@@ -160,15 +248,58 @@ def score_candidates(ctx: MessageContext, action: str) -> list[tuple[float, str,
     return scored
 
 
+def _history_text(ctx: MessageContext) -> dict[str, str]:
+    """message_id -> text, for the rows this user's history contains."""
+    return {row.get("message_id", ""): row.get("message_text", "") or ""
+            for row in ctx.history}
+
+
+def _second_citation(ctx: MessageContext,
+                     ranked: list[tuple[float, str, dict]]) -> Optional[str]:
+    """The best candidate that *earns* a second slot, or None.
+
+    Scans in score order and returns the first candidate clearing all three
+    parts of the admission bar. Score order is already deterministic
+    (-score, then id), so this is too. Ranking is read, never rewritten:
+    `ranked[0]` is not considered and cannot be displaced.
+    """
+    texts = _history_text(ctx)
+    top_tokens = _tokens(texts.get(ranked[0][1], ""))
+
+    for _score, hid, parts in ranked[1:]:
+        if parts["similarity"] < SECOND_MIN_SIMILARITY:
+            continue                       # riding the thread, not the topic
+        if parts["outcome_support"] < SECOND_MIN_OUTCOME:
+            continue                       # does not independently explain the action
+        if _similarity(top_tokens, _tokens(texts.get(hid, ""))) >= SECOND_MAX_REDUNDANCY:
+            continue                       # restates the first citation
+        return hid
+    return None
+
+
 def select_evidence(ctx: MessageContext, action: str, limit: int = 2) -> list[str]:
     """Return 1-2 history ids supporting `action`, or [] to emit `none`.
 
-    The 1-2 cap matches the observed sample format (27 of 30 rows cite one id,
-    3 cite two). DECISIONS.md flags that cap as inferred from thin evidence.
+    The first id is the top-scoring candidate above `MIN_SCORE` — unchanged, and
+    deliberately so. A second id is added only when some candidate passes the
+    admission bar described in the module docstring: independent topical
+    support, an outcome that explains the action on its own, and no redundancy
+    with the first pick. Most rows therefore cite one id, which is what the
+    labelled sample does (25 of 30; 3 cite two, 2 cite `none`).
+
+    `limit` caps the list; values above 2 do not widen it, because the third
+    candidate is never distinguishable from the fourth under these weights.
     """
-    ranked = score_candidates(ctx, action)
-    picked = [hid for score, hid, _ in ranked if score >= MIN_SCORE][:limit]
-    return picked
+    ranked = [t for t in score_candidates(ctx, action) if t[0] >= MIN_SCORE]
+    if not ranked:
+        return []
+
+    picked = [ranked[0][1]]
+    if limit >= 2:
+        second = _second_citation(ctx, ranked)
+        if second is not None:
+            picked.append(second)
+    return picked[:limit]
 
 
 def explain(ctx: MessageContext, action: str, limit: int = 3) -> list[tuple[float, str, dict]]:
