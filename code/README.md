@@ -21,8 +21,8 @@ read, review and run the router is in this directory.
 | **API key needed?** | **No.** All 114 model responses are committed; the run replays from disk. |
 | **Install step?** | **None.** Python 3.9+, standard library only. |
 | **Verify it** | `python code/eval_harness.py --provider nvidia` → `ALL CHECKS PASS` |
-| **Accuracy** (30 labelled samples) | **action 93%** (28/30), **message_type 83%** (25/30) |
-| **Reproducibility** | Byte-identical `output.csv`, md5 `e5dd52270207067dd6d7e9c873479ed4` |
+| **Accuracy** (30 labelled samples) | **action 93%** (28/30), **message_type 87%** (26/30) |
+| **Reproducibility** | Byte-identical `output.csv`, md5 `035a8371044842dca7f842f64709f26d` |
 | **Rows produced** | 110, exactly one per `message_id` |
 
 ---
@@ -99,10 +99,10 @@ The run is **byte-identical to the predictions CSV submitted alongside this
 package**:
 
 ```text
-md5  e5dd52270207067dd6d7e9c873479ed4
+md5  035a8371044842dca7f842f64709f26d
 ```
 
-That is the point: the 93%/83% figure does not have to be taken on trust. With
+That is the point: the 93%/87% figure does not have to be taken on trust. With
 no `.env` present and every provider key unset, the run still reproduces that
 exact file:
 
@@ -110,7 +110,7 @@ exact file:
 env -u NVIDIA_API_KEY -u ANTHROPIC_API_KEY \
     -u GEMINI_API_KEY -u GROQ_API_KEY \
     python code/main.py --provider nvidia
-md5 -q output.csv          # -> e5dd52270207067dd6d7e9c873479ed4
+md5 -q output.csv          # -> 035a8371044842dca7f842f64709f26d
 ```
 
 Verified by exporting the committed tree into an empty directory with no `.env`
@@ -134,9 +134,12 @@ MD5 before and after.
 python code/eval_harness.py --provider nvidia    # runs all four checks below
 ```
 
-Prints `ALL CHECKS PASS` and `action 28/30 = 93%, message_type 25/30`. It
-validates the `output.csv` already on disk; it does not regenerate it, so run
-`main.py` first if you changed anything. The individual checks:
+Prints `ALL CHECKS PASS` and `action 28/30 = 93%, message_type 26/30`. Its
+contract and edge-case checks read the `output.csv` already on disk — it does
+not regenerate it, so run `main.py` first if you changed anything — while the
+sample smoke test re-runs the router against the committed cache, which is why
+its `message_type` figure tracks the code rather than the stored artifact.
+The individual checks:
 
 ```bash
 python code/validate.py output.csv        # grader-style contract check
@@ -167,7 +170,7 @@ Accuracy against the 30 labelled sample rows:
 | path | action | message_type |
 |---|---|---|
 | `--provider stub` (rules only) | 70% | 47% |
-| `--provider nvidia` (shipping) | **93%** | **83%** |
+| `--provider nvidia` (shipping) | **93%** | **87%** |
 
 Both paths use the same deterministic safety gate; only the personalization
 stage differs. See [§2.2](#22-stage-1--safety-gate-blind).
@@ -238,6 +241,130 @@ promotion consent (`allows_promotions`, `promotions_opted_out_at`), relationship
 staleness, quiet hours, and notification load measured against each user's own
 baseline. Signals are always computed and are rendered into the LLM prompt, so
 choosing a provider cannot bypass this stage.
+
+### Open commitments — `affinity.py`
+
+A small deterministic override that runs after a decision exists, on both the
+rules path (end of `personalize()`) and the LLM path (first step of
+`router._apply_m4`, after the cache read), so the two cannot disagree about a
+relationship. It asks whether the user has an *open obligation* with this
+business — appointment, delivery, order, booking, prescription — and if so
+upgrades a `digest` to `notify`. It reads exactly one column,
+`why_user_knows_account`, normalised and tokenised on underscores: an admit set
+minus a veto set, **veto wins**.
+
+Veto-beats-admit is the load-bearing half. A missing veto token wakes the user
+with an advert; a missing admit token leaves a real delivery in the digest,
+which the user still sees. Those errors are not symmetric, so the veto set is
+written wide (114 tokens across marketing, broadcast lists, browse intent,
+opinion, dormancy, and **closed or negated commitments**) and the admit set
+narrow (48). That is why `cancelled_appointment`, `refunded_order`,
+`expired_booking` and `declined_loan_payment_offer` do not fire despite each
+carrying a good admit token, and why `business_payment_stack_interest`
+(`msg_035`) loses on *interest* despite carrying *payment*. Ambiguous words go
+in the veto set: "review" is a rating request far more often than a claim under
+review, so `insurance_claim_in_review` digests — a declared, accepted miss.
+
+Two guards and one phrase list stop the rule misfiring on held-out wording:
+the opt-out family is matched as the phrase `opted_out` / `opt_out` /
+`opting_out`, not the bare token `out`, because "out for delivery" is the
+standard courier phrase and the bare token silently vetoed
+`parcel_out_for_delivery` — precisely the open delivery the rule exists to
+rescue; the predicate requires `conversation_type == "business"`, because
+`data.py` joins `business_history` on `(user_id, business_id)` with no type
+filter; and a `mute` arriving here is returned untouched in **both** columns,
+so this stage cannot relabel the `message_type` of a row another stage
+suppressed. The upgrade also stands down inside quiet hours or above the user's
+normal notification load — on **both** call sites, so it cannot undo the
+demotion `personalize()`'s modifier block just made and the two paths cannot
+disagree about a quiet-hours row.
+
+The naive version of this rule uses engagement (`messages_opened_30d` vs
+`messages_dismissed_30d`) and the labelled samples falsify it. Four business
+rows are all heavily engaged and split two-two:
+`sample_msg_004` (grocery delivery, 5/1) and `sample_msg_005` (clinic
+appointment, 6/1) are labelled `notify`, while `sample_msg_007` (travel package
+**interest**, 6/1) and `sample_msg_011` (movie **feedback**, 6/0) are labelled
+`digest`. What separates them is the kind of relationship, not how much of it
+the user reads. Five engagement thresholds were measured on top of the
+predicate and every one produced an identical result on all 110 rows, so no
+engagement term ships.
+
+Direction is enforced in code: `_UPGRADE` is the complete transition table, it
+contains only `digest -> notify`, and an import-time check refuses any entry
+that points downhill. Gate-forced mutes are assembled in `main.py` and never
+reach this stage at all.
+
+It also refuses to upgrade a row typed `promotion`, `spam` or `scam`
+(`_NOT_UPGRADABLE`). A `promotion` label is a *default*, not a positive call —
+`classify_type`'s business branch falls through to it for any business message
+with no transactional word, and 10 of the 21 rows it types that way are not
+promotional at all — so upgrading one handed the promotion invariant below a
+`notify`/`promotion` to demote, and the two stages composed into a **net
+demotion**: `msg_075` ("Your pickup or route status has changed") arrived at
+`digest` and left at `mute`. Neither stage moves a row down by itself, which is
+why the guard sits at the point the sequence starts.
+
+Effect on the committed nvidia artifact: `msg_003` and `msg_004` move
+`digest -> notify`, and `msg_004`/`msg_050` move `business_update -> event`
+(on `--provider stub`, `msg_025` moves `digest -> notify` too). Labelled
+`message_type` goes 25/30 to 26/30 with no row moving away from truth in either
+column, and action holds at 28/30.
+`output.csv` has been regenerated against this stage, so the headline figures in
+[§At a glance](#at-a-glance), the md5 quoted throughout, and the smoke-test
+transcript in [§1.4](#14-verify) all agree at 26/30. The two round records in
+`CHECKLIST.md` §9 and §10 still quote the previous md5 on purpose: they record
+what the artifact was at the end of those rounds, not what it is now.
+
+### A promotion never interrupts — the one hard invariant
+
+A **product rule**, not something inferred from the data: no row this system
+emits may ever pair `action=notify` with `message_type=promotion`. The floor is
+the digest; a promotion drops the extra step to `mute` only when the content
+really is promotional (`Signals.promo`) **and** the user does not want
+promotions from this sender (`allows_promotions == "0"`, a
+`promotions_opted_out_at` timestamp, or a dormant relationship — the
+`promo_unwanted` / `relationship_stale` signals `personalize.py` already
+computes). The `s.promo` conjunct is load-bearing: the type label alone is not
+evidence that the user opted out of *this* message, because it is the business
+branch's fallthrough, and muting on the label emitted a reason ("the user does
+not accept promotions from this sender") that was simply untrue of a ride-status
+update. `reason` is a scored column. The labelled set happens to agree with the
+rule — its six promotion rows are 3 digest (`sample_msg_007`, `_012`, `_044`)
+and 3 mute (`_015`, `_045`, `_047`), none notify — but the rule does not rest
+on that.
+
+It is `personalize.enforce_promotion_policy(decision, signals)`, invoked at the
+one moment each path fixes its final action: immediately after `apply_affinity`
+and before `select_evidence`/`calibrate` in both `personalize()` and
+`router._apply_m4`. After affinity, so no ordering can leave the pairing
+standing; before evidence and confidence, because both are keyed on the action —
+applied later, `msg_094` would ship `digest` carrying a notify confidence of
+0.85 instead of 0.78. Two call sites cover every producer: `--provider stub`,
+the LLM path cached and live, `router._rules_fallback`, and `score_samples.py`.
+The demotion replaces the reason rather than appending to it, so the emitted
+string agrees with the emitted action.
+
+The invariant and the muted-group carve-out (`edge_cases.py` check 3) used to be
+jointly unsatisfiable for a promo-worded urgent direct mention, since
+`classify_type` tested `promo` before urgency. Fixed in the typing: a message
+that names the recipient **and** is genuinely time-sensitive is not a promotion,
+whatever vocabulary it uses. The 110-row type distribution is unchanged by it —
+`msg_056` and `msg_057` are the only rows that name the recipient urgently and
+neither is promotional — so `edge_cases.py` 5e probes the collision directly
+rather than waiting for a dataset that contains it.
+
+It caught a standing bug that predates the affinity work: `msg_094` is a 40%-off
+beauty blast whose "before the launch discount ends tonight" trips the urgency
+deadline pattern, and with no `user_business_history` row to let the
+unwanted-promotion branch catch it, the rules engine interrupted the user with
+an advert. It now digests.
+
+`edge_cases.py` section 5 keeps this durable rather than merely currently-true:
+it self-tests the rule, scans the artifact, runs `personalize()` and
+`route_stub()` over all 110 rows, replays every cached LLM decision through
+`_apply_m4`, and probes the carve-out collision above. Any `notify`/`promotion`
+fails the gate — and therefore the harness — rather than warning.
 
 ## 2.4 Stage 3 — writer + validator
 
@@ -396,6 +523,7 @@ Recorded honestly rather than omitted.
 | `data.py`, `media_cache.py` | load the 12 CSVs and the media cache |
 | `safety.py` | stage 1 — blind safety gate |
 | `personalize.py` | stage 2 — personalization signals and rules |
+| `affinity.py` | user-business affinity override, shared by both routing paths |
 | `router.py`, `prompts.py` | LLM personalization + prompt construction |
 | `evidence.py` | scored retrieval for `evidence_message_ids` |
 | `confidence.py` | confidence calibration |

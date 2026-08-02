@@ -558,14 +558,23 @@ def _validate_decision(raw: dict, message_id: str) -> Decision:
         )
 
     notes = []
-    action = raw.get("action")
+    # Case and surrounding whitespace are formatting, not meaning: 'Promotion',
+    # 'PROMOTION' and ' promotion' all coerced to `unknown`, which let such a row
+    # bypass the "a promotion never notifies" invariant SEMANTICALLY — it was
+    # emitted as notify/unknown instead of being demoted. Normalising is the
+    # cheap fix and costs nothing on well-formed output. A genuine non-label
+    # ('promotions', None, 7) still coerces and is still noted, and the note
+    # quotes what the model actually sent, not the normalised form.
+    raw_action = raw.get("action")
+    action = str(raw_action).strip().lower() if raw_action is not None else None
     if action not in ACTIONS:
-        notes.append(f"action {action!r} was invalid")
+        notes.append(f"action {raw_action!r} was invalid")
         action = "digest"
 
-    message_type = raw.get("message_type")
+    raw_type = raw.get("message_type")
+    message_type = str(raw_type).strip().lower() if raw_type is not None else None
     if message_type not in MESSAGE_TYPES:
-        notes.append(f"message_type {message_type!r} was invalid")
+        notes.append(f"message_type {raw_type!r} was invalid")
         message_type = "unknown"
 
     confidence = _coerce_confidence(raw.get("confidence"))
@@ -615,9 +624,34 @@ def _save_cache(provider: str, message_id: str, payload: dict) -> None:
     p.write_text(json.dumps(payload, indent=2, ensure_ascii=False))
 
 
+def _keep_degradation_marks(original: str, rewritten: str) -> str:
+    """Re-attach `original`'s degradation marker to a rewritten reason.
+
+    Post-processing replaces the reason so it argues for the action actually
+    emitted; the marker is an audit record `edge_cases.py` fails the run on and
+    must survive that. Both are needed, so the marker is moved rather than the
+    rewrite discarded. Covers all four `DEGRADED_REASON_SAMPLES`: two are affixes
+    that transplant cleanly, and the two whole-string reasons have no affix to
+    move, so they become a trailing note.
+    """
+    if original.startswith(RULES_FALLBACK_PREFIX):
+        return (RULES_FALLBACK_PREFIX + rewritten)[:500]
+    tail = original.find(VALIDATION_FALLBACK_PREFIX)
+    if tail != -1:
+        return (rewritten + original[tail:])[:500]
+    return f"{rewritten} ({original})"[:500]
+
+
 def _apply_m4(ctx: MessageContext, decision: Decision) -> Decision:
-    """M4: replace the model's evidence with deterministic retrieval, and
-    calibrate its confidence.
+    """M4: apply the user-business affinity override, replace the model's
+    evidence with deterministic retrieval, and calibrate its confidence.
+
+    The affinity override runs FIRST and the order is load-bearing, not
+    stylistic: evidence and confidence are both keyed on `decision.action`, so
+    an override applied after them would emit a row that says `notify` while
+    carrying digest-ranked evidence and a digest confidence. See affinity.py —
+    the model is inconsistent across byte-identical business bodies (digest for
+    msg_003/msg_004, notify for msg_025/msg_050), so the relationship decides.
 
     Evidence is a retrieval problem, not a reasoning one — it is rankable
     against measurable criteria (topical overlap, same conversation, whether
@@ -634,30 +668,75 @@ def _apply_m4(ctx: MessageContext, decision: Decision) -> Decision:
     this logic can be revised without invalidating it.
     """
     try:
-        from personalize import signals_for      # noqa: PLC0415
-        from evidence import select_evidence     # noqa: PLC0415
-        from confidence import calibrate         # noqa: PLC0415
+        from affinity import apply_affinity                    # noqa: PLC0415
+        from personalize import (                              # noqa: PLC0415
+            classify_type, enforce_promotion_policy, signals_for,
+        )
+        from evidence import select_evidence                   # noqa: PLC0415
+        from confidence import calibrate                       # noqa: PLC0415
     except ImportError:
-        from code.personalize import signals_for     # noqa: PLC0415
-        from code.evidence import select_evidence    # noqa: PLC0415
-        from code.confidence import calibrate        # noqa: PLC0415
+        from code.affinity import apply_affinity                   # noqa: PLC0415
+        from code.personalize import (                             # noqa: PLC0415
+            classify_type, enforce_promotion_policy, signals_for,
+        )
+        from code.evidence import select_evidence                  # noqa: PLC0415
+        from code.confidence import calibrate                      # noqa: PLC0415
+
+    s = signals_for(ctx)   # hoisted; calibrate needed it anyway
+
+    # Both steps below REPLACE the reason. A degradation marker in the incoming
+    # reason is an audit record — edge_cases.py greps for exactly these strings
+    # and fails the run on them — so it must survive that rewrite. This is
+    # reachable: _rules_fallback prefixes its reason, caches it, and the cached
+    # row comes back through here.
+    marked = any(mark in decision.reason.lower() for mark in DEGRADED_REASON_MARKERS)
+    before = decision.reason
+
+    # Affinity stands down inside quiet hours and above the user's normal
+    # notification load, exactly as it does at the end of personalize(). The two
+    # call sites have to agree: a cached model `digest` and a rules `digest` for
+    # the same row are the same decision, and it would be incoherent for one to
+    # be upgraded past a DND window the other respects.
+    if not (s.in_dnd or s.load_high):
+        apply_affinity(ctx, decision, classify_type(ctx, s))
+
+    # The promotion invariant. This is the model's own output being corrected,
+    # so it must run here as well as in personalize(): on this path the action
+    # and the type both come from the LLM, and nothing else on the way to
+    # output.csv looks at the pair. Placed after apply_affinity, and before the
+    # two steps below, which read `decision.action`.
+    enforce_promotion_policy(decision, s)
+
+    # COMPOSE the marker with the rewrite; do not overwrite one with the other.
+    # Restoring `before` wholesale re-created the contradiction the rewrites
+    # exist to remove: an upgraded rules-fallback row emitted `notify` carrying
+    # the digest reason it was upgraded away from.
+    if marked and decision.reason != before:
+        decision.reason = _keep_degradation_marks(before, decision.reason)
 
     evidence_ids = select_evidence(ctx, decision.action)
     decision.evidence_message_ids = evidence_ids
     decision.confidence = calibrate(
         decision.action, decision.message_type, evidence_ids,
-        signals=signals_for(ctx), model_confidence=decision.confidence,
+        signals=s, model_confidence=decision.confidence,
     )
     return decision
 
 
 def _rules_fallback(ctx: MessageContext) -> Decision:
-    """Deterministic rules decision, used when the model output cannot be read."""
+    """Deterministic rules decision, used when the model output cannot be read.
+
+    `apply_m4a=False` because this decision is CACHED by the caller. The cache
+    holds pre-M4 decisions so M4 logic can be revised without invalidating it,
+    and personalize() would otherwise bake an affinity upgrade and its reason
+    into the stored row. The caller runs `_apply_m4` after the cache write, so
+    the returned decision is unchanged either way.
+    """
     try:
         from personalize import personalize      # noqa: PLC0415
     except ImportError:
         from code.personalize import personalize  # noqa: PLC0415
-    decision = personalize(ctx)
+    decision = personalize(ctx, apply_m4a=False)
     decision.reason = RULES_FALLBACK_PREFIX + decision.reason
     return decision
 

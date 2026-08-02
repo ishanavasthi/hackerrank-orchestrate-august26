@@ -22,15 +22,20 @@ from __future__ import annotations
 import argparse
 import csv
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "code"))
 
+from contracts import Decision                              # noqa: E402
 from data import Dataset                                    # noqa: E402
-from personalize import signals_for                         # noqa: E402
+from personalize import (                                   # noqa: E402
+    Signals, enforce_promotion_policy, personalize, signals_for,
+)
 from router import (                                        # noqa: E402
     DEGRADED_REASON_MARKERS, DEGRADED_REASON_SAMPLES,
+    _apply_m4, _load_cache, _validate_decision, route_stub,
 )
 from safety import (                                        # noqa: E402
     build_safety_context, content_risk, structural_risk,
@@ -73,6 +78,55 @@ def self_test_guard() -> list[str]:
     ) if _degraded(s)]
     return ([f"guard does not catch: {s!r}" for s in missed]
             + [f"guard false-positives on: {s!r}" for s in false_positives])
+
+
+def self_test_promotion_policy() -> list[str]:
+    """Prove `enforce_promotion_policy` does what section 5 relies on it doing.
+
+    Same shape as `self_test_guard` above and for the same reason: checking the
+    artifact with an unverified guard is how assertion 0 came to report PASS
+    while blind to three of the four degradation paths.
+    """
+    problems: list[str] = []
+
+    def _d(action: str, mtype: str) -> Decision:
+        return Decision(message_id="selftest", action=action, message_type=mtype,
+                        reason="time-sensitive and expects a response now",
+                        confidence=0.9, evidence_message_ids=[])
+
+    # The extra step to `mute` is taken on CONTENT (`s.promo`), not on the type
+    # label, because classify_type falls through to `promotion` for any business
+    # message with no transactional word. The last two cases are msg_075 and
+    # msg_049: mistyped transactional rows that must be deferred, not suppressed.
+    cases = [
+        ("promotions opted out", Signals(promo=True, promo_unwanted=True), "mute"),
+        ("dormant relationship", Signals(promo=True, relationship_stale=True), "mute"),
+        ("promotions accepted",  Signals(promo=True), "digest"),
+        ("mistyped, opted out",  Signals(promo_unwanted=True), "digest"),
+        ("mistyped, dormant",    Signals(relationship_stale=True), "digest"),
+    ]
+    for label, signals, want in cases:
+        d = enforce_promotion_policy(_d("notify", "promotion"), signals)
+        if d.action != want:
+            problems.append(f"notify/promotion + {label} -> {d.action!r}, want {want!r}")
+        if _degraded(d.reason):
+            problems.append(f"demotion reason for {label} trips the fallback guard")
+        # The reason must argue for the action actually emitted.
+        if "interrupt" not in d.reason.lower():
+            problems.append(f"demotion reason for {label} does not state the rule")
+
+    # It must not touch anything else: not a non-promotion notify, and not a
+    # promotion that is already suppressed.
+    untouched = [
+        ("notify", "business_update"), ("notify", "urgent"), ("notify", "payment"),
+        ("digest", "promotion"), ("mute", "promotion"),
+    ]
+    for action, mtype in untouched:
+        d = enforce_promotion_policy(_d(action, mtype), Signals(promo_unwanted=True))
+        if (d.action, d.message_type) != (action, mtype):
+            problems.append(f"policy moved {action}/{mtype} -> {d.action}/{d.message_type}")
+
+    return problems
 
 
 def load(out_path: Path):
@@ -195,6 +249,98 @@ def main() -> int:
         s_only = sum(1 for b in borderline if b[1] == "structural")
         print(f"  PASS  {len(borderline)} single-signal rows all muted "
               f"({s_only} structural-only, {len(borderline)-s_only} content-only)")
+
+    # ── 5. A promotion never interrupts ─────────────────────────────────────
+    # A hard PRODUCT invariant, not a heuristic read off the data: no emitted
+    # row may pair action=notify with message_type=promotion. Promotions belong
+    # in the digest, or in mute when the user does not want them from this
+    # sender. See personalize.enforce_promotion_policy.
+    #
+    # Checked in four places because the artifact alone would only ever prove it
+    # for the provider that produced output.csv, and the pairing is one model
+    # token away on the other paths — msg_094 reached notify/promotion through
+    # the rules engine with no affinity override involved at all.
+    print("\n--- 5: promotions never notify ---")
+
+    # 5a. The rule itself.
+    policy_problems = self_test_promotion_policy()
+    if policy_problems:
+        for p in policy_problems:
+            print(f"  FAIL  {p}")
+            failures.append(f"promotion policy is unsound: {p}")
+    else:
+        print("  PASS  policy self-test: notify/promotion demotes to mute when the "
+              "user rejects promotions, digest otherwise, and nothing else moves")
+
+    # 5b. The artifact.
+    artifact_bad = sorted(mid for mid, r in rows.items()
+                          if r["action"] == "notify" and r["message_type"] == "promotion")
+    for mid in artifact_bad:
+        print(f"  FAIL  {mid} is notify/promotion in {args.out.name}")
+        failures.append(f"{mid}: promotion routed to notify")
+    if not artifact_bad:
+        n_promo = sum(1 for r in rows.values() if r["message_type"] == "promotion")
+        print(f"  PASS  {n_promo} promotion rows in {args.out.name}, none notify")
+
+    # 5c. The live decision paths, offline. `personalize()` is what
+    #     --provider stub emits and is also the LLM rules-fallback; `route_stub`
+    #     is the crude classifier. Neither may produce the pairing on any row.
+    live_bad = []
+    for m in ds.messages:
+        ctx = ds.context_for(m)
+        for label, d in (("rules", personalize(ctx)), ("stub-classifier", route_stub(ctx))):
+            if d.action == "notify" and d.message_type == "promotion":
+                live_bad.append((m.message_id, label))
+
+    # 5d. The LLM path, replayed from cache — no network, and it exercises the
+    #     same _apply_m4 a live run would. Skipped silently for a provider with
+    #     no cache.
+    replayed = 0
+    for provider in ("anthropic", "nvidia"):
+        for m in ds.messages:
+            cached = _load_cache(provider, m.message_id)
+            if cached is None:
+                continue
+            replayed += 1
+            d = _apply_m4(ds.context_for(m), _validate_decision(cached, m.message_id))
+            if d.action == "notify" and d.message_type == "promotion":
+                live_bad.append((m.message_id, f"{provider} (cached)"))
+
+    for mid, label in live_bad:
+        print(f"  FAIL  {mid} is notify/promotion on the {label} path")
+        failures.append(f"{mid}: promotion routed to notify ({label})")
+    if not live_bad:
+        print(f"  PASS  {len(ds.messages)} rows x rules + stub-classifier + "
+              f"{replayed} cached LLM decisions, no notify/promotion")
+
+    # 5e. Checks 3 and 5 must be JOINTLY satisfiable. They were not: an urgent
+    #     direct mention worded with a marketing verb typed `promotion` (the
+    #     `s.promo` test ran before urgency), took the carve-out branch to
+    #     `notify`, and was then demoted straight back out of the carve-out
+    #     check 3 requires. Vacuous on today's data — msg_056, the spec's own
+    #     example, is one word away from this wording — so it is probed rather
+    #     than waited for. Fixed in the TYPING: a message that names the
+    #     recipient AND is genuinely time-sensitive is not a promotion.
+    base = next(m for m in ds.messages if signals_for(ds.context_for(m)).group_muted
+                and m.conversation_type == "group")
+    probe = replace(
+        base, message_id="probe_carveout", forwarded_count=0,
+        message_text=f"@{base.user_id} urgent: book now for tomorrow's trip, "
+                     f"the deadline is 6pm today.")
+    pctx = ds.context_for(probe)
+    ps = signals_for(pctx)
+    pd = personalize(pctx)
+    if not (ps.direct_mention and ps.really_urgent and ps.promo):
+        print("  WARN  carve-out probe no longer exercises the collision "
+              f"(mention={ps.direct_mention} urgent={ps.really_urgent} promo={ps.promo})")
+    elif pd.action != "notify" or pd.message_type == "promotion":
+        print(f"  FAIL  promo-worded urgent direct mention in a muted group got "
+              f"{pd.action}/{pd.message_type}; checks 3 and 5 are unsatisfiable together")
+        failures.append("carve-out and promotion invariant collide on a "
+                        "promo-worded urgent direct mention")
+    else:
+        print(f"  PASS  promo-worded urgent direct mention -> {pd.action}/"
+              f"{pd.message_type}: carve-out honoured, invariant intact")
 
     print("\n--- summary ---")
     print(f"  unknown senders {len(unknown)} | thin history {len(thin)} | "

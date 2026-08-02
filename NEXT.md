@@ -2,14 +2,14 @@
 
 All milestones (M0–M5) are complete, plus the P0 quality pass and the evidence
 rework. `python code/eval_harness.py --provider nvidia` is green: contract PASS,
-M2 gate PASS, M5 edges PASS, smoke 93% action / 83% type.
+M2 gate PASS, M5 edges PASS, smoke 93% action / 87% type.
 
 This file is written to survive conversation compaction. Each item is
 self-contained: what, why it matters, how to know it is done. Work top-down —
 the ordering is by risk to the *submission*, not by effort.
 
 State at time of writing: `output.csv` = 110 rows,
-`md5 e5dd52270207067dd6d7e9c873479ed4`, shipping path = rules safety gate +
+`md5 035a8371044842dca7f842f64709f26d`, shipping path = rules safety gate +
 NVIDIA NIM personalization.
 
 **Read `CHECKLIST.md` §8 before touching any prompt.** It records that the model

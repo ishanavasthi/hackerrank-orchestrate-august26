@@ -10,7 +10,7 @@ work through once implementation is complete.
 **Active work plan:** see [`NEXT.md`](./NEXT.md) for the ordered subset of §7
 that warrants action now, ordered by risk to the quality of the answer.
 Packaging is the last item there, not the first. Last verified against
-commit `HEAD` (`output.csv` md5 `e5dd52270207067dd6d7e9c873479ed4`).
+commit `HEAD` (`output.csv` md5 `035a8371044842dca7f842f64709f26d`).
 
 ---
 
@@ -86,7 +86,7 @@ the submission's floor — see DECISIONS.md.
 | path | action | message_type |
 |---|---|---|
 | rules (offline fallback) | 70% | 47% |
-| **rules gate + NIM personalization (shipping)** | **93%** | **83%** |
+| **rules gate + NIM personalization (shipping)** | **93%** | **87%** |
 
 The LLM corrects the systematic conservatism the rules path showed: 8 of 9
 notifies correct against 3 of 9. Caveat unchanged — 30 rows is thin, and per
